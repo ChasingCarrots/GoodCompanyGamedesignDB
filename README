@@ -1,0 +1,7 @@
+# Installation
+This is a Django tool, written with Django 1.11 for Python 2.7. If you have not installed that, please follow [this guide](https://docs.djangoproject.com/en/2.0/intro/install/) or [this guide](https://docs.djangoproject.com/en/2.0/howto/windows/) if you are using windows.
+
+Next, make sure that the pip package `django-super-inlines` is installed by running `pip install django-super-inlines`. Additionally, install `django-grappelli`. Note that this will install most liklely install a version that is (at least formally) incompatible with Django 1.11. This should not matter. Then run `python manage.py runserver` to test your installation. If you have a trouble with grappelli, try restarting your system or running the server once without grappeli by commenting out the lines `grappelli` and `super_inlines.grappelli_integration` from the `INSTALLED_APPS` list in `GoodCompanyGameDesignDB/settings.py`.
+
+# Usage Tips
+After changes to any models, run `python manage.py makemigrations` followed by `python manage.py migrate` to update the database. A *migration* is a transformation of a database from an old version of a schema to a new version. Creating the migration basically means that your changes to the models are translated into database transformations, running `migrate` is then the act of applying the transformations.
