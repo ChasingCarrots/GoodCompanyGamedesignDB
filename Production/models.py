@@ -7,7 +7,10 @@ import common
 
 class Material(models.Model):
     Name = models.CharField(max_length=255)
-    IconAssetID = models.CharField(max_length=255)
+    IconAssetID = models.CharField(max_length=255, help_text="The asset id of the icon of this material.")
+    IconMonoAssetID = models.CharField(max_length=255, help_text="The asset id of the monochrome icon of this material.")
+    SpriteSheetAssetID = models.CharField(max_length=255, help_text="The asset id of the TMP spritesheet that contains the text-sprite for this material.")
+    SpriteSheetEntry = models.CharField(max_length=31, help_text="The name of the icon of this material within the TMP spritesheet")
     SizeType = models.IntegerField(choices=common.SizeTypeChoices)
     StackSize = models.IntegerField()
     BuyPrice = models.IntegerField()
@@ -17,6 +20,8 @@ class Material(models.Model):
         return {
             "Name":self.Name,
             "IconAssetID":self.IconAssetID,
+            "SpriteSheetAssetID":self.SpriteSheetAssetID,
+            "SpriteSheetEntry":self.SpriteSheetEntry,
             "SizeType":self.SizeType,
             "StackSize":self.StackSize,
             "BuyPrice":self.BuyPrice,
