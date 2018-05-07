@@ -20,6 +20,6 @@ from Production.views import *
 
 urlpatterns = [
     url(r'^grappelli/', include('grappelli.urls')),
-    url(r'^admin/', admin.site.urls),
+    url(r'^', admin.site.urls),
     url(r'^gamedataManifest/', getManifestJson)
 ]
