@@ -7,6 +7,7 @@ from django.http import HttpResponse
 
 from Production.models import *
 from ObjectTypes.models import *
+from Tuning.models import TuningValue
 
 def getManifestJson(request):
     materials = {}
@@ -87,6 +88,10 @@ def getManifestJson(request):
     blueprintPrinterProperties = {}
     for blueprintPrinter in BlueprintPrinterProperty.objects.all():
         blueprintPrinterProperties[str(blueprintPrinter.ObjectType.id)] = blueprintPrinter.getJsonObject()
+    
+    tuningValues = {}
+    for tuningValue in TuningValue.objects.all():
+        tuningValues[tuningValue.Name] = tuningValue.getJsonValue()
 
     return HttpResponse(json.dumps({
         "Materials":materials,
@@ -108,5 +113,6 @@ def getManifestJson(request):
         "InteractableTilesProperties": interactableTilesProperties,
         "SpecialFlagsProperties": specialFlagsProperties,
         "BlueprintPrinterProperties": blueprintPrinterProperties,
+        "TuningValues": tuningValues
     }, indent=4), content_type='application/json')
 
