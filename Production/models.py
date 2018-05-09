@@ -118,7 +118,7 @@ class ModuleStep(models.Model):
 class ModuleFeature(models.Model):
     Module = models.ForeignKey("Module", related_name="Features")
     ProductFeature = models.ForeignKey("ProductFeature")
-    FeatureValue = models.IntegerField()
+    FeatureValue = models.FloatField()
 
     def getJsonObject(self):
         return {
@@ -206,7 +206,7 @@ class ProductFeature(models.Model):
     Unit = models.CharField(max_length=8)
     Description = models.TextField()
     PropagationType = models.IntegerField(choices=common.PropagationTypeChoices)
-    DefaultValue = models.IntegerField()
+    DefaultValue = models.FloatField()
 
     def getJsonObject(self):
         return {
