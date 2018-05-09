@@ -22,3 +22,19 @@ SizeTypeChoices = (
     # large objects and materials
     (LARGESLOT, "LargeSlot"),
 )
+
+MULTIPLICATIVE = 0
+MINIMUM = 1
+MAXIMUM = 2
+ADDITIVE = 3
+BOOLEAN_OR = 4
+BOOLEAN_AND = 5
+
+PropagationTypeChoices = (
+    (MULTIPLICATIVE, "Multiplicative"),
+    (MINIMUM, "Minimum"),
+    (MAXIMUM, "Maximum"),
+    (ADDITIVE, "Additive"),
+    (BOOLEAN_OR, "Boolean OR"),
+    (BOOLEAN_AND, "Boolean AND"),
+)

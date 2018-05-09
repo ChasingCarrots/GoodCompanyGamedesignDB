@@ -49,12 +49,21 @@ class ModuleStepAdmin(SuperInlineModelAdmin, admin.StackedInline):
                ModuleStepOutputMaterialAmountAdmin)
     extra = 0
 
+class ModuleFeatureAdmin(SuperInlineModelAdmin, admin.StackedInline):
+    model = ModuleFeature
+    extra = 0
+
 class ModuleAdmin(SuperModelAdmin):
     list_display = ("id", "__unicode__", )
     list_filter = ("FitsIntoSlot",)
-    inlines = (ModuleStepAdmin,)
+    inlines = (ModuleStepAdmin,ModuleFeatureAdmin)
 admin.site.register(Module, ModuleAdmin)
 
 class ProductTypeAdmin(SuperModelAdmin):
     list_display = ("id", "__unicode__", )
 admin.site.register(ProductType, ProductTypeAdmin)
+
+class ProductFeatureAdmin(SuperModelAdmin):
+    list_display = ("id", "__unicode__", "PropagationType", "Unit")
+    list_filter = ("PropagationType",)
+admin.site.register(ProductFeature, ProductFeatureAdmin)

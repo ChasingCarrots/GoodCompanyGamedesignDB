@@ -33,6 +33,10 @@ def getManifestJson(request):
     for productType in ProductType.objects.all():
         productTypes[str(productType.id)] = productType.getJsonObject()
     
+    productFeatures = {}
+    for productFeature in ProductFeature.objects.all():
+        productFeatures[str(productFeature.id)] = productFeature.getJsonObject()
+
     objectTypes = {}
     for objectType in ObjectType.objects.all():
         objectTypes[str(objectType.id)] = objectType.getJsonObject()
@@ -88,7 +92,7 @@ def getManifestJson(request):
     blueprintPrinterProperties = {}
     for blueprintPrinter in BlueprintPrinterProperty.objects.all():
         blueprintPrinterProperties[str(blueprintPrinter.ObjectType.id)] = blueprintPrinter.getJsonObject()
-    
+
     tuningValues = {}
     for tuningValue in TuningValue.objects.all():
         tuningValues[tuningValue.Name] = tuningValue.getJsonValue()
@@ -98,6 +102,7 @@ def getManifestJson(request):
         "Modules":modules,
         "SlotTypes":slotTypes,
         "ProductTypes":productTypes,
+        "ProductFeatures":productFeatures,
         "Recipes":recipes,
         "ObjectTypes":objectTypes,
         "MovableProperties": movableProperties,

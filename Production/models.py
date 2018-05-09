@@ -115,6 +115,24 @@ class ModuleStep(models.Model):
     def __unicode__(self):
         return u"Step %d %s" % (self.StepNumber, self.Module)
 
+class ModuleFeature(models.Model):
+    Module = models.ForeignKey("Module", related_name="Features")
+    ProductFeature = models.ForeignKey("ProductFeature")
+    FeatureValue = models.IntegerField()
+
+    def getJsonObject(self):
+        return {
+            "FeatureID":self.ProductFeature.id,
+            "FeatureValue":self.FeatureValue,
+        }
+
+    class Meta:
+        verbose_name = 'Module Feature'
+        verbose_name_plural = 'Module Feature'
+
+    def __unicode__(self):
+        return u"%s %s: %d %s" % (self.Module, self.ProductFeature, self.FeatureValue, self.ProductFeature.Unit)
+
 class Module(models.Model):
     Name = models.CharField(max_length=255)
     IconAssetID = models.CharField(max_length=255)
@@ -124,11 +142,15 @@ class Module(models.Model):
         steps = []
         for step in self.Steps.all():
             steps.append(step.getJsonObject())
+        features = []
+        for feature in self.Features.all():
+            features.append(feature.getJsonObject())
         return {
             "Name":self.Name,
             "IconAssetID":self.IconAssetID,
             "FitsIntoSlot":self.FitsIntoSlot.id,
-            "Steps":steps
+            "Steps":steps,
+            "Features":features,
         }
     
     def getJsonStepRecipes(self):
@@ -178,3 +200,28 @@ class ProductType(models.Model):
 
     def __unicode__(self):
         return unicode(self.Name)
+
+class ProductFeature(models.Model):
+    Name = models.CharField(max_length=255)
+    Unit = models.CharField(max_length=8)
+    Description = models.TextField()
+    PropagationType = models.IntegerField(choices=common.PropagationTypeChoices)
+    DefaultValue = models.IntegerField()
+
+    def getJsonObject(self):
+        return {
+            "Name": self.Name,
+            "Unit": self.Unit,
+            "Description": self.Description,
+            "PropagationType": self.PropagationType,
+            "DefaultValue": self.DefaultValue,
+        }
+
+    class Meta:
+        verbose_name = 'Product Feature'
+        verbose_name_plural = 'Product Features'
+
+    def __unicode__(self):
+        return unicode(self.Name)
+
+
