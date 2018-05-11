@@ -64,6 +64,6 @@ class ProductTypeAdmin(SuperModelAdmin):
 admin.site.register(ProductType, ProductTypeAdmin)
 
 class ProductFeatureAdmin(SuperModelAdmin):
-    list_display = ("id", "__unicode__", "PropagationType", "Unit")
+    list_display = ("id", "__unicode__", "PropagationType", "Unit", "DefaultValue", "MinRange", "MaxRange")
     list_filter = ("PropagationType",)
 admin.site.register(ProductFeature, ProductFeatureAdmin)

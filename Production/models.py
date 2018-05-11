@@ -207,6 +207,8 @@ class ProductFeature(models.Model):
     Description = models.TextField()
     PropagationType = models.IntegerField(choices=common.PropagationTypeChoices)
     DefaultValue = models.FloatField()
+    MinRange = models.FloatField()
+    MaxRange = models.FloatField()
 
     def getJsonObject(self):
         return {
@@ -215,6 +217,8 @@ class ProductFeature(models.Model):
             "Description": self.Description,
             "PropagationType": self.PropagationType,
             "DefaultValue": self.DefaultValue,
+            "MinRange": self.MinRange,
+            "MaxRange": self.MaxRange
         }
 
     class Meta:
