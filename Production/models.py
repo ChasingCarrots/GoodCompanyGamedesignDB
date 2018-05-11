@@ -8,7 +8,7 @@ import common
 class Material(models.Model):
     Name = models.CharField(max_length=255)
     IconAssetID = models.CharField(max_length=255, help_text="The asset id of the icon of this material.")
-    IconMonoAssetID = models.CharField(max_length=255, help_text="The asset id of the monochrome icon of this material.")
+    ModelAssetID = models.CharField(max_length=255, help_text="The asset id of the model for this material.")
     TextSpriteAssetID = models.CharField(max_length=255, help_text="The asset id of the TMP spritesheet that contains the text-sprite for this material.")
     TextSpriteEntry = models.CharField(max_length=31, help_text="The name of the icon of this material within the TMP spritesheet")
     SizeType = models.IntegerField(choices=common.SizeTypeChoices)
@@ -20,7 +20,7 @@ class Material(models.Model):
         return {
             "Name": self.Name,
             "IconAssetID": self.IconAssetID,
-            "IconMonoAssetID": self.IconMonoAssetID,
+            "ModelAssetID": self.ModelAssetID,
             "TextSpriteAssetID": self.TextSpriteAssetID,
             "TextSpriteEntry": self.TextSpriteEntry,
             "SizeType": self.SizeType,
