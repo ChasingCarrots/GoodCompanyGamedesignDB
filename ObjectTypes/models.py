@@ -63,7 +63,9 @@ class ObjectLookProperty(models.Model):
 
 class IconProperty(models.Model):
     ObjectType = models.OneToOneField(ObjectType, related_name="IconProperty", blank=False)
-    IconAssetID = models.CharField(max_length=255, blank=False)
+    IconAssetID = models.CharField(max_length=255, help_text="The asset id of the icon for this object.", blank=False)
+    TextSpriteAssetID = models.CharField(max_length=255, help_text="The asset id of the TMP spritesheet that contains the text-sprite for this object.", blank=True)
+    TextSpriteEntry = models.CharField(max_length=31, help_text="The name of the icon of this object within the TMP spritesheet", blank=True)
 
     def getJsonObject(self):
         return {
@@ -98,6 +100,7 @@ class InventoryProperty(models.Model):
 class StorageProperty(models.Model):
     ObjectType = models.OneToOneField(ObjectType, related_name="StorageProperty", blank=False)
     SizeType = models.IntegerField(choices=common.SizeTypeChoices, blank=False)
+    ModelAssetID = models.CharField(max_length=255, help_text="The asset id of the model that should be used to display this object in an inventory view.", blank=True)
 
     def getJsonObject(self):
         return {
