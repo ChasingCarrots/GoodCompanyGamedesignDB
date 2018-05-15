@@ -70,6 +70,8 @@ class IconProperty(models.Model):
     def getJsonObject(self):
         return {
             "IconAssetID": self.IconAssetID,
+            "TextSpriteAssetID": self.TextSpriteAssetID,
+            "TextSpriteEntry": self.TextSpriteEntry,
         }
 
     class Meta:
@@ -105,6 +107,7 @@ class StorageProperty(models.Model):
     def getJsonObject(self):
         return {
             "SizeType": self.SizeType,
+            "ModelAssetID": self.ModelAssetID,
         }
 
     class Meta:
