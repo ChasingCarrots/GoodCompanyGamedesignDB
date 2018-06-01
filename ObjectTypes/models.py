@@ -85,11 +85,13 @@ class InventoryProperty(models.Model):
     ObjectType = models.OneToOneField(ObjectType, related_name="InventoryProperty", blank=False)
     SlotType = models.IntegerField(choices=common.SlotTypeChoices, blank=False)
     NumberOfSlots = models.IntegerField(blank=False)
+    IsLogistic = models.BooleanField(default=False, blank=False, help_text="Only logistic inventories can be used in workplaces.")
 
     def getJsonObject(self):
         return {
             "SlotType": self.SlotType,
             "NumberOfSlots": self.NumberOfSlots,
+            "IsLogistic": self.IsLogistic,
         }
 
     class Meta:
