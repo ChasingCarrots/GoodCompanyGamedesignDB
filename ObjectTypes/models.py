@@ -183,6 +183,13 @@ class CrafterPropertyModuleStepDuration(models.Model):
     ModuleStep = models.ForeignKey(Production.models.ModuleStep, blank=False)
     Duration = models.FloatField(blank=False)
 
+    def getJsonObject(self):
+        return {
+            "ModuleID": self.ModuleStep.Module.id,
+            "StepNumber": self.ModuleStep.StepNumber,
+            "Duration": self.Duration
+        }
+
     class Meta:
         verbose_name = 'Possible ModuleStep'
         verbose_name_plural = 'Possible ModuleSteps'
@@ -192,17 +199,15 @@ class CrafterPropertyModuleStepDuration(models.Model):
 
 class CrafterProperty(models.Model):
     ObjectType = models.OneToOneField(ObjectType, related_name="CrafterProperty", blank=False)
+    SwitchingTime = models.FloatField(blank=False, default=1)
 
-    def getRecipeJsonObject(self, moduleStepIDToRecipeID):
-        recipes = []
+    def getJsonObject(self):
+        possibleModuleSteps = []
         for step in self.PossibleModuleSteps.all():
-            recipes.append({
-                "Duration": step.Duration,
-                "SwitchDuration": step.Duration,
-                "RecipeID": moduleStepIDToRecipeID[step.ModuleStep.id],
-            })
+            possibleModuleSteps.append(step.getJsonObject())
         return {
-            "Recipes":recipes,
+            "SwitchingDuration": self.SwitchingTime,
+            "PossibleModuleSteps": possibleModuleSteps,
         }
 
     class Meta:
@@ -319,11 +324,13 @@ class SpecialFlagsProperty(models.Model):
     ObjectType = models.OneToOneField(ObjectType, related_name="SpecialFlagsProperty", blank=False)
     IsBuyPlace = models.BooleanField(default=False, blank=False)
     IsSellPlace = models.BooleanField(default=False, blank=False)
+    IsTrashCan = models.BooleanField(default=False, blank=False)
 
     def getJsonObject(self):
         return {
             "IsBuyPlace":self.IsBuyPlace,
             "IsSellPlace":self.IsSellPlace,
+            "IsTrashCan":self.IsTrashCan
         }
 
     class Meta:

@@ -14,16 +14,9 @@ def getManifestJson(request):
     for mat in Material.objects.all():
         materials[str(mat.id)] = mat.getJsonObject()
 
-    moduleStepIDToRecipeID = {}
-    recipes = {}
-    recipeID = 1
     modules = {}
     for mod in Module.objects.all():
         modules[str(mod.id)] = mod.getJsonObject()
-        for stepRecipe in mod.getJsonStepRecipes():
-            recipes[str(recipeID)] = stepRecipe
-            moduleStepIDToRecipeID[stepRecipe["id"]] = recipeID
-            recipeID = recipeID + 1
 
     slotTypes = {}
     for slotType in ModuleSlotType.objects.all():
@@ -71,7 +64,7 @@ def getManifestJson(request):
 
     crafterProperties = {}
     for crafter in CrafterProperty.objects.all():
-        crafterProperties[str(crafter.ObjectType.id)] = crafter.getRecipeJsonObject(moduleStepIDToRecipeID)
+        crafterProperties[str(crafter.ObjectType.id)] = crafter.getJsonObject()
 
     assemblyProperties = {}
     for assembly in AssemblyProperty.objects.all():
@@ -103,7 +96,6 @@ def getManifestJson(request):
         "SlotTypes":slotTypes,
         "ProductTypes":productTypes,
         "ProductFeatures":productFeatures,
-        "Recipes":recipes,
         "ObjectTypes":objectTypes,
         "MovableProperties": movableProperties,
         "ObjectLookProperties": objectLookProperties,
