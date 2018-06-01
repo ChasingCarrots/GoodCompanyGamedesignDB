@@ -325,12 +325,14 @@ class SpecialFlagsProperty(models.Model):
     IsBuyPlace = models.BooleanField(default=False, blank=False)
     IsSellPlace = models.BooleanField(default=False, blank=False)
     IsTrashCan = models.BooleanField(default=False, blank=False)
+    IsDraftingTable = models.BooleanField(default=False, blank=False)
 
     def getJsonObject(self):
         return {
             "IsBuyPlace":self.IsBuyPlace,
             "IsSellPlace":self.IsSellPlace,
-            "IsTrashCan":self.IsTrashCan
+            "IsTrashCan":self.IsTrashCan,
+            "IsDraftingTable":self.IsDraftingTable
         }
 
     class Meta:
