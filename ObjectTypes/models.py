@@ -328,13 +328,15 @@ class SpecialFlagsProperty(models.Model):
     IsSellPlace = models.BooleanField(default=False, blank=False)
     IsTrashCan = models.BooleanField(default=False, blank=False)
     IsDraftingTable = models.BooleanField(default=False, blank=False)
+    IsContractBoard = models.BooleanField(default=False, blank=False, help_text="Contract boards allow the player to view and accept open contracts.")
 
     def getJsonObject(self):
         return {
             "IsBuyPlace":self.IsBuyPlace,
             "IsSellPlace":self.IsSellPlace,
             "IsTrashCan":self.IsTrashCan,
-            "IsDraftingTable":self.IsDraftingTable
+            "IsDraftingTable":self.IsDraftingTable,
+            "IsContractBoard":self.IsContractBoard,
         }
 
     class Meta:
