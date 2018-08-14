@@ -329,6 +329,7 @@ class SpecialFlagsProperty(models.Model):
     IsTrashCan = models.BooleanField(default=False, blank=False)
     IsDraftingTable = models.BooleanField(default=False, blank=False)
     IsContractBoard = models.BooleanField(default=False, blank=False, help_text="Contract boards allow the player to view and accept open contracts.")
+    IsBatchEditor = models.BooleanField(default=False)
 
     def getJsonObject(self):
         return {
@@ -337,6 +338,7 @@ class SpecialFlagsProperty(models.Model):
             "IsTrashCan":self.IsTrashCan,
             "IsDraftingTable":self.IsDraftingTable,
             "IsContractBoard":self.IsContractBoard,
+            "IsBatchEditor":self.IsBatchEditor,
         }
 
     class Meta:
