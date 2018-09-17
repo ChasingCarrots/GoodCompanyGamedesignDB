@@ -199,17 +199,33 @@ class CrafterPropertyModuleStepDuration(models.Model):
     def __unicode__(self):
         return u"%s (%ds)" % (self.ModuleStep, self.Duration)
 
+class CrafterPropertyModuleDuration(models.Model):
+    CrafterProperty = models.ForeignKey("CrafterProperty", related_name="PossibleModules", blank=False)
+    Module = models.ForeignKey(Production.models.Module, blank=False)
+    Duration = models.FloatField(blank=False)
+
+    def getJsonObject(self):
+        return {
+            "ModuleID": self.Module.Module.id,
+            "Duration": self.Duration
+        }
+
+    class Meta:
+        verbose_name = 'Possible Module'
+        verbose_name_plural = 'Possible Modules'
+
+    def __unicode__(self):
+        return u"%s (%ds)" % (self.Module, self.Duration)
+
 class CrafterProperty(models.Model):
     ObjectType = models.OneToOneField(ObjectType, related_name="CrafterProperty", blank=False)
     SwitchingTime = models.FloatField(blank=False, default=1)
 
     def getJsonObject(self):
-        possibleModuleSteps = []
-        for step in self.PossibleModuleSteps.all():
-            possibleModuleSteps.append(step.getJsonObject())
+        possibleModules = [step.getJsonObject() for step in self.PossibleModules.all()]
         return {
             "SwitchingDuration": self.SwitchingTime,
-            "PossibleModuleSteps": possibleModuleSteps,
+            "PossibleModules": possibleModules,
         }
 
     class Meta:

@@ -137,41 +137,22 @@ class Module(models.Model):
     Name = models.CharField(max_length=255)
     IconAssetID = models.CharField(max_length=255)
     FitsIntoSlot = models.ForeignKey(ModuleSlotType, related_name="FittingModule", null=True, blank=True)
+    Material = models.ForeignKey(Material)
 
     def getJsonObject(self):
-        steps = []
-        for step in self.Steps.all():
-            steps.append(step.getJsonObject())
-        features = []
-        for feature in self.Features.all():
-            features.append(feature.getJsonObject())
         fitsIntoSlot = 0
         if self.FitsIntoSlot:
             fitsIntoSlot = self.FitsIntoSlot.id
+
+        features = [feature.getJsonObject() for feature in self.Features.all()]
+        inputMaterials = [mat.getJsonObject() for mat in self.InputMaterials.all()]
         return {
             "Name":self.Name,
             "IconAssetID":self.IconAssetID,
             "FitsIntoSlot":fitsIntoSlot,
-            "Steps":steps,
             "Features":features,
+            "InputMaterials":inputMaterials,
         }
-    
-    def getJsonStepRecipes(self):
-        stepRecipes = []
-        totalSteps = self.Steps.count()
-        stepNum = 1
-        for step in self.Steps.all():
-            stepRecipeJson = {
-                "Name": "%s step %d/%d" % (self.Name, stepNum, totalSteps),
-            }
-            stepJson = step.getJsonObject()
-            stepRecipeJson["InputMaterials"] = stepJson["InputMaterials"]
-            stepRecipeJson["OutputMaterials"] = stepJson["OutputMaterials"]
-            # this is super temporary, for the modulestep to recipe conversion!
-            stepRecipeJson["id"] = step.id
-            stepRecipes.append(stepRecipeJson)
-            stepNum = stepNum + 1
-        return stepRecipes
     
     class Meta:
         verbose_name = 'Module'
@@ -179,6 +160,24 @@ class Module(models.Model):
 
     def __unicode__(self):
         return u"%s (Slot: %s)" %(unicode(self.Name),unicode(self.FitsIntoSlot))
+
+class ModuleInputMaterialAmount(models.Model):
+    Material = models.ForeignKey(Material)
+    Amount = models.IntegerField()
+    Module = models.ForeignKey(Module, related_name="InputMaterials")
+
+    def getJsonObject(self):
+        return {
+            "MaterialID":self.Material.id,
+            "Amount":self.Amount,
+        }
+    
+    class Meta:
+        verbose_name = 'Input Material'
+        verbose_name_plural = 'Input Materials'
+
+    def __unicode__(self):
+        return u"%d x %s" %(self.Amount, unicode(self.Material))
 
 class ProductType(models.Model):
     Name = models.CharField(max_length=255)

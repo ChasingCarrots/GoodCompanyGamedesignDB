@@ -57,10 +57,14 @@ class CrafterPropertyModuleStepDurationInlineAdmin(SuperInlineModelAdmin, admin.
     model = CrafterPropertyModuleStepDuration
     extra = 0
 
+class CrafterPropertyModuleDurationInlineAdmin(SuperInlineModelAdmin, admin.TabularInline):
+    model = CrafterPropertyModuleDuration
+    extra = 0
+
 class CrafterPropertyInlineAdmin(SuperInlineModelAdmin, admin.StackedInline):
     model = CrafterProperty
     extra = 0
-    inlines = (CrafterPropertyModuleStepDurationInlineAdmin,)
+    inlines = (CrafterPropertyModuleStepDurationInlineAdmin,CrafterPropertyModuleDurationInlineAdmin)
 
 class AssemblyPropertySlotAssemblyDurationInlineAdmin(SuperInlineModelAdmin, admin.TabularInline):
     model = AssemblyPropertySlotAssemblyDuration
