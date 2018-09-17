@@ -90,6 +90,7 @@ class Module(models.Model):
         return {
             "Name":self.Name,
             "IconAssetID":self.IconAssetID,
+            "MaterialID":self.Material.id,
             "FitsIntoSlot":fitsIntoSlot,
             "Features":features,
             "InputMaterials":inputMaterials,
