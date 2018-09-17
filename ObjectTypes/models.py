@@ -180,25 +180,6 @@ class RecurringCostProperty(models.Model):
     def __unicode__(self):
         return u"RecurringCostProperty of %s" % (self.ObjectType)
 
-class CrafterPropertyModuleStepDuration(models.Model):
-    CrafterProperty = models.ForeignKey("CrafterProperty", related_name="PossibleModuleSteps", blank=False)
-    ModuleStep = models.ForeignKey(Production.models.ModuleStep, blank=False)
-    Duration = models.FloatField(blank=False)
-
-    def getJsonObject(self):
-        return {
-            "ModuleID": self.ModuleStep.Module.id,
-            "StepNumber": self.ModuleStep.StepNumber,
-            "Duration": self.Duration
-        }
-
-    class Meta:
-        verbose_name = 'Possible ModuleStep'
-        verbose_name_plural = 'Possible ModuleSteps'
-
-    def __unicode__(self):
-        return u"%s (%ds)" % (self.ModuleStep, self.Duration)
-
 class CrafterPropertyModuleDuration(models.Model):
     CrafterProperty = models.ForeignKey("CrafterProperty", related_name="PossibleModules", blank=False)
     Module = models.ForeignKey(Production.models.Module, blank=False)
@@ -206,7 +187,7 @@ class CrafterPropertyModuleDuration(models.Model):
 
     def getJsonObject(self):
         return {
-            "ModuleID": self.Module.Module.id,
+            "ModuleID": self.Module.id,
             "Duration": self.Duration
         }
 

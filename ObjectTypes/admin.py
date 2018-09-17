@@ -52,11 +52,6 @@ class RecurringCostPropertyInlineAdmin(SuperInlineModelAdmin, admin.StackedInlin
     model = RecurringCostProperty
     extra = 0
 
-
-class CrafterPropertyModuleStepDurationInlineAdmin(SuperInlineModelAdmin, admin.TabularInline):
-    model = CrafterPropertyModuleStepDuration
-    extra = 0
-
 class CrafterPropertyModuleDurationInlineAdmin(SuperInlineModelAdmin, admin.TabularInline):
     model = CrafterPropertyModuleDuration
     extra = 0
@@ -64,7 +59,7 @@ class CrafterPropertyModuleDurationInlineAdmin(SuperInlineModelAdmin, admin.Tabu
 class CrafterPropertyInlineAdmin(SuperInlineModelAdmin, admin.StackedInline):
     model = CrafterProperty
     extra = 0
-    inlines = (CrafterPropertyModuleStepDurationInlineAdmin,CrafterPropertyModuleDurationInlineAdmin)
+    inlines = (CrafterPropertyModuleDurationInlineAdmin,)
 
 class AssemblyPropertySlotAssemblyDurationInlineAdmin(SuperInlineModelAdmin, admin.TabularInline):
     model = AssemblyPropertySlotAssemblyDuration

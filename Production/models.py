@@ -36,42 +36,6 @@ class Material(models.Model):
     def __unicode__(self):
         return unicode(self.Name)
 
-class ModuleStepInputMaterialAmount(models.Model):
-    Material = models.ForeignKey(Material)
-    Amount = models.IntegerField()
-    ModuleStep = models.ForeignKey("ModuleStep", related_name="InputMaterials")
-
-    def getJsonObject(self):
-        return {
-            "MaterialID":self.Material.id,
-            "Amount":self.Amount,
-        }
-    
-    class Meta:
-        verbose_name = 'Input Material'
-        verbose_name_plural = 'Input Materials'
-
-    def __unicode__(self):
-        return u"%d x %s" %(self.Amount, unicode(self.Material))
-
-class ModuleStepOutputMaterialAmount(models.Model):
-    Material = models.ForeignKey(Material)
-    Amount = models.IntegerField()
-    ModuleStep = models.ForeignKey("ModuleStep", related_name="OutputMaterials")
-
-    def getJsonObject(self):
-        return {
-            "MaterialID": self.Material.id,
-            "Amount": self.Amount,
-        }
-    
-    class Meta:
-        verbose_name = 'Output Material'
-        verbose_name_plural = 'Output Materials'
-
-    def __unicode__(self):
-        return u"%d x %s" % (self.Amount, unicode(self.Material))
-
 class ModuleSlotType(models.Model):
     Name = models.CharField(max_length=255)
     IsOptional = models.BooleanField()
@@ -91,29 +55,6 @@ class ModuleSlotType(models.Model):
             return u"%s (optional)" % unicode(self.Name)
         else:
             return unicode(self.Name)
-
-class ModuleStep(models.Model):
-    Module = models.ForeignKey("Module", related_name="Steps")
-    StepNumber = models.IntegerField(blank=False, default=0)
-
-    def getJsonObject(self):
-        inputMaterials = []
-        for inMat in self.InputMaterials.all():
-            inputMaterials.append(inMat.getJsonObject())
-        outputMaterials = []
-        for outMat in self.OutputMaterials.all():
-            outputMaterials.append(outMat.getJsonObject())
-        return {
-            "InputMaterials":inputMaterials,
-            "OutputMaterials":outputMaterials,
-        }
-    
-    class Meta:
-        verbose_name = 'Module Step'
-        verbose_name_plural = 'Module Steps'
-
-    def __unicode__(self):
-        return u"Step %d %s" % (self.StepNumber, self.Module)
 
 class ModuleFeature(models.Model):
     Module = models.ForeignKey("Module", related_name="Features")

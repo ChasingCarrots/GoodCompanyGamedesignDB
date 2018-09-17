@@ -35,22 +35,8 @@ class ModuleSlotTypeAdmin(SuperModelAdmin):
     list_display = ("id", "__unicode__", "IsOptional",)
 admin.site.register(ModuleSlotType, ModuleSlotTypeAdmin)
 
-class ModuleStepInputMaterialAmountAdmin(SuperInlineModelAdmin, admin.TabularInline):
-    model = ModuleStepInputMaterialAmount
-    extra = 0
-
-class ModuleStepOutputMaterialAmountAdmin(SuperInlineModelAdmin, admin.TabularInline):
-    model = ModuleStepOutputMaterialAmount
-    extra = 0
-
 class ModuleInputMaterialAmountAdmin(SuperInlineModelAdmin, admin.TabularInline):
     model = ModuleInputMaterialAmount
-    extra = 0
-
-class ModuleStepAdmin(SuperInlineModelAdmin, admin.StackedInline):
-    model = ModuleStep
-    inlines = (ModuleStepInputMaterialAmountAdmin,
-               ModuleStepOutputMaterialAmountAdmin)
     extra = 0
 
 class ModuleFeatureAdmin(SuperInlineModelAdmin, admin.StackedInline):
@@ -61,7 +47,6 @@ class ModuleAdmin(SuperModelAdmin):
     list_display = ("id", "__unicode__", )
     list_filter = ("FitsIntoSlot",)
     inlines = (ModuleInputMaterialAmountAdmin,
-               ModuleStepAdmin,
                ModuleFeatureAdmin)
 admin.site.register(Module, ModuleAdmin)
 
