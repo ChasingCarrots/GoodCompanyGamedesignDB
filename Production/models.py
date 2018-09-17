@@ -136,7 +136,7 @@ class ModuleFeature(models.Model):
 class Module(models.Model):
     Name = models.CharField(max_length=255)
     IconAssetID = models.CharField(max_length=255)
-    FitsIntoSlot = models.ForeignKey(ModuleSlotType, related_name="FittingModule")
+    FitsIntoSlot = models.ForeignKey(ModuleSlotType, related_name="FittingModule", null=True, blank=True)
 
     def getJsonObject(self):
         steps = []
@@ -145,10 +145,13 @@ class Module(models.Model):
         features = []
         for feature in self.Features.all():
             features.append(feature.getJsonObject())
+        fitsIntoSlot = 0
+        if self.FitsIntoSlot:
+            fitsIntoSlot = self.FitsIntoSlot.id
         return {
             "Name":self.Name,
             "IconAssetID":self.IconAssetID,
-            "FitsIntoSlot":self.FitsIntoSlot.id,
+            "FitsIntoSlot":fitsIntoSlot,
             "Steps":steps,
             "Features":features,
         }
