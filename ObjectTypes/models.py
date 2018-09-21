@@ -144,7 +144,6 @@ class BuildsObjectConnection(models.Model):
 class BuildableProperty(models.Model):
     ObjectType = models.OneToOneField(ObjectType, related_name="BuildableProperty", blank=False)
     BuildDuration = models.FloatField(blank=False)
-    BuildCost = models.IntegerField(blank=False)
 
     def getJsonObject(self):
         neededmats = []
@@ -154,7 +153,6 @@ class BuildableProperty(models.Model):
             "NeededMaterials":neededmats,
             "BuildDuration":self.BuildDuration,
             "BuildsObjectID":self.BuildsObjectConnection.BuildsObject.id,
-            "BuildCost":self.BuildCost,
         }
 
     class Meta:
