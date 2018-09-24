@@ -36,6 +36,9 @@ class Material(models.Model):
     def __unicode__(self):
         return unicode(self.Name)
 
+    def getPricePerUnit(self):
+        return float(self.BuyPrice) / float(self.StackSize)
+
 class ModuleSlotType(models.Model):
     Name = models.CharField(max_length=255)
     IsOptional = models.BooleanField()
@@ -102,6 +105,45 @@ class Module(models.Model):
 
     def __unicode__(self):
         return u"%s (Slot: %s)" %(unicode(self.Name),unicode(self.FitsIntoSlot))
+
+    def rawMaterialCost(self):
+        totalCost = 0
+        for inputMat in self.InputMaterials.all():
+            moduleMatQuery = Module.objects.filter(Material=inputMat.Material)
+            if moduleMatQuery.exists():
+                totalCost += moduleMatQuery.all()[0].rawMaterialCost() * inputMat.Amount
+            else:
+                totalCost += inputMat.Material.getPricePerUnit() * inputMat.Amount
+        return totalCost
+
+    def collectMaterials(self):
+        # type (Module) -> {}
+        localMaterials = {}
+        for inputMat in self.InputMaterials.all():
+            moduleMatQuery = Module.objects.filter(Material=inputMat.Material)
+            if moduleMatQuery.exists():
+                inputModMaterials = moduleMatQuery.all()[0].collectMaterials()
+                for inputModMaterialID, inputModMaterial in inputModMaterials.items():
+                    inputModMaterial["amount"] *= inputMat.Amount
+                    inputModMaterial["totalcost"] *= inputMat.Amount
+                    if inputModMaterialID in localMaterials:
+                        localMaterials[inputModMaterialID]["amount"] += inputModMaterial["amount"]
+                        localMaterials[inputModMaterialID]["totalcost"] += inputModMaterial["totalcost"]
+                    else:
+                        localMaterials[inputModMaterialID] = inputModMaterial
+            else:
+                inputModMaterialID = inputMat.Material.id
+                if inputModMaterialID in localMaterials:
+                    localMaterials[inputModMaterialID]["amount"] += inputMat.Amount
+                    localMaterials[inputModMaterialID]["totalcost"] += inputMat.Amount * inputMat.Material.getPricePerUnit()
+                else:
+                    localMaterials[inputModMaterialID] = {
+                        "name": inputMat.Material.Name,
+                        "amount": inputMat.Amount,
+                        "totalcost": inputMat.Amount * inputMat.Material.getPricePerUnit(),
+                    }
+        return localMaterials
+
 
 class ModuleInputMaterialAmount(models.Model):
     Material = models.ForeignKey(Material)

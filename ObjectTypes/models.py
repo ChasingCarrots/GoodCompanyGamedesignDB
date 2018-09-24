@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 from django.db import models
 import Production
 import common
+from django.db.models import Sum
 
 class ObjectType(models.Model):
     Name = models.CharField(max_length=255)
@@ -161,6 +162,12 @@ class BuildableProperty(models.Model):
 
     def __unicode__(self):
         return u"BuildableProperty of %s" % (self.ObjectType)
+
+    def materialCost(self):
+        totalCost = 0
+        for neededMat in self.NeededMaterials.all():
+            totalCost += neededMat.Material.BuyPrice * neededMat.Amount
+        return totalCost
 
 class RecurringCostProperty(models.Model):
     ObjectType = models.OneToOneField(ObjectType, related_name="RecurringCostProperty", blank=False)

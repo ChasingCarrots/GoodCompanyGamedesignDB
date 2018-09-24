@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'Production.apps.ProductionConfig',
     'ObjectTypes.apps.ObjecttypesConfig',
-    'Tuning.apps.TuningConfig'
+    'Tuning.apps.TuningConfig',
+    'Helpers.apps.HelpersConfig'
 ]
 
 MIDDLEWARE = [

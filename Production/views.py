@@ -112,4 +112,3 @@ def getManifestJson(request):
         "BlueprintPrinterProperties": blueprintPrinterProperties,
         "TuningValues": tuningValues
     }, indent=4), content_type='application/json')
-

@@ -1,0 +1,56 @@
+{% extends 'helpers/base.html' %}
+
+{% block title %}Module Overview{% endblock %}
+
+{% block content %}
+    <h1 class="ui header">{{ module.name }}</h1>
+    <h2 class="ui header">Input Materials</h2>
+    <table class="ui celled table">
+        <thead>
+            <tr>
+                <th>Material</th>
+                <th>Amount</th>
+                <th>Total cost</th>
+            </tr>
+        </thead>
+        <tbody>
+    {% for material in module.inputMaterials %}
+        <tr>
+            {% if material.moduleID == -1 %}
+            <td>{{ material.name }}</td>
+            {% else %}
+            <td><a href="{% url 'moduledetail' material.moduleID %}">{{ material.name }}</a></td>
+            {% endif %}
+            <td>{{ material.amount }}</td>
+            <td>{{ material.totalcost }}</td>
+        </tr>
+    {% endfor %}
+        </tbody>
+    </table>
+    <h2 class="ui header">Needed Base Materials</h2>
+    <table class="ui celled table">
+        <thead>
+            <tr>
+                <th>Material</th>
+                <th>Amount</th>
+                <th>Total cost</th>
+            </tr>
+        </thead>
+        <tbody>
+    {% for materialID, material in materials.items %}
+        <tr>
+            <td>{{ material.name }}</td>
+            <td>{{ material.amount }}</td>
+            <td>{{ material.totalcost }}</td>
+        </tr>
+    {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr>
+                <th>Total</th>
+                <th>{{ total.amount }}</th>
+                <th>{{ total.totalcost }}</th>
+            </tr>
+        </tfoot>
+    </table>
+{% endblock %}
