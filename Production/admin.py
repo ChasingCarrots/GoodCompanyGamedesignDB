@@ -26,7 +26,7 @@ class MaterialSellBuyFilter(admin.SimpleListFilter):
 class MaterialAdmin(SuperModelAdmin):
     list_filter = (MaterialSellBuyFilter, "SizeType",)
     list_display = ("id", "__unicode__", "SizeType",
-                    "StackSize", "BuyPrice", "SellPrice", "getPricePerUnit")
+                    "StackSize", "StackBuyPrice", "getPricePerUnit")
 admin.site.register(Material, MaterialAdmin)
 
 

@@ -13,8 +13,7 @@ class Material(models.Model):
     TextSpriteEntry = models.CharField(max_length=31, help_text="The name of the icon of this material within the TMP spritesheet", blank=True)
     SizeType = models.IntegerField(choices=common.SizeTypeChoices)
     StackSize = models.IntegerField()
-    BuyPrice = models.IntegerField()
-    SellPrice = models.IntegerField()
+    StackBuyPrice = models.IntegerField()
 
     def getJsonObject(self):
         return {
@@ -25,8 +24,7 @@ class Material(models.Model):
             "TextSpriteEntry": self.TextSpriteEntry,
             "SizeType": self.SizeType,
             "StackSize": self.StackSize,
-            "BuyPrice": self.BuyPrice,
-            "SellPrice": self.SellPrice
+            "StackBuyPrice": self.StackBuyPrice,
         }
     
     class Meta:
@@ -37,7 +35,7 @@ class Material(models.Model):
         return unicode(self.Name)
 
     def getPricePerUnit(self):
-        return float(self.BuyPrice) / float(self.StackSize)
+        return float(self.StackBuyPrice) / float(self.StackSize)
 
 class ModuleSlotType(models.Model):
     Name = models.CharField(max_length=255)
