@@ -93,6 +93,23 @@ class ModuleFeatureRequirement(models.Model):
     def __unicode__(self):
         return u"%s %s: %d" % (self.Module, self.ProductFeature, self.FeatureValue)
 
+class ModuleResearchDataYield(models.Model):
+    Module = models.ForeignKey("Module", related_name="ResearchDataYield")
+    ResearchDataType = models.ForeignKey("Research.ResearchDataType", related_name="Modules")
+    Amount = models.IntegerField()
+
+    def getJsonObject(self):
+        return {
+            "ResearchDataTypeID": self.ResearchDataType.id,
+            "Amount": self.Amount,
+        }
+
+    class Meta:
+        verbose_name = 'Module Research Data Yield'
+        verbose_name_plural = 'Module Research Data Yields'
+
+    def __unicode__(self):
+        return u"%s: %d" % (self.ResearchDataType, self.Amount)
 
 class Module(models.Model):
     Name = models.CharField(max_length=255)
@@ -108,6 +125,7 @@ class Module(models.Model):
         features = [feature.getJsonObject() for feature in self.Features.all()]
         featureRequirements = [featureReq.getJsonObject() for featureReq in self.FeatureRequirements.all()]
         inputMaterials = [mat.getJsonObject() for mat in self.InputMaterials.all()]
+        researchDataYield = [resYield.getJsonObject() for resYield in self.ResearchDataYield.all()]
         return {
             "Name":self.Name,
             "IconAssetID":self.IconAssetID,
@@ -116,6 +134,7 @@ class Module(models.Model):
             "Features":features,
             "FeatureRequirements":featureRequirements,
             "InputMaterials":inputMaterials,
+            "ResearchDataYield":researchDataYield
         }
     
     class Meta:

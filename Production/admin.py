@@ -47,12 +47,17 @@ class ModuleFeatureRequirementAdmin(SuperInlineModelAdmin, admin.StackedInline):
     model = ModuleFeatureRequirement
     extra = 0
 
+class ModuleResearchDataYieldAdmin(SuperInlineModelAdmin, admin.StackedInline):
+    model = ModuleResearchDataYield
+    extra = 0
+
 class ModuleAdmin(SuperModelAdmin):
     list_display = ("id", "__unicode__", )
     list_filter = ("FitsIntoSlot",)
     inlines = (ModuleInputMaterialAmountAdmin,
                ModuleFeatureAdmin,
-               ModuleFeatureRequirementAdmin)
+               ModuleFeatureRequirementAdmin,
+               ModuleResearchDataYieldAdmin)
 admin.site.register(Module, ModuleAdmin)
 
 class ProductTypeAdmin(SuperModelAdmin):

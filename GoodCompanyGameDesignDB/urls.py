@@ -18,7 +18,6 @@ from django.contrib import admin
 from django.conf import settings
 from django.conf.urls.static import static
 
-from Production.views import getManifestJson
 from Helpers.views import *
 
 urlpatterns = [
