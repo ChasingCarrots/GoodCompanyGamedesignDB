@@ -43,11 +43,16 @@ class ModuleFeatureAdmin(SuperInlineModelAdmin, admin.StackedInline):
     model = ModuleFeature
     extra = 0
 
+class ModuleFeatureRequirementAdmin(SuperInlineModelAdmin, admin.StackedInline):
+    model = ModuleFeatureRequirement
+    extra = 0
+
 class ModuleAdmin(SuperModelAdmin):
     list_display = ("id", "__unicode__", )
     list_filter = ("FitsIntoSlot",)
     inlines = (ModuleInputMaterialAmountAdmin,
-               ModuleFeatureAdmin)
+               ModuleFeatureAdmin,
+               ModuleFeatureRequirementAdmin)
 admin.site.register(Module, ModuleAdmin)
 
 class ProductTypeAdmin(SuperModelAdmin):
@@ -55,6 +60,14 @@ class ProductTypeAdmin(SuperModelAdmin):
 admin.site.register(ProductType, ProductTypeAdmin)
 
 class ProductFeatureAdmin(SuperModelAdmin):
-    list_display = ("id", "__unicode__", "PropagationType", "Unit", "DefaultValue", "MinRange", "MaxRange")
-    list_filter = ("PropagationType",)
+    list_display = ("id", "__unicode__", "Type",)
+    list_filter = ("Type",)
 admin.site.register(ProductFeature, ProductFeatureAdmin)
+
+class ProductFunctionFeatureRequirementAdmin(SuperInlineModelAdmin, admin.TabularInline):
+    model = ProductFunctionFeatureRequirement
+    extra = 0
+
+class ProductFunctionAdmin(SuperModelAdmin):
+    inlines = (ProductFunctionFeatureRequirementAdmin,)
+admin.site.register(ProductFunction, ProductFunctionAdmin)

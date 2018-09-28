@@ -60,7 +60,7 @@ class ModuleSlotType(models.Model):
 class ModuleFeature(models.Model):
     Module = models.ForeignKey("Module", related_name="Features")
     ProductFeature = models.ForeignKey("ProductFeature")
-    FeatureValue = models.FloatField()
+    FeatureValue = models.IntegerField()
 
     def getJsonObject(self):
         return {
@@ -73,7 +73,26 @@ class ModuleFeature(models.Model):
         verbose_name_plural = 'Module Feature'
 
     def __unicode__(self):
-        return u"%s %s: %d %s" % (self.Module, self.ProductFeature, self.FeatureValue, self.ProductFeature.Unit)
+        return u"%s %s: %d" % (self.Module, self.ProductFeature, self.FeatureValue)
+
+class ModuleFeatureRequirement(models.Model):
+    Module = models.ForeignKey("Module", related_name="FeatureRequirements")
+    ProductFeature = models.ForeignKey("ProductFeature")
+    FeatureValue = models.IntegerField()
+
+    def getJsonObject(self):
+        return {
+            "FeatureID":self.ProductFeature.id,
+            "FeatureValue":self.FeatureValue,
+        }
+
+    class Meta:
+        verbose_name = 'Module Feature Requirement'
+        verbose_name_plural = 'Module Feature Requirements'
+
+    def __unicode__(self):
+        return u"%s %s: %d" % (self.Module, self.ProductFeature, self.FeatureValue)
+
 
 class Module(models.Model):
     Name = models.CharField(max_length=255)
@@ -87,6 +106,7 @@ class Module(models.Model):
             fitsIntoSlot = self.FitsIntoSlot.id
 
         features = [feature.getJsonObject() for feature in self.Features.all()]
+        featureRequirements = [featureReq.getJsonObject() for featureReq in self.FeatureRequirements.all()]
         inputMaterials = [mat.getJsonObject() for mat in self.InputMaterials.all()]
         return {
             "Name":self.Name,
@@ -94,6 +114,7 @@ class Module(models.Model):
             "MaterialID":self.Material.id,
             "FitsIntoSlot":fitsIntoSlot,
             "Features":features,
+            "FeatureRequirements":featureRequirements,
             "InputMaterials":inputMaterials,
         }
     
@@ -187,22 +208,16 @@ class ProductType(models.Model):
 
 class ProductFeature(models.Model):
     Name = models.CharField(max_length=255)
-    Unit = models.CharField(max_length=8)
-    Description = models.TextField()
-    PropagationType = models.IntegerField(choices=common.PropagationTypeChoices)
-    DefaultValue = models.FloatField()
-    MinRange = models.FloatField()
-    MaxRange = models.FloatField()
+    Description = models.TextField(blank=True)
+    Type = models.IntegerField(choices=common.FeatureTypeChoices, default=common.MAXIMUM)
+    SymbolAssetID = models.CharField(max_length=255)
 
     def getJsonObject(self):
         return {
             "Name": self.Name,
-            "Unit": self.Unit,
             "Description": self.Description,
-            "PropagationType": self.PropagationType,
-            "DefaultValue": self.DefaultValue,
-            "MinRange": self.MinRange,
-            "MaxRange": self.MaxRange
+            "Type": self.Type,
+            "SymbolAssetID": self.SymbolAssetID,
         }
 
     class Meta:
@@ -212,4 +227,39 @@ class ProductFeature(models.Model):
     def __unicode__(self):
         return unicode(self.Name)
 
+class ProductFunctionFeatureRequirement(models.Model):
+    Function = models.ForeignKey("ProductFunction", related_name="FeatureRequirements")
+    Feature = models.ForeignKey(ProductFeature, related_name="ProductFunctions")
+    FeatureValue = models.IntegerField()
 
+    def getJsonObject(self):
+        return {
+            "FeatureID":self.Feature.id,
+            "FeatureValue":self.FeatureValue,
+        }
+
+    class Meta:
+        verbose_name = 'Feature Requirement'
+        verbose_name_plural = 'Feature Requirements'
+
+    def __unicode__(self):
+        return u"%d x %s" %(self.FeatureValue, unicode(self.Feature))
+
+class ProductFunction(models.Model):
+    Name = models.CharField(max_length=255)
+
+    def getJsonObject(self):
+        featureRequirements = []
+        for req in self.FeatureRequirements.all():
+            featureRequirements.append(req.getJsonObject())
+        return {
+            "Name":self.Name,
+            "FeatureRequirements":featureRequirements,
+        }
+
+    class Meta:
+        verbose_name = 'Product Function'
+        verbose_name_plural = 'Product Functions'
+
+    def __unicode__(self):
+        return self.Name
