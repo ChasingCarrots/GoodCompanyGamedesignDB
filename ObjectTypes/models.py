@@ -4,7 +4,6 @@ from __future__ import unicode_literals
 from django.db import models
 import Production
 import common
-from django.db.models import Sum
 
 class ObjectType(models.Model):
     Name = models.CharField(max_length=255)
@@ -20,6 +19,7 @@ class ObjectType(models.Model):
     class Meta:
         verbose_name = 'Object Type'
         verbose_name_plural = 'Object Types'
+
 
 class MovableProperty(models.Model):
     ObjectType = models.OneToOneField(ObjectType, related_name="MovableProperty", blank=False)
@@ -82,7 +82,7 @@ class IconProperty(models.Model):
     def __unicode__(self):
         return u"IconProperty of %s" % (self.ObjectType)
 
-class InventoryProperty(models.Model):    
+class InventoryProperty(models.Model):
     ObjectType = models.OneToOneField(ObjectType, related_name="InventoryProperty", blank=False)
     SlotType = models.IntegerField(choices=common.SlotTypeChoices, blank=False)
     NumberOfSlots = models.IntegerField(blank=False)
@@ -127,8 +127,8 @@ class BuildablePropertyNeededMaterial(models.Model):
 
     def getJsonObject(self):
         return {
-            "MaterialID" : self.Material.id,
-            "Amount" : self.Amount,
+            "MaterialID": self.Material.id,
+            "Amount": self.Amount,
         }
 
     class Meta:
@@ -245,7 +245,7 @@ class AssemblyProperty(models.Model):
                 "Duration":slot.Duration,
             })
         return {
-            "Slots" : slots,
+            "Slots": slots,
         }
 
     class Meta:
