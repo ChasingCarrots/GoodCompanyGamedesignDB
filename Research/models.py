@@ -42,19 +42,25 @@ class DevelopmentProject(models.Model):
     Name = models.CharField(max_length=255)
     IconAssetID = models.CharField(max_length=255)
     RequiredProjects = models.ManyToManyField("self", blank=True, symmetrical=False, related_name="RequiredForProjects")
+    UnlocksModules = models.ManyToManyField("Production.Module", blank=True, related_name="UnlockedByResearch")
+    UnlocksBuildables = models.ManyToManyField("ObjectTypes.ObjectType", blank=True, related_name="UnlockedByResearch")
+    UnlocksProductTypes = models.ManyToManyField("Production.ProductType", blank=True, related_name="UnlockedByResearch")
 
     def getJsonObject(self):
-        requiredData = []
-        for reqDat in self.RequiredData.all():
-            requiredData.append(reqDat.getJsonObject())
-        requiredProjects = []
-        for reqProj in self.RequiredProjects.all():
-            requiredProjects.append(reqProj.id)
+        requiredData = [reqDat.getJsonObject() for reqDat in self.RequiredData.all()]
+        requiredProjects = [reqProj.id for reqProj in self.RequiredProjects.all()]
+        unlocksModules = [module.id for module in self.UnlocksModules.all()]
+        unlocksBuildables = [objType.id for objType in self.UnlocksBuildables.all()]
+        unlocksProductTypes = [prodType.id for prodType in self.UnlocksProductTypes.all()]
+
         return {
             "Name": self.Name,
             "IconAssetID": self.IconAssetID,
-            "RequiredProjects":requiredProjects,
-            "RequiredData":requiredData
+            "RequiredProjects": requiredProjects,
+            "RequiredData": requiredData,
+            "UnlocksModules": unlocksModules,
+            "UnlocksBuildables": unlocksBuildables,
+            "UnlocksProductTypes": unlocksProductTypes
         }
 
     class Meta:
