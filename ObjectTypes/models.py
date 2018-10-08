@@ -140,8 +140,8 @@ class BuildablePropertyNeededMaterial(models.Model):
 
 class BuildablePropertyCanBuildInWorkplace(models.Model):
     PRODUCTION = 0
-    MANAGEMENT = 1
-    LOGISTICS = 2
+    LOGISTICS = 1
+    MANAGEMENT = 2
     RESEARCH = 3
 
     BuildableProperty = models.ForeignKey("BuildableProperty", related_name="CanBuildInWorkplaces", blank=False)
