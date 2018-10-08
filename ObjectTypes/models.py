@@ -138,6 +138,28 @@ class BuildablePropertyNeededMaterial(models.Model):
     def __unicode__(self):
         return u"%s (%ds)" % (self.Material, self.Amount)
 
+class BuildablePropertyCanBuildInWorkplace(models.Model):
+    PRODUCTION = 0
+    MANAGEMENT = 1
+    LOGISTICS = 2
+    RESEARCH = 3
+
+    BuildableProperty = models.ForeignKey("BuildableProperty", related_name="CanBuildInWorkplaces", blank=False)
+
+    WorkplaceType = models.IntegerField(
+        default=PRODUCTION,
+        choices=(
+            (PRODUCTION, "production"),
+            (MANAGEMENT, "management"),
+            (LOGISTICS, "logistics"),
+            (RESEARCH, "research"),
+        )
+    )
+
+    class Meta:
+        verbose_name = 'CanBuildInWorkplace'
+        verbose_name_plural = 'CanBuildInWorkplaces'
+
 class BuildsObjectConnection(models.Model):
     BuildsObject = models.ForeignKey(ObjectType, related_name="BuildsObjectConnection", blank=False)
     BuiltBy = models.OneToOneField("BuildableProperty", related_name="BuildsObjectConnection", blank=False)
@@ -150,10 +172,14 @@ class BuildableProperty(models.Model):
         neededmats = []
         for mat in self.NeededMaterials.all():
             neededmats.append(mat.getJsonObject())
+        canBuildInWorkplaces = []
+        for wp in self.CanBuildInWorkplaces.all():
+            canBuildInWorkplaces.append(wp.WorkplaceType)
         return {
-            "NeededMaterials":neededmats,
-            "BuildDuration":self.BuildDuration,
-            "BuildsObjectID":self.BuildsObjectConnection.BuildsObject.id,
+            "NeededMaterials": neededmats,
+            "BuildDuration": self.BuildDuration,
+            "BuildsObjectID": self.BuildsObjectConnection.BuildsObject.id,
+            "CanBuildInWorkplaces": canBuildInWorkplaces,
         }
 
     class Meta:

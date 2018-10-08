@@ -36,6 +36,9 @@ class BuildablePropertyNeededMaterialInlineAdmin(SuperInlineModelAdmin, admin.Ta
     model = BuildablePropertyNeededMaterial
     extra = 0
 
+class BuildablePropertyCanBuildInWorkplaceInlineAdmin(SuperInlineModelAdmin, admin.TabularInline):
+    model = BuildablePropertyCanBuildInWorkplace
+    extra = 0
 
 class BuildsObjectConnectionInlineAdmin(SuperInlineModelAdmin, admin.TabularInline):
     model = BuildsObjectConnection
@@ -45,7 +48,8 @@ class BuildablePropertyInlineAdmin(SuperInlineModelAdmin, admin.StackedInline):
     model = BuildableProperty
     extra = 0
     inlines = (BuildablePropertyNeededMaterialInlineAdmin,
-                BuildsObjectConnectionInlineAdmin)
+               BuildsObjectConnectionInlineAdmin,
+               BuildablePropertyCanBuildInWorkplaceInlineAdmin)
 
 
 class RecurringCostPropertyInlineAdmin(SuperInlineModelAdmin, admin.StackedInline):
