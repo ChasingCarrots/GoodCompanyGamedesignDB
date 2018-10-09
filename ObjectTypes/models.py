@@ -144,7 +144,7 @@ class BuildablePropertyCanBuildInWorkplace(models.Model):
     MANAGEMENT = 2
     RESEARCH = 3
 
-    BuildableProperty = models.ForeignKey("BuildableProperty", related_name="CanBuildInWorkplaces", blank=False)
+    BuildableProperty = models.ForeignKey("BuildableProperty", related_name="CanBuildInWorkplaces", blank=False, null=True)
 
     WorkplaceType = models.IntegerField(
         default=PRODUCTION,
@@ -394,3 +394,22 @@ class BlueprintPrinterProperty(models.Model):
 
     def __unicode__(self):
         return u"BlueprintPrinterProperty of %s" % (self.ObjectType)
+
+
+class ResearchAndDevelopmentProperty(models.Model):
+    ObjectType = models.OneToOneField(ObjectType, related_name="ResearchAndDevelopmentProperty", blank=False)
+    CanDoResearch = models.BooleanField(default=False, blank=False)
+    CanDoDevelopment = models.BooleanField(default=False, blank=False)
+
+    def getJsonObject(self):
+        return {
+            "CanDoResearch": self.CanDoResearch,
+            "CanDoDevelopment": self.CanDoDevelopment,
+        }
+
+    class Meta:
+        verbose_name = 'Research and Development Property'
+        verbose_name_plural = 'Research and Development Properties'
+
+    def __unicode__(self):
+        return u"ResearchAndDevelopmentProperty of %s" % (self.ObjectType)

@@ -138,6 +138,10 @@ def getManifestJson(request):
     for blueprintPrinter in BlueprintPrinterProperty.objects.all():
         blueprintPrinterProperties[str(blueprintPrinter.ObjectType.id)] = blueprintPrinter.getJsonObject()
 
+    researchAndDevelopmentProperties = {}
+    for rndProp in ResearchAndDevelopmentProperty.objects.all():
+        researchAndDevelopmentProperties[str(rndProp.ObjectType.id)] = rndProp.getJsonObject()
+
     tuningValues = {}
     for tuningValue in TuningValue.objects.all():
         tuningValues[tuningValue.Name] = tuningValue.getJsonValue()
@@ -172,6 +176,7 @@ def getManifestJson(request):
         "InteractableTilesProperties": interactableTilesProperties,
         "SpecialFlagsProperties": specialFlagsProperties,
         "BlueprintPrinterProperties": blueprintPrinterProperties,
+        "ResearchAndDevelopmentProperties": researchAndDevelopmentProperties,
         "TuningValues": tuningValues,
         "ResearchDataTypes": researchDataTypes,
         "DevelopmentProjects": developmentProjects

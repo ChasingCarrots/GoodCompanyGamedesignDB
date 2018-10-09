@@ -104,6 +104,12 @@ class BlueprintPrinterPropertyInlineAdmin(SuperInlineModelAdmin, admin.StackedIn
     model = BlueprintPrinterProperty
     extra = 0
 
+
+class ResearchAndDevelopmentPropertyInlineAdmin(SuperInlineModelAdmin, admin.StackedInline):
+    model = ResearchAndDevelopmentProperty
+    extra = 0
+
+
 class HasPropertyFilter(admin.SimpleListFilter):
     title = 'Filter title not set'
     parameter_name = 'parameter name not set'
@@ -182,6 +188,12 @@ class HasBlueprintPrinterPropertyFilter(HasPropertyFilter):
     title = "BlueprintPrinter Property"
     parameter_name = "BlueprintPrinterProperty"
 
+
+class HasResearchAndDevelopmentPropertyFilter(HasPropertyFilter):
+    title = "ResearchAndDevelopment Property"
+    parameter_name = "ResearchAndDevelopmentProperty"
+
+
 class ObjectTypeAdmin(SuperModelAdmin):
     list_display = ("id", "__unicode__", )
     inlines = (MovablePropertyInlineAdmin,
@@ -196,7 +208,8 @@ class ObjectTypeAdmin(SuperModelAdmin):
                StaticDimensionPropertyInlineAdmin,
                InteractableTilesPropertyInlineAdmin,
                SpecialFlagsPropertyInlineAdmin,
-               BlueprintPrinterPropertyInlineAdmin)
+               BlueprintPrinterPropertyInlineAdmin,
+               ResearchAndDevelopmentPropertyInlineAdmin)
     list_filter = (HasMovablePropertyFilter,
                    HasObjectLookPropertyFilter,
                    HasIconPropertyFilter,
@@ -209,5 +222,6 @@ class ObjectTypeAdmin(SuperModelAdmin):
                    HasStaticDimensionPropertyFilter,
                    HasInteractableTilesPropertyFilter,
                    HasSpecialFlagsPropertyFilter,
-                   HasBlueprintPrinterPropertyFilter)
+                   HasBlueprintPrinterPropertyFilter,
+                   HasResearchAndDevelopmentPropertyFilter)
 admin.site.register(ObjectType, ObjectTypeAdmin)
