@@ -131,7 +131,7 @@ class ModuleResearchDataYield(models.Model):
 
     def getJsonObject(self):
         return {
-            "ResearchDataTypeID": self.ResearchDataType.id,
+            "DataTypeID": self.ResearchDataType.id,
             "Amount": self.Amount,
         }
 
