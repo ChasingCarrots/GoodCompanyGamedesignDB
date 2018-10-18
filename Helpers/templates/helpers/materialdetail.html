@@ -1,0 +1,65 @@
+{% extends 'helpers/base.html' %}
+
+{% block title %}{{ material.name | title }} Details{% endblock %}
+
+{% block content %}
+    <h1 class="ui header">{{ material.name | title }}</h1>
+    <table class="ui celled table">
+        <tr>
+            <td>Stack Size:</td>
+            <td><input value="{{ material.stackSize }}" id="StackSize" oninput="recalculateUnitPrice()"/></td>
+        </tr>
+        <tr>
+            <td>Stack Price:</td>
+            <td><input value="{{ material.stackPrice }}" id="StackPrice" oninput="recalculateUnitPrice()"/></td>
+        </tr>
+        <tr>
+            <td>Price per Unit:</td>
+            <td id="UnitPrice">{{ material.unitPrice }}</td>
+        </tr>
+    </table>
+
+    
+    
+    <h2 class="ui header">Resulting Modules</h2>
+    <table class="ui celled table">
+        <thead>
+            <tr>
+                <th>Module</th>
+                <th>{{material.name | capfirst}} Amount</th>
+                <th>Total Price</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for module in modules %}
+            <tr>
+                <td><a href="{% url 'moduledetail' module.id %}">{{ module.name | title}}</a></td>
+                <td id="amount_{{ module.id }}">{{ module.amount }}</td>
+                <td id="cost_{{ module.id }}">{{ module.cost }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <script>
+        modules = [
+            {% for module in modules %}{id:{{ module.id }}, basePrice:{{module.cost}}, materialAmount:{{module.amount}} },
+            {% endfor %}
+        ];
+        function recalculateUnitPrice(){
+            stackSize = document.getElementById("StackSize").value;
+            stackPrice = document.getElementById("StackPrice").value;
+            document.getElementById("UnitPrice").innerHTML = parseInt(stackPrice) / parseInt(stackSize);
+            
+            for(i=0;i<modules.length;i++){
+                module = modules[i];
+                priceField = document.getElementById("cost_"+module.id);
+                priceWithoutMaterial = module.basePrice - module.materialAmount * {{material.stackPrice}} / {{material.stackSize}};
+                modifiedPrice = priceWithoutMaterial + module.materialAmount * parseInt(stackPrice) / parseInt(stackSize);
+                priceField.innerHTML = modifiedPrice.toFixed(2);
+            }
+        }
+
+        recalculateUnitPrice();
+    </script>
+{% endblock %}

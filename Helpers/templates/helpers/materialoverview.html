@@ -1,0 +1,22 @@
+{% extends 'helpers/base.html' %}
+
+{% block title %}Module Overview{% endblock %}
+
+{% block content %}
+    <table class="ui celled table">
+        <thead>
+            <tr>
+                <th>Material</th>
+                <th>Cost</th>
+            </tr>
+        </thead>
+        <tbody>
+    {% for material in materials %}
+        <tr>
+            <td><a href="{% url 'materialdetail' material.id %}">{{ material.name | title }}</a></td>
+            <td>{{ material.cost }}</td>
+        </tr>
+    {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

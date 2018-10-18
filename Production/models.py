@@ -26,7 +26,7 @@ class Material(models.Model):
             "StackSize": self.StackSize,
             "StackBuyPrice": self.StackBuyPrice,
         }
-    
+
     class Meta:
         verbose_name = 'Material'
         verbose_name_plural = 'Materials'
@@ -36,6 +36,37 @@ class Material(models.Model):
 
     def getPricePerUnit(self):
         return float(self.StackBuyPrice) / float(self.StackSize)
+
+    def collect_modules(self, amount=1):
+        local_modules = {}
+        module_inputs = ModuleInputMaterialAmount.objects.filter(Material=self)
+        for module_input in module_inputs:
+            # add module
+            module = module_input.Module
+
+            # safety check
+            if module.id in local_modules:
+                local_modules[module.id]["amount"] += module_input.Amount * amount
+            else:
+                local_modules[module.id] = {
+                    "name": module.Name,
+                    "amount": module_input.Amount * amount,
+                    "cost": module.rawMaterialCost(),
+                    "id": module.id,
+                }
+
+            # get modules made from this one recursively
+            sub_modules = module.Material.collect_modules(module_input.Amount)
+            for module_id, sub_module in sub_modules.items():
+                
+                if module_id in local_modules:
+                    local_modules[module_id]["amount"] += sub_module["amount"] * amount
+                else:
+                    local_modules[module_id] = sub_module
+                    local_modules[module_id]["amount"] *= amount
+
+        return local_modules
+
 
 class ModuleSlotType(models.Model):
     Name = models.CharField(max_length=255)

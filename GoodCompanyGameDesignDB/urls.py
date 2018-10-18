@@ -24,6 +24,8 @@ urlpatterns = [
     url(r'^grappelli/', include('grappelli.urls')),
     url(r'^', admin.site.urls),
     url(r'^gamedataManifest/', getManifestJson),
+    url(r'^helper/materialoverview/', materialOverview, name="materialoverview"),
+    url(r'^helper/materialdetail/(\d+)', materialDetail, name="materialdetail"),
     url(r'^helper/moduleoverview/', moduleOverview, name="moduleoverview"),
     url(r'^helper/moduledetail/(\d+)', moduleDetail, name="moduledetail"),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

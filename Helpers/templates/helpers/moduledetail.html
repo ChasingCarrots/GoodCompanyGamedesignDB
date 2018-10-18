@@ -1,9 +1,9 @@
 {% extends 'helpers/base.html' %}
 
-{% block title %}Module Overview{% endblock %}
+{% block title %}{{ module.name }} Details{% endblock %}
 
 {% block content %}
-    <h1 class="ui header">{{ module.name }}</h1>
+    <h1 class="ui header">{{ module.name | title}}</h1>
     <h2 class="ui header">Input Materials</h2>
     <table class="ui celled table">
         <thead>
@@ -17,9 +17,9 @@
     {% for material in module.inputMaterials %}
         <tr>
             {% if material.moduleID == -1 %}
-            <td>{{ material.name }}</td>
+            <td><a href="{% url 'materialdetail' material.materialID %}">{{ material.name | title}}</a></td>
             {% else %}
-            <td><a href="{% url 'moduledetail' material.moduleID %}">{{ material.name }}</a></td>
+            <td><a href="{% url 'moduledetail' material.moduleID %}">{{ material.name | title}}</a></td>
             {% endif %}
             <td>{{ material.amount }}</td>
             <td>{{ material.totalcost }}</td>
@@ -39,9 +39,9 @@
         <tbody>
     {% for materialID, material in materials.items %}
         <tr>
-            <td>{{ material.name }}</td>
-            <td>{{ material.amount }}</td>
-            <td>{{ material.totalcost }}</td>
+            <td><a href="{% url 'materialdetail' materialID %}">{{ material.name | title}}</a></td>
+            <td>{{ material.amount}}</td>
+            <td>{{ material.totalcost}}</td>
         </tr>
     {% endfor %}
         </tbody>

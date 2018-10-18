@@ -32,8 +32,10 @@ def moduleDetail(request, moduleID):
     moduleInputMaterials = []
     for moduleInputMat in module.InputMaterials.all():
         moduleInputMatModuleID = -1
+        moduleInputMatMaterialID = -1
         cost = moduleInputMat.Material.getPricePerUnit()
         moduleInputModuleQuery = Module.objects.filter(Material=moduleInputMat.Material)
+        moduleInputMatMaterialID = moduleInputMat.Material.id
         if moduleInputModuleQuery.exists():
             moduleInputModule = moduleInputModuleQuery.all()[0]
             moduleInputMatModuleID = moduleInputModule.id
@@ -42,6 +44,7 @@ def moduleDetail(request, moduleID):
             "name": moduleInputMat.Material.Name,
             "amount": moduleInputMat.Amount,
             "moduleID": moduleInputMatModuleID,
+            "materialID": moduleInputMatMaterialID,
             "totalcost": cost * moduleInputMat.Amount,
         })
     return render(request, "helpers/moduledetail.html", {
@@ -56,6 +59,34 @@ def moduleDetail(request, moduleID):
         },
     })
 
+def materialOverview(request):
+    materials = []
+    #get all materials
+    for material in Material.objects.filter(module=None).all():
+        materials.append({
+            "id": material.id,
+            "name": material.Name,
+            "cost": material.getPricePerUnit(),
+        })
+
+    return render(request, "helpers/materialoverview.html", {"materials": materials})
+
+def materialDetail(request, materialID):
+    material = get_object_or_404(Material, pk=materialID)
+
+    modules = material.collect_modules().values()
+
+    detailInformation = {
+        "material": {
+            "name": material.Name,
+            "id": material.id,
+            "stackSize": material.StackSize,
+            "stackPrice": material.StackBuyPrice,
+            "unitPrice": material.getPricePerUnit(),
+        },
+        "modules": modules,
+    }
+    return render(request, "helpers/materialdetail.html", detailInformation)
 
 def getManifestJson(request):
     materials = {}

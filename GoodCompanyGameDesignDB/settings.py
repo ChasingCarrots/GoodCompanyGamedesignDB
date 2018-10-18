@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     'ObjectTypes.apps.ObjecttypesConfig',
     'Tuning.apps.TuningConfig',
     'Helpers.apps.HelpersConfig',
-    'Research.apps.ResearchConfig'
+    'Research.apps.ResearchConfig',
 ]
 
 MIDDLEWARE = [

@@ -11,12 +11,12 @@
             </tr>
         </thead>
         <tbody>
-    {% for module in modules %}
-        <tr>
-            <td><a href="{% url 'moduledetail' module.id %}">{{ module.name }}</a></td>
-            <td>{{ module.matCost }}</td>
-        </tr>
-    {% endfor %}
+        {% for module in modules %}
+            <tr>
+                <td><a href="{% url 'moduledetail' module.id %}">{{ module.name | title}}</a></td>
+                <td>{{ module.matCost }}</td>
+            </tr>
+        {% endfor %}
         </tbody>
     </table>
 {% endblock %}
