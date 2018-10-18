@@ -61,7 +61,7 @@ def moduleDetail(request, moduleID):
 
 def materialOverview(request):
     materials = []
-    #get all materials
+    # get all materials
     for material in Material.objects.filter(module=None).all():
         materials.append({
             "id": material.id,
@@ -74,6 +74,17 @@ def materialOverview(request):
 def materialDetail(request, materialID):
     material = get_object_or_404(Material, pk=materialID)
 
+    appliedValues = False
+    if request.method == 'POST':
+        failedSave = False
+        try:
+            material.StackSize = int(request.POST["stackSize"])
+            material.StackBuyPrice = int(request.POST["stackPrice"])
+            material.save()
+        except Exception:
+            failedSave = True
+        appliedValues = not failedSave
+
     modules = material.collect_modules().values()
 
     detailInformation = {
@@ -85,7 +96,9 @@ def materialDetail(request, materialID):
             "unitPrice": material.getPricePerUnit(),
         },
         "modules": modules,
+        "appliedValues": appliedValues,
     }
+    
     return render(request, "helpers/materialdetail.html", detailInformation)
 
 def getManifestJson(request):
