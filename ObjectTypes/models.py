@@ -248,30 +248,30 @@ class CrafterProperty(models.Model):
         return u"CrafterProperty of %s" % (self.ObjectType)
 
 
-class AssemblyPropertySlotAssemblyDuration(models.Model):
-    AssemblyProperty = models.ForeignKey("AssemblyProperty", related_name="PossibleSlotTypes", blank=False)
-    SlotType = models.ForeignKey(Production.models.ModuleSlotType, blank=False)
+class AssemblyPropertyProductTypeAssemblyDuration(models.Model):
+    AssemblyProperty = models.ForeignKey("AssemblyProperty", related_name="PossibleProductTypes", blank=False)
+    ProductType = models.ForeignKey(Production.models.ProductType, blank=False)
     Duration = models.FloatField(blank=False)
 
     class Meta:
-        verbose_name = 'Possible SlotType'
-        verbose_name_plural = 'Possible SlotTypes'
+        verbose_name = 'Possible ProductType'
+        verbose_name_plural = 'Possible ProductTypes'
 
     def __unicode__(self):
-        return u"%s (%ds)" % (self.SlotType, self.Duration)
+        return u"%s (%ds)" % (self.ProductType, self.Duration)
 
 class AssemblyProperty(models.Model):
     ObjectType = models.OneToOneField(ObjectType, related_name="AssemblyProperty", blank=False)
 
     def getJsonObject(self):
-        slots = []
-        for slot in self.PossibleSlotTypes.all():
-            slots.append({
-                "SlotTypeID":slot.SlotType.id,
-                "Duration":slot.Duration,
+        productTypes = []
+        for productType in self.PossibleProductTypes.all():
+            productTypes.append({
+                "ProductTypeID":productType.ProductType.id,
+                "Duration":productType.Duration,
             })
         return {
-            "Slots": slots,
+            "ProductTypes": productTypes,
         }
 
     class Meta:

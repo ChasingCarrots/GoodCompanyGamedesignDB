@@ -65,14 +65,14 @@ class CrafterPropertyInlineAdmin(SuperInlineModelAdmin, admin.StackedInline):
     extra = 0
     inlines = (CrafterPropertyModuleDurationInlineAdmin,)
 
-class AssemblyPropertySlotAssemblyDurationInlineAdmin(SuperInlineModelAdmin, admin.TabularInline):
-    model = AssemblyPropertySlotAssemblyDuration
+class AssemblyPropertyProductTypeAssemblyDurationInlineAdmin(SuperInlineModelAdmin, admin.TabularInline):
+    model = AssemblyPropertyProductTypeAssemblyDuration
     extra = 0
 
 class AssemblyPropertyInlineAdmin(SuperInlineModelAdmin, admin.StackedInline):
     model = AssemblyProperty
     extra = 0
-    inlines = (AssemblyPropertySlotAssemblyDurationInlineAdmin,)
+    inlines = (AssemblyPropertyProductTypeAssemblyDurationInlineAdmin,)
 
 
 class StaticDimensionPropertyBlockedTileInlineAdmin(SuperInlineModelAdmin, admin.TabularInline):
