@@ -1,0 +1,24 @@
+{% extends 'helpers/base.html' %}
+
+{% block title %}Product Type Overview{% endblock %}
+
+{% block content %}
+    <table class="ui celled table">
+        <thead>
+            <tr>
+                <th>Product Type</th>
+                <th>Slot Count</th>
+                <th>Relevant Modules Count</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for type in productTypes %}
+            <tr>
+                <td><a href="{% url 'moduledetail' type.id %}">{{ type.name | title}}</a></td>
+                <td>{{ type.slotCount }}</td>
+                <td>{{ type.relevantModules }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

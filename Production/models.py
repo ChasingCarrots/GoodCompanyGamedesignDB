@@ -37,6 +37,11 @@ class Material(models.Model):
     def getPricePerUnit(self):
         return float(self.StackBuyPrice) / float(self.StackSize)
 
+    def assetCheck(self):
+        if len(self.IconAssetID.replace(" ", "")) == 0 or len(self.TextSpriteAssetID.replace(" ", "")) == 0 or len(self.TextSpriteEntry.replace(" ", "")) == 0:
+            return "⚠️ missing asset ID!"
+        return "✔️"
+
     def collect_modules(self, amount=1):
         local_modules = {}
         module_inputs = ModuleInputMaterialAmount.objects.filter(Material=self)
@@ -173,7 +178,10 @@ class Module(models.Model):
         verbose_name_plural = 'Modules'
 
     def __unicode__(self):
-        return u"%s (Slot: %s)" %(unicode(self.Name),unicode(self.FitsIntoSlot))
+        return unicode(self.Name)
+
+    def slot(self):
+        return unicode(self.FitsIntoSlot)
 
     def rawMaterialCost(self):
         totalCost = 0
@@ -261,6 +269,7 @@ class ProductFeature(models.Model):
     Description = models.TextField(blank=True)
     Type = models.IntegerField(choices=common.FeatureTypeChoices, default=common.MAXIMUM)
     SymbolAssetID = models.CharField(max_length=255)
+    HelperEmoji = models.CharField(max_length=4)
 
     def getJsonObject(self):
         return {
@@ -275,7 +284,7 @@ class ProductFeature(models.Model):
         verbose_name_plural = 'Product Features'
 
     def __unicode__(self):
-        return unicode(self.Name)
+        return unicode(self.HelperEmoji + " " +  self.Name)
 
 class ProductFunctionFeatureRequirement(models.Model):
     Function = models.ForeignKey("ProductFunction", related_name="FeatureRequirements")

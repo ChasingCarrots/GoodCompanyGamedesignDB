@@ -28,4 +28,5 @@ urlpatterns = [
     url(r'^helper/materialdetail/(\d+)', materialDetail, name="materialdetail"),
     url(r'^helper/moduleoverview/', moduleOverview, name="moduleoverview"),
     url(r'^helper/moduledetail/(\d+)', moduleDetail, name="moduledetail"),
+    url(r'^helper/producttypeoverview/', productTypeOverview, name="producttypeoverview"),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

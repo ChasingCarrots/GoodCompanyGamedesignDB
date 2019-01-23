@@ -10,6 +10,17 @@ from ObjectTypes.models import *
 from Tuning.models import TuningValue
 from Research.models import *
 
+def productTypeOverview(request):
+    productTypes = []
+    for productType in ProductType.objects.all():
+        productTypes.append({
+            "id": productType.id,
+            "name": productType.Name,
+            "slotCount": productType.Slots.count(),
+            "relevantModules": 0
+        })
+    return render(request, "helpers/producttypeoverview.html", {"productTypes": productTypes})
+
 def moduleOverview(request):
     modules = []
     for module in Module.objects.all():

@@ -26,7 +26,7 @@ class MaterialSellBuyFilter(admin.SimpleListFilter):
 class MaterialAdmin(SuperModelAdmin):
     list_filter = (MaterialSellBuyFilter, "SizeType",)
     list_display = ("id", "__unicode__", "SizeType",
-                    "StackSize", "StackBuyPrice", "getPricePerUnit")
+                    "StackSize", "StackBuyPrice", "getPricePerUnit", "assetCheck")
 admin.site.register(Material, MaterialAdmin)
 
 
@@ -52,7 +52,7 @@ class ModuleResearchDataYieldAdmin(SuperInlineModelAdmin, admin.StackedInline):
     extra = 0
 
 class ModuleAdmin(SuperModelAdmin):
-    list_display = ("id", "__unicode__", )
+    list_display = ("id", "__unicode__", "slot")
     list_filter = ("FitsIntoSlot",)
     inlines = (ModuleInputMaterialAmountAdmin,
                ModuleFeatureAdmin,

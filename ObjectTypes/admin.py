@@ -195,7 +195,7 @@ class HasResearchAndDevelopmentPropertyFilter(HasPropertyFilter):
 
 
 class ObjectTypeAdmin(SuperModelAdmin):
-    list_display = ("id", "__unicode__", )
+    list_display = ("id", "__unicode__")
     inlines = (MovablePropertyInlineAdmin,
                ObjectLookPropertyInlineAdmin, 
                IconPropertyInlineAdmin, 
