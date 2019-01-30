@@ -74,6 +74,14 @@ class AssemblyPropertyInlineAdmin(SuperInlineModelAdmin, admin.StackedInline):
     extra = 0
     inlines = (AssemblyPropertyProductTypeAssemblyDurationInlineAdmin,)
 
+class InterfaceNodesPropertyInterfaceNodeInlineAdmin(SuperInlineModelAdmin, admin.TabularInline):
+    model = InterfaceNodesPropertyInterfaceNode
+    extra = 0
+
+class InterfaceNodesPropertyInlineAdmin(SuperInlineModelAdmin, admin.StackedInline):
+    model = InterfaceNodesProperty
+    extra = 0
+    inlines = (InterfaceNodesPropertyInterfaceNodeInlineAdmin,)
 
 class StaticDimensionPropertyBlockedTileInlineAdmin(SuperInlineModelAdmin, admin.TabularInline):
     model = StaticDimensionPropertyBlockedTile
@@ -171,6 +179,10 @@ class HasAssemblyPropertyFilter(HasPropertyFilter):
     title = "Assembly Property"
     parameter_name = "AssemblyProperty"
 
+class HasInterfaceNodesPropertyFilter(HasPropertyFilter):
+    title = "InteractionNodes Property"
+    parameter_name = "InteractionNodesProperty"
+
 class HasStaticDimensionPropertyFilter(HasPropertyFilter):
     title = "StaticDimension Property"
     parameter_name = "StaticDimensionProperty"
@@ -205,6 +217,7 @@ class ObjectTypeAdmin(SuperModelAdmin):
                RecurringCostPropertyInlineAdmin,
                CrafterPropertyInlineAdmin,
                AssemblyPropertyInlineAdmin,
+               InterfaceNodesPropertyInlineAdmin,
                StaticDimensionPropertyInlineAdmin,
                InteractableTilesPropertyInlineAdmin,
                SpecialFlagsPropertyInlineAdmin,
@@ -219,6 +232,7 @@ class ObjectTypeAdmin(SuperModelAdmin):
                    HasRecurringCostPropertyFilter,
                    HasCrafterPropertyFilter,
                    HasAssemblyPropertyFilter,
+                   HasInterfaceNodesPropertyFilter,
                    HasStaticDimensionPropertyFilter,
                    HasInteractableTilesPropertyFilter,
                    HasSpecialFlagsPropertyFilter,

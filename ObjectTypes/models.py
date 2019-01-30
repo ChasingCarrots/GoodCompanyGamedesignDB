@@ -281,6 +281,41 @@ class AssemblyProperty(models.Model):
     def __unicode__(self):
         return u"AssemblyProperty of %s" % (self.ObjectType)
 
+class InterfaceNodesProperty(models.Model):
+    ObjectType = models.OneToOneField(ObjectType, related_name="InterfaceNodesProperty", blank=False)
+
+    def getJsonObject(self):
+        interfaceNodes = []
+        for node in self.InterfaceNodes.all():
+            interfaceNodes.append({
+                "X": node.XCoord,
+                "Y": node.YCoord,
+                "IsInput": node.IsInput,
+            })
+        return {
+            "InterfaceNodes":interfaceNodes,
+        }
+
+    class Meta:
+        verbose_name = "Interface Nodes Property"
+        verbose_name_plural = "Interface Nodes Properties"
+
+    def __unicode__(self):
+        return u"InterfaceNodesProperty of %s" % (self.ObjectType)
+
+class InterfaceNodesPropertyInterfaceNode(models.Model):
+    InterfaceNodesProperty = models.ForeignKey("InterfaceNodesProperty", related_name="InterfaceNodes", blank=False)
+    XCoord = models.IntegerField(blank=False)
+    YCoord = models.IntegerField(blank=False)
+    IsInput = models.BooleanField(blank=False)
+
+    class Meta:
+        verbose_name = 'Interface node'
+        verbose_name_plural = 'Interface nodes'
+    
+    def __unicode__(self):
+        return u"(%d, %d | %r)" % (self.XCoord, self.YCoord, self.IsInput)
+
 class StaticDimensionPropertyBlockedTile(models.Model):
     StaticDimensionProperty = models.ForeignKey("StaticDimensionProperty", related_name="BlockedTiles", blank=False)
     XCoord = models.IntegerField(blank=False)
