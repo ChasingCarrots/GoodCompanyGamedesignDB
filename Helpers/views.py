@@ -177,6 +177,10 @@ def getManifestJson(request):
     for assembly in AssemblyProperty.objects.all():
         assemblyProperties[str(assembly.ObjectType.id)] = assembly.getJsonObject()
 
+    interfaceNodesProperties = {}
+    for interfaceNodes in InterfaceNodesProperty.objects.all():
+        interfaceNodesProperties[str(interfaceNodes.ObjectType.id)] = interfaceNodes.getJsonObject()
+
     staticDimensionProperties = {}
     for staticDimension in StaticDimensionProperty.objects.all():
         staticDimensionProperties[str(staticDimension.ObjectType.id)] = staticDimension.getJsonObject()
@@ -227,6 +231,7 @@ def getManifestJson(request):
         "RecurringCostProperties": recurringCostProperties,
         "CrafterProperties": crafterProperties,
         "AssemblyProperties": assemblyProperties,
+        "InterfaceNodesProperties": interfaceNodesProperties,
         "StaticDimensionProperties": staticDimensionProperties,
         "InteractableTilesProperties": interactableTilesProperties,
         "SpecialFlagsProperties": specialFlagsProperties,
