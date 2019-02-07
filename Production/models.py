@@ -306,13 +306,20 @@ class ProductFunctionFeatureRequirement(models.Model):
 
 class ProductFunction(models.Model):
     Name = models.CharField(max_length=255)
+    IconAssetID = models.CharField(max_length=255)
+    ViableProductTypes = models.ManyToManyField(ProductType, related_name="ViableProdictTypes")
 
     def getJsonObject(self):
         featureRequirements = []
         for req in self.FeatureRequirements.all():
             featureRequirements.append(req.getJsonObject())
+        productTypes = []
+        for product in self.ViableProductTypes.all():
+            productTypes.append(product.id)
         return {
             "Name":self.Name,
+            "IconAssetID":self.IconAssetID,
+            "ViableProductTypes":productTypes,
             "FeatureRequirements":featureRequirements,
         }
 
