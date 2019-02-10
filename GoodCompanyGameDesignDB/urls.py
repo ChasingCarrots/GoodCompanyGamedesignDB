@@ -21,12 +21,12 @@ from django.conf.urls.static import static
 from Helpers.views import *
 
 urlpatterns = [
-    url(r'^grappelli/', include('grappelli.urls')),
-    url(r'^', admin.site.urls),
-    url(r'^gamedataManifest/', getManifestJson),
-    url(r'^helper/materialoverview/', materialOverview, name="materialoverview"),
-    url(r'^helper/materialdetail/(\d+)', materialDetail, name="materialdetail"),
-    url(r'^helper/moduleoverview/', moduleOverview, name="moduleoverview"),
-    url(r'^helper/moduledetail/(\d+)', moduleDetail, name="moduledetail"),
-    url(r'^helper/producttypeoverview/', productTypeOverview, name="producttypeoverview"),
+    url(r'^goodcompany/grappelli/', include('grappelli.urls')),
+    url(r'^goodcompany/', admin.site.urls),
+    url(r'^goodcompany/gamedataManifest/', getManifestJson),
+    url(r'^goodcompany/helper/materialoverview/', materialOverview, name="materialoverview"),
+    url(r'^goodcompany/helper/materialdetail/(\d+)', materialDetail, name="materialdetail"),
+    url(r'^goodcompany/helper/moduleoverview/', moduleOverview, name="moduleoverview"),
+    url(r'^goodcompany/helper/moduledetail/(\d+)', moduleDetail, name="moduledetail"),
+    url(r'^goodcompany/helper/producttypeoverview/', productTypeOverview, name="producttypeoverview"),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
