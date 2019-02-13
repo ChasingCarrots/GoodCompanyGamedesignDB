@@ -307,7 +307,8 @@ class ProductFunctionFeatureRequirement(models.Model):
 class ProductFunction(models.Model):
     Name = models.CharField(max_length=255)
     IconAssetID = models.CharField(max_length=255)
-    ViableProductTypes = models.ManyToManyField(ProductType, related_name="ViableProdictTypes")
+    ViableProductTypes = models.ManyToManyField(ProductType, related_name="PossibleFunctions")
+    BaseMarketPrice = models.IntegerField(default=100)
 
     def getJsonObject(self):
         featureRequirements = []
@@ -321,6 +322,7 @@ class ProductFunction(models.Model):
             "IconAssetID":self.IconAssetID,
             "ViableProductTypes":productTypes,
             "FeatureRequirements":featureRequirements,
+            "BaseMarketPrice":self.BaseMarketPrice
         }
 
     class Meta:
