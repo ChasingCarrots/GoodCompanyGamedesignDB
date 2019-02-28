@@ -51,7 +51,6 @@ class BuildablePropertyInlineAdmin(SuperInlineModelAdmin, admin.StackedInline):
                BuildsObjectConnectionInlineAdmin,
                BuildablePropertyCanBuildInWorkplaceInlineAdmin)
 
-
 class RecurringCostPropertyInlineAdmin(SuperInlineModelAdmin, admin.StackedInline):
     model = RecurringCostProperty
     extra = 0
@@ -92,7 +91,6 @@ class StaticDimensionPropertyInlineAdmin(SuperInlineModelAdmin, admin.StackedInl
     extra = 0
     inlines = (StaticDimensionPropertyBlockedTileInlineAdmin,)
 
-
 class InteractableTilesPropertyInteractableTileInlineAdmin(SuperInlineModelAdmin, admin.TabularInline):
     model = InteractableTilesPropertyInteractableTile
     extra = 0
@@ -102,19 +100,20 @@ class InteractableTilesPropertyInlineAdmin(SuperInlineModelAdmin, admin.StackedI
     extra = 0
     inlines = (InteractableTilesPropertyInteractableTileInlineAdmin,)
 
-
 class SpecialFlagsPropertyInlineAdmin(SuperInlineModelAdmin, admin.StackedInline):
     model = SpecialFlagsProperty
     extra = 0
-
 
 class BlueprintPrinterPropertyInlineAdmin(SuperInlineModelAdmin, admin.StackedInline):
     model = BlueprintPrinterProperty
     extra = 0
 
-
 class ResearchAndDevelopmentPropertyInlineAdmin(SuperInlineModelAdmin, admin.StackedInline):
     model = ResearchAndDevelopmentProperty
+    extra = 0
+
+class InventoryGroupPropertyInlineAdmin(SuperInlineModelAdmin, admin.StackedInline):
+    model = InventoryGroupProperty
     extra = 0
 
 class ConveyorPropertyInlineAdmin(SuperInlineModelAdmin, admin.StackedInline):
@@ -145,7 +144,6 @@ class HasPropertyFilter(admin.SimpleListFilter):
                 filter_string: True
             }
             return queryset.filter(**is_null_true)
-
 
 class HasMovablePropertyFilter(HasPropertyFilter):
     title = "Movable Property"
@@ -199,20 +197,21 @@ class HasSpecialFlagsPropertyFilter(HasPropertyFilter):
     title = "SpecialFlags Property"
     parameter_name = "SpecialFlagsProperty"
 
-
 class HasBlueprintPrinterPropertyFilter(HasPropertyFilter):
     title = "BlueprintPrinter Property"
     parameter_name = "BlueprintPrinterProperty"
-
 
 class HasResearchAndDevelopmentPropertyFilter(HasPropertyFilter):
     title = "ResearchAndDevelopment Property"
     parameter_name = "ResearchAndDevelopmentProperty"
 
+class HasInventoryGroupPropertyFilter(HasPropertyFilter):
+    title = "InventoryGroup Property"
+    parameter_name = "InventoryGroupProperty"
+
 class HasConveyorPropertyFilter(HasPropertyFilter):
     title = "Conveyor Property"
     parameter_name = "ConveyorProperty"
-
 
 class ObjectTypeAdmin(SuperModelAdmin):
     list_display = ("id", "__unicode__")
@@ -231,6 +230,7 @@ class ObjectTypeAdmin(SuperModelAdmin):
                SpecialFlagsPropertyInlineAdmin,
                BlueprintPrinterPropertyInlineAdmin,
                ResearchAndDevelopmentPropertyInlineAdmin,
+               InventoryGroupPropertyInlineAdmin,
                ConveyorPropertyInlineAdmin)
     list_filter = (HasMovablePropertyFilter,
                    HasObjectLookPropertyFilter,
@@ -247,5 +247,6 @@ class ObjectTypeAdmin(SuperModelAdmin):
                    HasSpecialFlagsPropertyFilter,
                    HasBlueprintPrinterPropertyFilter,
                    HasResearchAndDevelopmentPropertyFilter,
+                   HasInventoryGroupPropertyFilter,
                    HasConveyorPropertyFilter)
 admin.site.register(ObjectType, ObjectTypeAdmin)

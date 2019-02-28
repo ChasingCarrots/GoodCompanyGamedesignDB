@@ -449,6 +449,22 @@ class ResearchAndDevelopmentProperty(models.Model):
     def __unicode__(self):
         return u"ResearchAndDevelopmentProperty of %s" % (self.ObjectType)
 
+class InventoryGroupProperty(models.Model):
+    ObjectType = models.OneToOneField(ObjectType, related_name="InventoryGroupProperty", blank=False)
+    SlotCapacity = models.IntegerField(blank=False)
+
+    def getJsonObject(self):
+        return {
+            "SlotCapacity": self.SlotCapacity
+        }
+    
+    class Meta:
+        verbose_name = 'Inventory Group Property'
+        verbose_name_plural = "Inventory Group Properties"
+
+    def __unicode__(self):
+        return u"InventoryGroupProperty of %s" % (self.ObjectType)
+
 class ConveyorProperty(models.Model):
     ObjectType = models.OneToOneField(ObjectType, related_name="ConveyorProperty", blank=False)
     IsConveyor = models.BooleanField(default=False, blank=False)
