@@ -117,6 +117,9 @@ class ResearchAndDevelopmentPropertyInlineAdmin(SuperInlineModelAdmin, admin.Sta
     model = ResearchAndDevelopmentProperty
     extra = 0
 
+class InventoryGroupPropertyInlineAdmin(SuperInlineModelAdmin, admin.StackedInline):
+    model = InventoryGroupProperty
+    extra = 0
 
 class HasPropertyFilter(admin.SimpleListFilter):
     title = 'Filter title not set'
@@ -205,6 +208,9 @@ class HasResearchAndDevelopmentPropertyFilter(HasPropertyFilter):
     title = "ResearchAndDevelopment Property"
     parameter_name = "ResearchAndDevelopmentProperty"
 
+class HasInventoryGroupPropertyFilter(HasPropertyFilter):
+    title = "InventoryGroup Property"
+    parameter_name = "InventoryGroupProperty"
 
 class ObjectTypeAdmin(SuperModelAdmin):
     list_display = ("id", "__unicode__")
@@ -222,7 +228,8 @@ class ObjectTypeAdmin(SuperModelAdmin):
                InteractableTilesPropertyInlineAdmin,
                SpecialFlagsPropertyInlineAdmin,
                BlueprintPrinterPropertyInlineAdmin,
-               ResearchAndDevelopmentPropertyInlineAdmin)
+               ResearchAndDevelopmentPropertyInlineAdmin,
+               InventoryGroupPropertyInlineAdmin)
     list_filter = (HasMovablePropertyFilter,
                    HasObjectLookPropertyFilter,
                    HasIconPropertyFilter,
@@ -237,5 +244,6 @@ class ObjectTypeAdmin(SuperModelAdmin):
                    HasInteractableTilesPropertyFilter,
                    HasSpecialFlagsPropertyFilter,
                    HasBlueprintPrinterPropertyFilter,
-                   HasResearchAndDevelopmentPropertyFilter)
+                   HasResearchAndDevelopmentPropertyFilter,
+                   HasInventoryGroupPropertyFilter)
 admin.site.register(ObjectType, ObjectTypeAdmin)
