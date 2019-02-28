@@ -201,6 +201,10 @@ def getManifestJson(request):
     for rndProp in ResearchAndDevelopmentProperty.objects.all():
         researchAndDevelopmentProperties[str(rndProp.ObjectType.id)] = rndProp.getJsonObject()
 
+    conveyorProperties = {}
+    for convProp in ConveyorProperty.objects.all():
+        conveyorProperties[str(convProp.ObjectType.id)] = convProp.getJsonObject()
+
     inventoryGroupProperties = {}
     for invgProp in InventoryGroupProperty.objects.all():
         inventoryGroupProperties[str(invgProp.ObjectType.id)] = invgProp.getJsonObject()
@@ -240,6 +244,7 @@ def getManifestJson(request):
         "SpecialFlagsProperties": specialFlagsProperties,
         "BlueprintPrinterProperties": blueprintPrinterProperties,
         "ResearchAndDevelopmentProperties": researchAndDevelopmentProperties,
+        "ConveyorProperties": conveyorProperties,
         "InventoryGroupProperties": inventoryGroupProperties,
         "TuningValues": tuningValues,
         "ResearchDataTypes": researchDataTypes,
