@@ -117,6 +117,10 @@ class ResearchAndDevelopmentPropertyInlineAdmin(SuperInlineModelAdmin, admin.Sta
     model = ResearchAndDevelopmentProperty
     extra = 0
 
+class ConveyorPropertyInlineAdmin(SuperInlineModelAdmin, admin.StackedInline):
+    model = ConveyorProperty
+    extra = 0
+
 
 class HasPropertyFilter(admin.SimpleListFilter):
     title = 'Filter title not set'
@@ -205,6 +209,10 @@ class HasResearchAndDevelopmentPropertyFilter(HasPropertyFilter):
     title = "ResearchAndDevelopment Property"
     parameter_name = "ResearchAndDevelopmentProperty"
 
+class HasConveyorPropertyFilter(HasPropertyFilter):
+    title = "Conveyor Property"
+    parameter_name = "ConveyorProperty"
+
 
 class ObjectTypeAdmin(SuperModelAdmin):
     list_display = ("id", "__unicode__")
@@ -222,7 +230,8 @@ class ObjectTypeAdmin(SuperModelAdmin):
                InteractableTilesPropertyInlineAdmin,
                SpecialFlagsPropertyInlineAdmin,
                BlueprintPrinterPropertyInlineAdmin,
-               ResearchAndDevelopmentPropertyInlineAdmin)
+               ResearchAndDevelopmentPropertyInlineAdmin,
+               ConveyorPropertyInlineAdmin)
     list_filter = (HasMovablePropertyFilter,
                    HasObjectLookPropertyFilter,
                    HasIconPropertyFilter,
@@ -237,5 +246,6 @@ class ObjectTypeAdmin(SuperModelAdmin):
                    HasInteractableTilesPropertyFilter,
                    HasSpecialFlagsPropertyFilter,
                    HasBlueprintPrinterPropertyFilter,
-                   HasResearchAndDevelopmentPropertyFilter)
+                   HasResearchAndDevelopmentPropertyFilter,
+                   HasConveyorPropertyFilter)
 admin.site.register(ObjectType, ObjectTypeAdmin)
