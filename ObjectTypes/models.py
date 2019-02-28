@@ -464,3 +464,23 @@ class InventoryGroupProperty(models.Model):
 
     def __unicode__(self):
         return u"InventoryGroupProperty of %s" % (self.ObjectType)
+
+class ConveyorProperty(models.Model):
+    ObjectType = models.OneToOneField(ObjectType, related_name="ConveyorProperty", blank=False)
+    IsConveyor = models.BooleanField(default=False, blank=False)
+    IsRollerband = models.BooleanField(default=False, blank=False)
+    IsOverhead = models.BooleanField(default=False, blank=False)
+
+    def getJsonObject(self):
+        return {
+            "IsConveyor": self.IsConveyor,
+            "IsRollerband": self.IsRollerband,
+            "IsOverhead": self.IsOverhead,
+        }
+
+    class Meta:
+        verbose_name = 'Conveyor Property'
+        verbose_name_plural = 'Conveyor Properties'
+
+    def __unicode__(self):
+        return u"ConveyorProperty of %s" % (self.ObjectType)
