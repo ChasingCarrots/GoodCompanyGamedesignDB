@@ -51,7 +51,6 @@ class BuildablePropertyInlineAdmin(SuperInlineModelAdmin, admin.StackedInline):
                BuildsObjectConnectionInlineAdmin,
                BuildablePropertyCanBuildInWorkplaceInlineAdmin)
 
-
 class RecurringCostPropertyInlineAdmin(SuperInlineModelAdmin, admin.StackedInline):
     model = RecurringCostProperty
     extra = 0
@@ -92,7 +91,6 @@ class StaticDimensionPropertyInlineAdmin(SuperInlineModelAdmin, admin.StackedInl
     extra = 0
     inlines = (StaticDimensionPropertyBlockedTileInlineAdmin,)
 
-
 class InteractableTilesPropertyInteractableTileInlineAdmin(SuperInlineModelAdmin, admin.TabularInline):
     model = InteractableTilesPropertyInteractableTile
     extra = 0
@@ -102,16 +100,13 @@ class InteractableTilesPropertyInlineAdmin(SuperInlineModelAdmin, admin.StackedI
     extra = 0
     inlines = (InteractableTilesPropertyInteractableTileInlineAdmin,)
 
-
 class SpecialFlagsPropertyInlineAdmin(SuperInlineModelAdmin, admin.StackedInline):
     model = SpecialFlagsProperty
     extra = 0
 
-
 class BlueprintPrinterPropertyInlineAdmin(SuperInlineModelAdmin, admin.StackedInline):
     model = BlueprintPrinterProperty
     extra = 0
-
 
 class ResearchAndDevelopmentPropertyInlineAdmin(SuperInlineModelAdmin, admin.StackedInline):
     model = ResearchAndDevelopmentProperty
@@ -124,6 +119,7 @@ class InventoryGroupPropertyInlineAdmin(SuperInlineModelAdmin, admin.StackedInli
 class ConveyorPropertyInlineAdmin(SuperInlineModelAdmin, admin.StackedInline):
     model = ConveyorProperty
     extra = 0
+
 
 class HasPropertyFilter(admin.SimpleListFilter):
     title = 'Filter title not set'
@@ -148,7 +144,6 @@ class HasPropertyFilter(admin.SimpleListFilter):
                 filter_string: True
             }
             return queryset.filter(**is_null_true)
-
 
 class HasMovablePropertyFilter(HasPropertyFilter):
     title = "Movable Property"
@@ -202,11 +197,9 @@ class HasSpecialFlagsPropertyFilter(HasPropertyFilter):
     title = "SpecialFlags Property"
     parameter_name = "SpecialFlagsProperty"
 
-
 class HasBlueprintPrinterPropertyFilter(HasPropertyFilter):
     title = "BlueprintPrinter Property"
     parameter_name = "BlueprintPrinterProperty"
-
 
 class HasResearchAndDevelopmentPropertyFilter(HasPropertyFilter):
     title = "ResearchAndDevelopment Property"
