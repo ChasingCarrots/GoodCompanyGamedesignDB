@@ -31,9 +31,9 @@ ALLOWED_HOSTS = ["mrtagjunior", "localhost", "127.0.0.1"]
 # Application definition
 
 INSTALLED_APPS = [
-    'super_inlines.grappelli_integration',
+    #'super_inlines.grappelli_integration',
     'super_inlines',
-    'grappelli',
+    #'grappelli',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
