@@ -4,8 +4,10 @@ from __future__ import unicode_literals
 from django.db import models
 
 import common
+from simple_history.models import HistoricalRecords
 
 class Material(models.Model):
+    history = HistoricalRecords()
     Name = models.CharField(max_length=255)
     IconAssetID = models.CharField(max_length=255, help_text="The asset id of the icon of this material.")
     ModelAssetID = models.CharField(max_length=255, help_text="The asset id of the model for this material.", blank=True)
@@ -74,6 +76,7 @@ class Material(models.Model):
 
 
 class ModuleSlotType(models.Model):
+    history = HistoricalRecords()
     Name = models.CharField(max_length=255)
     IsOptional = models.BooleanField()
 
@@ -94,6 +97,7 @@ class ModuleSlotType(models.Model):
             return unicode(self.Name)
 
 class ModuleFeature(models.Model):
+    history = HistoricalRecords()
     Module = models.ForeignKey("Module", related_name="Features")
     ProductFeature = models.ForeignKey("ProductFeature")
     FeatureValue = models.IntegerField()
@@ -112,6 +116,7 @@ class ModuleFeature(models.Model):
         return u"%s %s: %d" % (self.Module, self.ProductFeature, self.FeatureValue)
 
 class ModuleFeatureRequirement(models.Model):
+    history = HistoricalRecords()
     Module = models.ForeignKey("Module", related_name="FeatureRequirements")
     ProductFeature = models.ForeignKey("ProductFeature")
     FeatureValue = models.IntegerField()
@@ -130,6 +135,7 @@ class ModuleFeatureRequirement(models.Model):
         return u"%s %s: %d" % (self.Module, self.ProductFeature, self.FeatureValue)
 
 class ModuleResearchDataYield(models.Model):
+    history = HistoricalRecords()
     Module = models.ForeignKey("Module", related_name="ResearchDataYield")
     ResearchDataType = models.ForeignKey("Research.ResearchDataType", related_name="Modules")
     Amount = models.IntegerField()
@@ -148,6 +154,7 @@ class ModuleResearchDataYield(models.Model):
         return u"%s: %d" % (self.ResearchDataType, self.Amount)
 
 class Module(models.Model):
+    history = HistoricalRecords()
     Name = models.CharField(max_length=255)
     IconAssetID = models.CharField(max_length=255)
     FitsIntoSlot = models.ForeignKey(ModuleSlotType, related_name="FittingModule", null=True, blank=True)
@@ -223,6 +230,7 @@ class Module(models.Model):
 
 
 class ModuleInputMaterialAmount(models.Model):
+    history = HistoricalRecords()
     Material = models.ForeignKey(Material)
     Amount = models.IntegerField()
     Module = models.ForeignKey(Module, related_name="InputMaterials")
@@ -241,6 +249,7 @@ class ModuleInputMaterialAmount(models.Model):
         return u"%d x %s" %(self.Amount, unicode(self.Material))
 
 class ProductType(models.Model):
+    history = HistoricalRecords()
     Name = models.CharField(max_length=255)
     IconAssetID = models.CharField(max_length=255)
     BigImageAssetID = models.CharField(max_length=255)
@@ -265,6 +274,7 @@ class ProductType(models.Model):
         return unicode(self.Name)
 
 class ProductFeature(models.Model):
+    history = HistoricalRecords()
     Name = models.CharField(max_length=255)
     Description = models.TextField(blank=True)
     Type = models.IntegerField(choices=common.FeatureTypeChoices, default=common.MAXIMUM)
@@ -287,6 +297,7 @@ class ProductFeature(models.Model):
         return unicode(self.HelperEmoji + " " +  self.Name)
 
 class ProductFunctionFeatureRequirement(models.Model):
+    history = HistoricalRecords()
     Function = models.ForeignKey("ProductFunction", related_name="FeatureRequirements")
     Feature = models.ForeignKey(ProductFeature, related_name="ProductFunctions")
     FeatureValue = models.IntegerField()
@@ -305,6 +316,7 @@ class ProductFunctionFeatureRequirement(models.Model):
         return u"%d x %s" %(self.FeatureValue, unicode(self.Feature))
 
 class ProductFunction(models.Model):
+    history = HistoricalRecords()
     Name = models.CharField(max_length=255)
     IconAssetID = models.CharField(max_length=255)
     ViableProductTypes = models.ManyToManyField(ProductType, related_name="PossibleFunctions")

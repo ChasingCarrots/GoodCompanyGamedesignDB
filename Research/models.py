@@ -2,8 +2,10 @@
 from __future__ import unicode_literals
 
 from django.db import models
+from simple_history.models import HistoricalRecords
 
 class ResearchDataType(models.Model):
+    history = HistoricalRecords()
     Name = models.CharField(max_length=255)
     IconAssetID = models.CharField(max_length=255)
 
@@ -21,6 +23,7 @@ class ResearchDataType(models.Model):
         return unicode(self.Name)
 
 class DevelopmentProjectRequiredData(models.Model):
+    history = HistoricalRecords()
     DevelopmentProject = models.ForeignKey("DevelopmentProject", related_name="RequiredData")
     DataType = models.ForeignKey(ResearchDataType, related_name="DevelopmentProjects")
     Amount = models.IntegerField()
@@ -39,6 +42,7 @@ class DevelopmentProjectRequiredData(models.Model):
         return u"%d x %s" %(self.Amount, unicode(self.DataType))
 
 class DevelopmentProject(models.Model):
+    history = HistoricalRecords()
     Name = models.CharField(max_length=255)
     IconAssetID = models.CharField(max_length=255)
     RequiredProjects = models.ManyToManyField("self", blank=True, symmetrical=False, related_name="RequiredForProjects")

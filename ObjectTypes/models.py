@@ -4,8 +4,10 @@ from __future__ import unicode_literals
 from django.db import models
 import Production
 import common
+from simple_history.models import HistoricalRecords
 
 class ObjectType(models.Model):
+    history = HistoricalRecords()
     Name = models.CharField(max_length=255)
 
     def getJsonObject(self):
@@ -22,6 +24,7 @@ class ObjectType(models.Model):
 
 
 class MovableProperty(models.Model):
+    history = HistoricalRecords()
     ObjectType = models.OneToOneField(ObjectType, related_name="MovableProperty", blank=False)
     Width = models.FloatField(default=0, blank=True)
     Height = models.FloatField(default=0, blank=True)
@@ -46,6 +49,7 @@ class MovableProperty(models.Model):
 
 
 class ObjectLookProperty(models.Model):
+    history = HistoricalRecords()
     ObjectType = models.OneToOneField(ObjectType, related_name="ObjectLookProperty", blank=False)
     ModelAssetID = models.CharField(max_length=255, blank=False)
 
@@ -63,6 +67,7 @@ class ObjectLookProperty(models.Model):
 
 
 class IconProperty(models.Model):
+    history = HistoricalRecords()
     ObjectType = models.OneToOneField(ObjectType, related_name="IconProperty", blank=False)
     IconAssetID = models.CharField(max_length=255, help_text="The asset id of the icon for this object.", blank=False)
     TextSpriteAssetID = models.CharField(max_length=255, help_text="The asset id of the TMP spritesheet that contains the text-sprite for this object.", blank=True)
@@ -83,6 +88,7 @@ class IconProperty(models.Model):
         return u"IconProperty of %s" % (self.ObjectType)
 
 class InventoryProperty(models.Model):
+    history = HistoricalRecords()
     ObjectType = models.OneToOneField(ObjectType, related_name="InventoryProperty", blank=False)
     SlotType = models.IntegerField(choices=common.SlotTypeChoices, blank=False)
     NumberOfSlots = models.IntegerField(blank=False)
@@ -103,6 +109,7 @@ class InventoryProperty(models.Model):
         return u"InventoryProperty of %s" % (self.ObjectType)
 
 class StorageProperty(models.Model):
+    history = HistoricalRecords()
     ObjectType = models.OneToOneField(ObjectType, related_name="StorageProperty", blank=False)
     SizeType = models.IntegerField(choices=common.SizeTypeChoices, blank=False)
     ModelAssetID = models.CharField(max_length=255, help_text="The asset id of the model that should be used to display this object in an inventory view.", blank=True)
@@ -121,6 +128,7 @@ class StorageProperty(models.Model):
         return u"StorageProperty of %s" % (self.ObjectType)
 
 class BuildablePropertyNeededMaterial(models.Model):
+    history = HistoricalRecords()
     BuildableProperty = models.ForeignKey("BuildableProperty", related_name="NeededMaterials", blank=False)
     Material = models.ForeignKey(Production.models.Material, blank=False)
     Amount = models.IntegerField(default=0)
@@ -139,6 +147,7 @@ class BuildablePropertyNeededMaterial(models.Model):
         return u"%s (%ds)" % (self.Material, self.Amount)
 
 class BuildablePropertyCanBuildInWorkplace(models.Model):
+    history = HistoricalRecords()
     PRODUCTION = 0
     LOGISTICS = 1
     MANAGEMENT = 2
@@ -161,10 +170,12 @@ class BuildablePropertyCanBuildInWorkplace(models.Model):
         verbose_name_plural = 'CanBuildInWorkplaces'
 
 class BuildsObjectConnection(models.Model):
+    history = HistoricalRecords()
     BuildsObject = models.ForeignKey(ObjectType, related_name="BuildsObjectConnection", blank=False)
     BuiltBy = models.OneToOneField("BuildableProperty", related_name="BuildsObjectConnection", blank=False)
 
 class BuildableProperty(models.Model):
+    history = HistoricalRecords()
     ObjectType = models.OneToOneField(ObjectType, related_name="BuildableProperty", blank=False)
     BuildDuration = models.FloatField(blank=False)
 
@@ -196,6 +207,7 @@ class BuildableProperty(models.Model):
         return totalCost
 
 class RecurringCostProperty(models.Model):
+    history = HistoricalRecords()
     ObjectType = models.OneToOneField(ObjectType, related_name="RecurringCostProperty", blank=False)
     RecurringCost = models.IntegerField(blank=False)
 
@@ -212,6 +224,7 @@ class RecurringCostProperty(models.Model):
         return u"RecurringCostProperty of %s" % (self.ObjectType)
 
 class CrafterPropertyModuleDuration(models.Model):
+    history = HistoricalRecords()
     CrafterProperty = models.ForeignKey("CrafterProperty", related_name="PossibleModules", blank=False)
     Module = models.ForeignKey(Production.models.Module, blank=False)
     Duration = models.FloatField(blank=False)
@@ -230,6 +243,7 @@ class CrafterPropertyModuleDuration(models.Model):
         return u"%s (%ds)" % (self.Module, self.Duration)
 
 class CrafterProperty(models.Model):
+    history = HistoricalRecords()
     ObjectType = models.OneToOneField(ObjectType, related_name="CrafterProperty", blank=False)
     SwitchingTime = models.FloatField(blank=False, default=1)
 
@@ -249,6 +263,7 @@ class CrafterProperty(models.Model):
 
 
 class AssemblyPropertyProductTypeAssemblyDuration(models.Model):
+    history = HistoricalRecords()
     AssemblyProperty = models.ForeignKey("AssemblyProperty", related_name="PossibleProductTypes", blank=False)
     ProductType = models.ForeignKey(Production.models.ProductType, blank=False)
     Duration = models.FloatField(blank=False)
@@ -261,6 +276,7 @@ class AssemblyPropertyProductTypeAssemblyDuration(models.Model):
         return u"%s (%ds)" % (self.ProductType, self.Duration)
 
 class AssemblyProperty(models.Model):
+    history = HistoricalRecords()
     ObjectType = models.OneToOneField(ObjectType, related_name="AssemblyProperty", blank=False)
 
     def getJsonObject(self):
@@ -282,6 +298,7 @@ class AssemblyProperty(models.Model):
         return u"AssemblyProperty of %s" % (self.ObjectType)
 
 class InterfaceNodesProperty(models.Model):
+    history = HistoricalRecords()
     ObjectType = models.OneToOneField(ObjectType, related_name="InterfaceNodesProperty", blank=False)
 
     def getJsonObject(self):
@@ -304,6 +321,7 @@ class InterfaceNodesProperty(models.Model):
         return u"InterfaceNodesProperty of %s" % (self.ObjectType)
 
 class InterfaceNodesPropertyInterfaceNode(models.Model):
+    history = HistoricalRecords()
     InterfaceNodesProperty = models.ForeignKey("InterfaceNodesProperty", related_name="InterfaceNodes", blank=False)
     XCoord = models.IntegerField(blank=False)
     YCoord = models.IntegerField(blank=False)
@@ -317,6 +335,7 @@ class InterfaceNodesPropertyInterfaceNode(models.Model):
         return u"(%d, %d | %r)" % (self.XCoord, self.YCoord, self.IsInput)
 
 class StaticDimensionPropertyBlockedTile(models.Model):
+    history = HistoricalRecords()
     StaticDimensionProperty = models.ForeignKey("StaticDimensionProperty", related_name="BlockedTiles", blank=False)
     XCoord = models.IntegerField(blank=False)
     YCoord = models.IntegerField(blank=False)
@@ -329,6 +348,7 @@ class StaticDimensionPropertyBlockedTile(models.Model):
         return u"(%d, %d)" % (self.XCoord, self.YCoord)
 
 class StaticDimensionProperty(models.Model):
+    history = HistoricalRecords()
     ObjectType = models.OneToOneField(ObjectType, related_name="StaticDimensionProperty", blank=False)
 
     def getJsonObject(self):
@@ -351,6 +371,7 @@ class StaticDimensionProperty(models.Model):
 
 
 class InteractableTilesPropertyInteractableTile(models.Model):
+    history = HistoricalRecords()
     InteractableTilesProperty = models.ForeignKey("InteractableTilesProperty", related_name="InteractableTiles", blank=False)
     XCoord = models.IntegerField(blank=False)
     YCoord = models.IntegerField(blank=False)
@@ -364,6 +385,7 @@ class InteractableTilesPropertyInteractableTile(models.Model):
 
 
 class InteractableTilesProperty(models.Model):
+    history = HistoricalRecords()
     ObjectType = models.OneToOneField(ObjectType, related_name="InteractableTilesProperty", blank=False)
 
     def getJsonObject(self):
@@ -386,6 +408,7 @@ class InteractableTilesProperty(models.Model):
 
 
 class SpecialFlagsProperty(models.Model):
+    history = HistoricalRecords()
     ObjectType = models.OneToOneField(ObjectType, related_name="SpecialFlagsProperty", blank=False)
     IsBuyPlace = models.BooleanField(default=False, blank=False)
     IsSellPlace = models.BooleanField(default=False, blank=False)
@@ -413,6 +436,7 @@ class SpecialFlagsProperty(models.Model):
 
 
 class BlueprintPrinterProperty(models.Model):
+    history = HistoricalRecords()
     ObjectType = models.OneToOneField(ObjectType, related_name="BlueprintPrinterProperty", blank=False)
     PrintingTime = models.FloatField(blank=False)
     NumberOfOutputSlots = models.IntegerField(blank=False)
@@ -432,6 +456,7 @@ class BlueprintPrinterProperty(models.Model):
 
 
 class ResearchAndDevelopmentProperty(models.Model):
+    history = HistoricalRecords()
     ObjectType = models.OneToOneField(ObjectType, related_name="ResearchAndDevelopmentProperty", blank=False)
     CanDoResearch = models.BooleanField(default=False, blank=False)
     CanDoDevelopment = models.BooleanField(default=False, blank=False)
@@ -450,6 +475,7 @@ class ResearchAndDevelopmentProperty(models.Model):
         return u"ResearchAndDevelopmentProperty of %s" % (self.ObjectType)
 
 class InventoryGroupProperty(models.Model):
+    history = HistoricalRecords()
     ObjectType = models.OneToOneField(ObjectType, related_name="InventoryGroupProperty", blank=False)
     SlotCapacity = models.IntegerField(blank=False)
 
@@ -466,6 +492,7 @@ class InventoryGroupProperty(models.Model):
         return u"InventoryGroupProperty of %s" % (self.ObjectType)
 
 class ConveyorProperty(models.Model):
+    history = HistoricalRecords()
     ObjectType = models.OneToOneField(ObjectType, related_name="ConveyorProperty", blank=False)
     IsConveyor = models.BooleanField(default=False, blank=False)
     IsRollerband = models.BooleanField(default=False, blank=False)

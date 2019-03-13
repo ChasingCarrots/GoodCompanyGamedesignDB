@@ -2,10 +2,12 @@
 from __future__ import unicode_literals
 
 from django.db import models
+from simple_history.models import HistoricalRecords
 
 import common
 
 class TuningValue(models.Model):
+    history = HistoricalRecords()
     INTEGER = 0
     FLOAT = 1
     STRING = 2
