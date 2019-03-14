@@ -1,0 +1,39 @@
+{% extends 'helpers/base.html' %}
+
+{% block title %}Revert Changes{% endblock %}
+
+{% block content %}
+    <h1 class="ui header">Revert Changes</h1>
+    {% if message %}
+        <div class="ui message">
+            <p>{{ message }}</p>
+        </div>
+    {% endif %}
+    <form action="{% url "revertchanges" %}" method="post" class="ui mini form">
+        {% csrf_token %}
+        <div class ="fields">
+            <div class="two wide field">
+              <label>Year</label>
+              <input type="text" name="year" value="{% now "Y" %}">
+            </div>
+            <div class="two wide field">
+              <label>Month</label>
+              <input type="text" name="month" value="{% now "m" %}">
+            </div>
+            <div class="two wide field">
+              <label>Day</label>
+              <input type="text" name="day" value="{% now "d" %}">
+            </div>
+            <div class="one wide field"> </div>
+            <div class="two wide field">
+              <label>Hour</label>
+              <input type="text" name="hour" value="{% now "G" %}">
+            </div>
+            <div class="two wide field">
+              <label>Minute</label>
+              <input type="text" name="minute" value="{% now "i" %}">
+            </div>
+        </div>
+        <button class="ui button" type="submit">Revert to Time</button>
+    </form>
+{% endblock %}

@@ -4,11 +4,14 @@ from __future__ import unicode_literals
 from django.shortcuts import render, get_object_or_404
 import json
 from django.http import HttpResponse
+from datetime import datetime
+from django.utils import timezone
 
 from Production.models import *
 from ObjectTypes.models import *
 from Tuning.models import TuningValue
 from Research.models import *
+from helpers import *
 
 def productTypeOverview(request):
     productTypes = []
@@ -250,3 +253,19 @@ def getManifestJson(request):
         "ResearchDataTypes": researchDataTypes,
         "DevelopmentProjects": developmentProjects
     }, indent=4), content_type='application/json')
+
+def revertChangesView(request):
+    if request.method == "POST":
+        year = int(request.POST["year"])
+        month = int(request.POST["month"])
+        day = int(request.POST["day"])
+        hour = int(request.POST["hour"])
+        minute = int(request.POST["minute"])
+        pointInTime = timezone.make_aware(datetime(year, month, day, hour, minute))
+        numReverted = revertChangesTo(pointInTime)
+        return render(request, "helpers/revertchanges.html", {
+            "message": "Success. Reverted %d Objects." % numReverted,
+            "messageType": "success"
+        })
+    else:
+        return render(request, "helpers/revertchanges.html")

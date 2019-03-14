@@ -29,4 +29,5 @@ urlpatterns = [
     url(r'^goodcompany/helper/moduleoverview/', moduleOverview, name="moduleoverview"),
     url(r'^goodcompany/helper/moduledetail/(\d+)', moduleDetail, name="moduledetail"),
     url(r'^goodcompany/helper/producttypeoverview/', productTypeOverview, name="producttypeoverview"),
+    url(r'^goodcompany/helper/revertchanges/', revertChangesView, name="revertchanges"),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
