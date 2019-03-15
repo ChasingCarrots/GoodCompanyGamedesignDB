@@ -1,0 +1,125 @@
+{% extends 'helpers/base.html' %}
+
+{% block title %}Balancing Tables{% endblock %}
+
+{% block content %}
+    <h1 class="ui header">Balancing Tables</h1>
+    <div class="ui action input">
+        <div class="ui selection dropdown">
+            <input type="hidden" name="tableselection" id="tableselection">
+            <i class="dropdown icon"></i>
+            <div class="default text">Select table</div>
+            <div class="menu">
+                {% for table in tables %}
+                    <div class="item" data-value="{{ table }}">{{ table }}</div>
+                {% endfor %}
+            </div>
+        </div>
+        <input type="text" id="limitFrom" value="0">
+        <input type="text" id="limitTo" value="10">
+        <div class="ui button" id="go">GO</div>
+    </div>
+    <div id="tablecontent"></div>
+{% endblock %}
+
+{% block customjavascript %}
+    <script>
+    // from here: http://krasimirtsonev.com/blog/article/Javascript-template-engine-in-just-20-line
+    var TemplateEngine = function(html, options) {
+        var re = /<%(.+?)%>/g,
+            reExp = /(^( )?(var|if|for|else|switch|case|break|{|}|;))(.*)?/g,
+            code = 'with(obj) { var r=[];\n',
+            cursor = 0,
+            result,
+                match;
+        var add = function(line, js) {
+            js? (code += line.match(reExp) ? line + '\n' : 'r.push(' + line + ');\n') :
+                (code += line != '' ? 'r.push("' + line.replace(/"/g, '\\"') + '");\n' : '');
+            return add;
+        };
+        while(match = re.exec(html)) {
+            add(html.slice(cursor, match.index))(match[1], true);
+            cursor = match.index + match[0].length;
+        }
+        add(html.substr(cursor, html.length - cursor));
+        code = (code + 'return r.join(""); }').replace(/[\r\t\n]/g, ' ');
+        try { result = new Function('obj', code).apply(options, [options]); }
+        catch(err) { console.error("'" + err.message + "'", " in \n\nCode:\n", code, "\n"); }
+        return result;
+    };
+
+    var TableTemplate = `<table class="ui very compact small striped celled table">
+  <thead>
+    <tr>
+        <%for(var colIndex in this.columns) { %>
+        <th class="one wide"><%this.columns[colIndex].header%></th>
+        <% } %>
+    </tr>
+  </thead>
+  <tbody>
+    <%for(var rowIndex in this.rows) { %>
+    <tr>
+        <%for(var colIndex in this.rows[rowIndex].columns) { %>
+        <td>
+            <%if(this.columns[colIndex].editable) { %>
+            <div class="ui action fluid mini input cell" data-objid="<%this.rows[rowIndex].id%>" data-column="<%colIndex - 1%>">
+                <input type="text" value="<%this.rows[rowIndex].columns[colIndex]%>">
+                <button class="ui disabled icon button">
+                  <i class="check icon"></i>
+                </button>
+            </div>
+            <% } else { %>
+            <%this.rows[rowIndex].columns[colIndex]%>
+            <% } %>
+        </td>
+        <% } %>
+    </tr>
+    <% } %>
+  </tbody>
+</table>`;
+
+    function updateTable(tablename, limitFrom, limitTo) {
+        $('#go').addClass("disabled loading");
+        var getTableJSONURL = "{% url "getbalancingtablejson" tablename="tablename" limitFrom=11 limitTo=22%}";
+        getTableJSONURL = getTableJSONURL.replace("tablename", tablename);
+        getTableJSONURL = getTableJSONURL.replace("11", limitFrom);
+        getTableJSONURL = getTableJSONURL.replace("22", limitTo);
+        $.getJSON(getTableJSONURL, function (data, status) {
+            console.log("data received, using template to render table...");
+            $('#tablecontent').html(TemplateEngine(TableTemplate, data));
+            $('.cell input').on("input", function () {
+                $(this).siblings("button").removeClass("disabled").addClass("green");
+            });
+            $('.cell button').click(function() {
+                var postData = {
+                    "tablename": tablename,
+                    "column": $(this).parent().data("column"),
+                    "objID": $(this).parent().data("objid"),
+                    "value": $(this).siblings("input").val()
+                };
+                $('.cell').addClass("disabled");
+                $(this).addClass("loading disabled");
+                $.post("{% url "setbalancingtablevalue" %}", postData, function(data) {
+                    updateTable(tablename, limitFrom, limitTo);
+                }, "json").fail(function (jqxhr, textStatus, error) {
+                    console.log("setbalancingtablevalue failed! "+textStatus+" "+error);
+                });
+            });
+            $('#go').removeClass("disabled loading");
+        });
+    }
+
+    $('.ui.dropdown')
+      .dropdown()
+    ;
+
+    $('#go').click(function() {
+        if($('#tableselection').val()) {
+            var tableName = $('#tableselection').val();
+            var limitFrom = $('#limitFrom').val();
+            var limitTo = $('#limitTo').val();
+            updateTable(tableName, limitFrom, limitTo);
+        }
+    });
+    </script>
+{% endblock %}

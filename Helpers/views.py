@@ -2,16 +2,12 @@
 from __future__ import unicode_literals
 
 from django.shortcuts import render, get_object_or_404
-import json
-from django.http import HttpResponse
-from datetime import datetime
+from django.http import HttpResponse, Http404
 from django.utils import timezone
+from django.views.decorators.csrf import csrf_exempt
 
-from Production.models import *
-from ObjectTypes.models import *
-from Tuning.models import TuningValue
-from Research.models import *
 from helpers import *
+from Helpers.balancing.balancingtablemodules import *
 
 def productTypeOverview(request):
     productTypes = []
@@ -269,3 +265,28 @@ def revertChangesView(request):
         })
     else:
         return render(request, "helpers/revertchanges.html")
+
+def balancingTablesView(request):
+    balancingTables = []
+    for table in BalancingTableBase.__subclasses__():
+        balancingTables.append(table.BalancingTableIdentifier)
+    return render(request, "helpers/balancingtables.html", { "tables": balancingTables })
+
+@csrf_exempt
+def getBalancingTableJson(request, tablename, limitFrom, limitTo):
+    for table in BalancingTableBase.__subclasses__():
+        if tablename == table.BalancingTableIdentifier:
+            balancingTable = table(int(limitFrom), int(limitTo))
+            return HttpResponse(balancingTable.GetJson(), content_type='application/json')
+
+    raise Http404()
+
+@csrf_exempt
+def setBalancingTableValue(request):
+    for table in BalancingTableBase.__subclasses__():
+        if request.POST["tablename"] == table.BalancingTableIdentifier:
+            balancingTable = table(0,0)
+            balancingTable.SetValueReceived(int(request.POST["column"]), int(request.POST["objID"]), request.POST["value"])
+            return HttpResponse('{"result": "OK"}', content_type='application/json')
+
+    return HttpResponse("{'result': 'FAIL'}", content_type='application/json')

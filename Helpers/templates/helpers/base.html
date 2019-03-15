@@ -3,9 +3,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.0/dist/semantic.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.0/dist/semantic.min.js"></script>
+    <link rel="stylesheet" href="https://semantic-ui.com/dist/semantic.min.css">
+
     <style type="text/css">
         body {
             background-color: #FFFFFF;
@@ -23,6 +22,7 @@
             margin: 5em 0em 0em;
             padding: 5em 0em;
         }
+        {% block customcss %}{% endblock %}
     </style>
 
 
@@ -30,6 +30,9 @@
 </head>
 <body>
     <div class="ui fixed inverted menu">
+        <div class="ui container">
+            <a href="{% url 'revertchanges' %}" class="item">Revert Changes</a>
+        </div>
         <div class="ui container">
             <a href="{% url 'moduleoverview' %}" class="item">Modules</a>
         </div>
@@ -39,13 +42,19 @@
         <div class="ui container">
             <a href="{% url 'producttypeoverview' %}" class="item">Product Types</a>
         </div>
+        <div class="ui container">
+            <a href="{% url 'balancingtables' %}" class="item">Balancing Tables</a>
+        </div>
     </div>
 
-    <div class="ui main text container">
+    <div class="ui main container">
         {% block content %}
 
         {% endblock %}
     </div>
 
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script>
+    {% block customjavascript %}{% endblock %}
 </body>
 </html>

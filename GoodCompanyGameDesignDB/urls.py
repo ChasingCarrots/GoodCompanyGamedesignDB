@@ -30,4 +30,7 @@ urlpatterns = [
     url(r'^goodcompany/helper/moduledetail/(\d+)', moduleDetail, name="moduledetail"),
     url(r'^goodcompany/helper/producttypeoverview/', productTypeOverview, name="producttypeoverview"),
     url(r'^goodcompany/helper/revertchanges/', revertChangesView, name="revertchanges"),
+    url(r'^goodcompany/helper/getbalancingtablejson/(?P<tablename>\w+)/(?P<limitFrom>\d+)/(?P<limitTo>\d+)', getBalancingTableJson, name="getbalancingtablejson"),
+    url(r'^goodcompany/helper/balancingtables', balancingTablesView, name="balancingtables"),
+    url(r'^goodcompany/helper/setbalancingtablevalue', setBalancingTableValue, name="setbalancingtablevalue"),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
