@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'Tuning.apps.TuningConfig',
     'Helpers.apps.HelpersConfig',
     'Research.apps.ResearchConfig',
+    'BalancingHelper.apps.BalancinghelperConfig',
     'simple_history'
 ]
 

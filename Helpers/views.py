@@ -7,7 +7,8 @@ from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 
 from helpers import *
-from Helpers.balancing.balancingtablemodules import *
+from Helpers.balancing.modules import *
+from Helpers.balancing.products import *
 
 def productTypeOverview(request):
     productTypes = []
