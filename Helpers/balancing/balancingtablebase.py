@@ -14,8 +14,6 @@ class ColumnBase(object):
         pass
 
 class BalancingTableBase(object):
-    BalancingTableIdentifier = "base"
-
     def __init__(self, query):
         self.query = query
         self.columns = []

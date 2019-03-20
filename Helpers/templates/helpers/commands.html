@@ -1,0 +1,57 @@
+{% extends 'helpers/base.html' %}
+
+{% block title %}Commands{% endblock %}
+
+{% block content %}
+    <h1 class="ui header">Commands</h1>
+    <div class="ui action input">
+        <div class="ui selection dropdown" style="width:20em">
+            <input type="hidden" name="commandselection" id="commandselection">
+            <i class="dropdown icon"></i>
+            <div class="default text">Select command</div>
+            <div class="menu">
+                {% for command in commands %}
+                    <div class="item" data-value="{{ command }}">{{ command }}</div>
+                {% endfor %}
+            </div>
+        </div>
+        <input style="width:30em" type="text" id="arguments" value="" placeholder="Commandline arguments">
+        <div class="ui button" id="run">RUN</div>
+    </div>
+    <div id="commandoutput" class="ui message"></div>
+{% endblock %}
+
+{% block customjavascript %}
+    <script>
+    // our json calls can take very long and we don't want them to timeout
+    $.ajaxSetup({
+        timeout: 30000 // that number is in miliseconds!
+    });
+
+    function runCommand(commandname, arguments) {
+        $('#run').addClass("disabled loading");
+        var runcommandURL = "{% url "runcommand" commandname="commandname" arguments="arguments"%}";
+        runcommandURL = runcommandURL.replace("commandname", commandname)
+        runcommandURL = runcommandURL.replace("arguments", arguments)
+        $.getJSON(runcommandURL, function (data, status) {
+            console.log("runcommand returned...");
+            $('#commandoutput').html(data.output);
+            $('#run').removeClass("disabled loading");
+        }).done(function() { console.log( "second success" ); }) .fail(function(jqXHR, textStatus, errorThrown) {
+            console.log("error " + textStatus);
+        console.log("incoming Text " + jqXHR.responseText); }) .always(function() { console.log( "complete" ); });
+    }
+
+    $('.ui.dropdown')
+      .dropdown()
+    ;
+
+    $('#run').click(function() {
+        if($('#commandselection').val()) {
+            var commandname = $('#commandselection').val();
+            var arguments = $('#arguments').val();
+            runCommand(commandname, arguments);
+        }
+    });
+    </script>
+{% endblock %}

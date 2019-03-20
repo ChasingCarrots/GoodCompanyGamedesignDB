@@ -24,6 +24,11 @@
 
 {% block customjavascript %}
     <script>
+    // our json calls can take very long and we don't want them to timeout
+    $.ajaxSetup({
+        timeout: 30000 // that number is in miliseconds!
+    });
+
     // from here: http://krasimirtsonev.com/blog/article/Javascript-template-engine-in-just-20-line
     var TemplateEngine = function(html, options) {
         var re = /<%(.+?)%>/g,

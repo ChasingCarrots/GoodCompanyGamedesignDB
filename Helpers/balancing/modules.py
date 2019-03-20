@@ -142,7 +142,6 @@ class ModuleProfitPerDay(ColumnBase):
         return rows
 
 class ModuleBalancingTable(BalancingTableBase):
-    BalancingTableIdentifier = "Modules"
     def __init__(self, limitFrom, limitTo):
         BalancingTableBase.__init__(self, Module.objects.all()[limitFrom:limitTo])
         self.AddColumn(ModuleStackSizeColumn())

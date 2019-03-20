@@ -31,6 +31,9 @@
 <body>
     <div class="ui fixed inverted menu">
         <div class="ui container">
+            <a href="{% url "admin:index" %}" class="item">Django Admin</a>
+        </div>
+        <div class="ui container">
             <a href="{% url 'revertchanges' %}" class="item">Revert Changes</a>
         </div>
         <div class="ui container">
@@ -44,6 +47,9 @@
         </div>
         <div class="ui container">
             <a href="{% url 'balancingtables' %}" class="item">Balancing Tables</a>
+        </div>
+        <div class="ui container">
+            <a href="{% url 'commands' %}" class="item">Commands</a>
         </div>
     </div>
 

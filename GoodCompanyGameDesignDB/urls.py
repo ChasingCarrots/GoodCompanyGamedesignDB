@@ -17,12 +17,14 @@ from django.conf.urls import url, include
 from django.contrib import admin
 from django.conf import settings
 from django.conf.urls.static import static
+from django.views.generic import TemplateView
 
 from Helpers.views import *
 
 urlpatterns = [
     url(r'^goodcompany/grappelli/', include('grappelli.urls')),
-    url(r'^goodcompany/', admin.site.urls),
+    url(r'^goodcompany/$', TemplateView.as_view(template_name="helpers/home.html")),
+    url(r'^goodcompany/admin/', include(admin.site.urls)),
     url(r'^goodcompany/gamedataManifest/', getManifestJson),
     url(r'^goodcompany/helper/materialoverview/', materialOverview, name="materialoverview"),
     url(r'^goodcompany/helper/materialdetail/(\d+)', materialDetail, name="materialdetail"),
@@ -33,4 +35,6 @@ urlpatterns = [
     url(r'^goodcompany/helper/getbalancingtablejson/(?P<tablename>\w+)/(?P<limitFrom>\d+)/(?P<limitTo>\d+)', getBalancingTableJson, name="getbalancingtablejson"),
     url(r'^goodcompany/helper/balancingtables', balancingTablesView, name="balancingtables"),
     url(r'^goodcompany/helper/setbalancingtablevalue', setBalancingTableValue, name="setbalancingtablevalue"),
+    url(r'^goodcompany/helper/commands', commandsView, name="commands"),
+    url(r'^goodcompany/helper/runcommand/(?P<commandname>\w+)/(?P<arguments>\w*)', runCommand, name="runcommand"),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

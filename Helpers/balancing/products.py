@@ -110,7 +110,6 @@ class ProductProfitPerDay(ColumnBase):
         return rows
 
 class ProductBalancingTable(BalancingTableBase):
-    BalancingTableIdentifier = "Products"
     def __init__(self, limitFrom, limitTo):
         BalancingTableBase.__init__(self, SampleProduct.objects.all()[limitFrom:limitTo])
         self.AddColumn(ProductMaterialCostColumn())

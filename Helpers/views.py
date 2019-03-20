@@ -7,8 +7,9 @@ from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 
 from helpers import *
-from Helpers.balancing.modules import *
-from Helpers.balancing.products import *
+from balancing.modules import *
+from balancing.products import *
+from commands.sanitychecks import *
 
 def productTypeOverview(request):
     productTypes = []
@@ -270,13 +271,13 @@ def revertChangesView(request):
 def balancingTablesView(request):
     balancingTables = []
     for table in BalancingTableBase.__subclasses__():
-        balancingTables.append(table.BalancingTableIdentifier)
+        balancingTables.append(table.__name__)
     return render(request, "helpers/balancingtables.html", { "tables": balancingTables })
 
 @csrf_exempt
 def getBalancingTableJson(request, tablename, limitFrom, limitTo):
     for table in BalancingTableBase.__subclasses__():
-        if tablename == table.BalancingTableIdentifier:
+        if tablename == table.__name__:
             balancingTable = table(int(limitFrom), int(limitTo))
             return HttpResponse(balancingTable.GetJson(), content_type='application/json')
 
@@ -291,3 +292,19 @@ def setBalancingTableValue(request):
             return HttpResponse('{"result": "OK"}', content_type='application/json')
 
     return HttpResponse("{'result': 'FAIL'}", content_type='application/json')
+
+def commandsView(request):
+    commands = []
+    for command in CommandBase.__subclasses__():
+        commands.append(command.__name__)
+    return render(request, "helpers/commands.html", { "commands": commands })
+
+@csrf_exempt
+def runCommand(request, commandname, arguments):
+    for command in CommandBase.__subclasses__():
+        if command.__name__ == commandname:
+            output = command().RunCommand(arguments)
+            output = output.replace('\n', '<br/>')
+            return HttpResponse('{"output": "%s"}' % output, content_type="application/json")
+
+    return HttpResponse('{"output": "Error: command not found!"}', content_type="application/json")
