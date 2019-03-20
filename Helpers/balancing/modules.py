@@ -106,35 +106,36 @@ class ModuleNumProductionSteps(ColumnBase):
             rows.append(getModuleNumProductionSteps(module))
         return rows
 
-class ModuleSellPriceColumn(ColumnBase):
+class ModuleBaseMarketPrice(ColumnBase):
     def GetHeader(self):
-        return "Sell Price"
+        return "BaseMarketPrice"
+
+    def IsEditable(self):
+        return True
 
     def GetRowStrings(self, query):
-        addCostPerStep = float(TuningValue.objects.get(Name="ModuleSellPriceAddCostPerStep").Value)
-        materialCostFactor = float(TuningValue.objects.get(Name="ModuleSellPriceMaterialCostFactor").Value)
         rows = []
         for module in query.all():
-            price = getModuleNumProductionSteps(module) * addCostPerStep
-            price += module.rawMaterialCost() * materialCostFactor
-            rows.append(price)
+            rows.append(module.BaseMarketPrice)
         return rows
+
+    def SetValue(self, objID, value):
+        module = Module.objects.get(id=objID)
+        module.BaseMarketPrice = float(value)
+        module.save()
 
 class ModuleProfitPerDay(ColumnBase):
     def GetHeader(self):
         return "Profit per day"
 
     def GetRowStrings(self, query):
-        addCostPerStep = float(TuningValue.objects.get(Name="ModuleSellPriceAddCostPerStep").Value)
-        materialCostFactor = float(TuningValue.objects.get(Name="ModuleSellPriceMaterialCostFactor").Value)
         secondsPerDay = float(TuningValue.objects.get(Name="SecondsPerDay").Value)
         employeeWagePerSecond = float(TuningValue.objects.get(Name="EmployeeWage").Value) / secondsPerDay
         rows = []
         for module in query.all():
             rawMaterialCost = module.rawMaterialCost()
             productionTime = getModuleTotalProductionTime(module)
-            sellPrice = getModuleNumProductionSteps(module) * addCostPerStep
-            sellPrice += rawMaterialCost * materialCostFactor
+            sellPrice = module.BaseMarketPrice
             productionCost = rawMaterialCost + employeeWagePerSecond * productionTime
             profitPerModule = sellPrice - productionCost
 
@@ -150,5 +151,5 @@ class ModuleBalancingTable(BalancingTableBase):
         self.AddColumn(ModuleTotalProductionTimeColumn())
         self.AddColumn(NumModulesPerDay())
         self.AddColumn(ModuleRawMaterialCostColumn())
-        self.AddColumn(ModuleSellPriceColumn())
+        self.AddColumn(ModuleBaseMarketPrice())
         self.AddColumn(ModuleProfitPerDay())
