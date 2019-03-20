@@ -64,7 +64,11 @@ class NumModulesPerDay(ColumnBase):
         secondsPerDay = float(TuningValue.objects.get(Name="SecondsPerDay").Value)
         rows = []
         for module in query.all():
-            rows.append("%.2f" % (secondsPerDay / getModuleTotalProductionTime(module)))
+            moduleProductionTime = getModuleTotalProductionTime(module)
+            if moduleProductionTime == 0:
+                rows.append("none")
+            else:
+                rows.append("%.2f" % (secondsPerDay / moduleProductionTime))
         return rows
 
 def getModuleTotalProductionTime(module):
