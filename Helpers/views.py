@@ -287,7 +287,7 @@ def getBalancingTableJson(request, tablename, limitFrom, limitTo):
 @csrf_exempt
 def setBalancingTableValue(request):
     for table in BalancingTableBase.__subclasses__():
-        if request.POST["tablename"] == table.BalancingTableIdentifier:
+        if request.POST["tablename"] == table.__name__:
             balancingTable = table(0,0)
             balancingTable.SetValueReceived(int(request.POST["column"]), int(request.POST["objID"]), request.POST["value"])
             return HttpResponse('{"result": "OK"}', content_type='application/json')
