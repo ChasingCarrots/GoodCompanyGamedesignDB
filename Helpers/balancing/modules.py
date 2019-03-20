@@ -66,7 +66,7 @@ class NumModulesPerDay(ColumnBase):
         for module in query.all():
             moduleProductionTime = getModuleTotalProductionTime(module)
             if moduleProductionTime == 0:
-                rows.append("none")
+                rows.append("err")
             else:
                 rows.append("%.2f" % (secondsPerDay / moduleProductionTime))
         return rows
@@ -143,7 +143,10 @@ class ModuleProfitPerDay(ColumnBase):
             productionCost = rawMaterialCost + employeeWagePerSecond * productionTime
             profitPerModule = sellPrice - productionCost
 
-            rows.append("%.2f" % (secondsPerDay * (profitPerModule / productionTime)))
+            if productionTime == 0:
+                rows.append("err")
+            else:
+                rows.append("%.2f" % (secondsPerDay * (profitPerModule / productionTime)))
         return rows
 
 class ModuleBalancingTable(BalancingTableBase):
