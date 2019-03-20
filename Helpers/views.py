@@ -10,6 +10,7 @@ from helpers import *
 from balancing.modules import *
 from balancing.products import *
 from commands.sanitychecks import *
+from commands.tempcommands import *
 
 def productTypeOverview(request):
     productTypes = []

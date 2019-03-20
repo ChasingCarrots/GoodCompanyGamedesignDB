@@ -159,6 +159,8 @@ class Module(models.Model):
     IconAssetID = models.CharField(max_length=255)
     FitsIntoSlot = models.ForeignKey(ModuleSlotType, related_name="FittingModule", null=True, blank=True)
     Material = models.ForeignKey(Material)
+    OutputAmount = models.IntegerField(default=1)
+    BaseMarketPrice = models.FloatField(default=1)
 
     def getJsonObject(self):
         fitsIntoSlot = 0
@@ -177,7 +179,9 @@ class Module(models.Model):
             "Features":features,
             "FeatureRequirements":featureRequirements,
             "InputMaterials":inputMaterials,
-            "ResearchDataYield":researchDataYield
+            "ResearchDataYield":researchDataYield,
+            "OutputAmount":self.OutputAmount,
+            "BaseMarketPrice":self.BaseMarketPrice
         }
     
     class Meta:
