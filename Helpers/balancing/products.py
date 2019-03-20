@@ -51,7 +51,7 @@ class ProductFunctionBaseMarketPrice(ColumnBase):
     def SetValue(self, objID, value):
         product = SampleProduct.objects.get(id=objID)
         product.ProductFunction.BaseMarketPrice = int(value)
-        product.save()
+        product.ProductFunction.save()
 
 class ProductProductionCostPerProduct(ColumnBase):
     def GetHeader(self):

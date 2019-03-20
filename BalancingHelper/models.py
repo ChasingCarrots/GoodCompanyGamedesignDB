@@ -12,6 +12,7 @@ class SampleProduct(models.Model):
     class Meta:
         verbose_name = 'Sample Product'
         verbose_name_plural = 'Sample Products'
+        ordering = ['id']
 
     def __unicode__(self):
         return self.Name

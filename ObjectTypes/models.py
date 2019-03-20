@@ -21,6 +21,7 @@ class ObjectType(models.Model):
     class Meta:
         verbose_name = 'Object Type'
         verbose_name_plural = 'Object Types'
+        ordering = ['id']
 
 
 class MovableProperty(models.Model):

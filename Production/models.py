@@ -32,6 +32,7 @@ class Material(models.Model):
     class Meta:
         verbose_name = 'Material'
         verbose_name_plural = 'Materials'
+        ordering = ['id']
 
     def __unicode__(self):
         return unicode(self.Name)
@@ -187,6 +188,7 @@ class Module(models.Model):
     class Meta:
         verbose_name = 'Module'
         verbose_name_plural = 'Modules'
+        ordering = ['id']
 
     def __unicode__(self):
         return unicode(self.Name)
@@ -344,6 +346,7 @@ class ProductFunction(models.Model):
     class Meta:
         verbose_name = 'Product Function'
         verbose_name_plural = 'Product Functions'
+        ordering = ['id']
 
     def __unicode__(self):
         return self.Name

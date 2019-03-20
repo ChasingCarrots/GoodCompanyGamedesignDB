@@ -18,6 +18,7 @@ class ResearchDataType(models.Model):
     class Meta:
         verbose_name = 'Research Data Type'
         verbose_name_plural = 'Research Data Types'
+        ordering = ['id']
 
     def __unicode__(self):
         return unicode(self.Name)
@@ -70,6 +71,7 @@ class DevelopmentProject(models.Model):
     class Meta:
         verbose_name = 'Development Project'
         verbose_name_plural = 'Development Projects'
+        ordering = ['id']
 
     def __unicode__(self):
         return unicode(self.Name)
