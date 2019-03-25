@@ -309,3 +309,72 @@ def runCommand(request, commandname, arguments):
             return HttpResponse('{"output": "%s"}' % output, content_type="application/json")
 
     return HttpResponse('{"output": "Error: command not found!"}', content_type="application/json")
+
+def researchOverview(request):
+    devProjects = []
+    for devProj in DevelopmentProject.objects.all():
+        devProjects.append({
+            "id": devProj.id,
+            "name": devProj.Name,
+        })
+    return render(request, "helpers/researchoverview.html", { "devProjects": devProjects })
+
+def researchDetail(request, projectID):
+    project = get_object_or_404(DevelopmentProject, pk=projectID)
+    prerequisites = []
+    leadsTo = []
+    modules = []
+    buildables = []
+    productTypes = []
+
+    allProjects = DevelopmentProject.objects.all()
+    for proj in allProjects:
+        required = project.RequiredProjects.all()
+        if proj in required:
+            prerequisites.append({
+                "id": proj.id,
+                "name": proj.Name,
+            })
+        required = proj.RequiredProjects.all()
+        if project in required:
+            leadsTo.append({
+                "id": proj.id,
+                "name": proj.Name
+            })
+
+    allModules = Module.objects.all()
+    for m in allModules:
+        if m in project.UnlocksModules.all():
+            modules.append({
+                "id": m.id,
+                "name": m.Name,
+            })
+
+    allBuildables = ObjectType.objects.all()
+    for b in allBuildables:
+        if b in project.UnlocksBuildables.all():
+            buildables.append({
+                "id": b.id,
+                "name": b.Name,
+            })
+
+    allProductTypes = ProductType.objects.all()
+    for p in allProductTypes:
+        if p in project.UnlocksProductTypes.all():
+            productTypes.append({
+                "id": p.id,
+                "name": p.Name
+            })
+
+    detailInformation = {
+        "project": {
+            "name": project.Name,
+            "id": project.id,
+        },
+        "prerequisites": prerequisites,
+        "leadsTo": leadsTo,
+        "modules": modules,
+        "buildables": buildables,
+        "productTypes": productTypes,
+    }
+    return render(request, "helpers/researchdetail.html", detailInformation)

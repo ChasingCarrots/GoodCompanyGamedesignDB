@@ -1,0 +1,49 @@
+{% extends 'helpers/base.html' %}
+
+{% block title %}{{ project.name | title }} Details{% endblock %}
+
+{% block content %}
+<table class="ui celled table">
+<thead>
+    <tr>
+        <th>requires</th>
+        <th>{{ project.name }}</th>
+        <th>leads to</th>
+    </tr>
+</thead>
+<tbody>
+    <tr>
+        <td>
+            {% for proj in prerequisites %}
+            <a href="{% url 'researchdetail' proj.id %}">{{ proj.name }}</a><br>
+            {% endfor %}
+        </td>
+        <td>
+            <b>modules</b>
+            <ul>
+                {% for module in modules %}
+                <li><a href="{% url 'moduledetail' module.id %}">{{ module.name }}</a></li>
+                {% endfor %}
+            </ul>
+            <b>buildbables</b>
+            <ul>
+                {% for b in buildables %}
+                <li>{{ b.name }}</li>
+                {% endfor %}
+            </ul>
+            <b>product types</b>
+            <ul>
+                {% for p in productTypes %}
+                <li>{{ p.name }}</li>
+                {% endfor %}
+            </ul>
+        </td>
+        <td>
+            {% for proj in leadsTo %}
+            <a href="{% url 'researchdetail' proj.id %}">{{ proj.name }}</a><br>
+            {% endfor %}
+        </td>
+    </tr>
+</tbody>
+</table>
+{% endblock %}

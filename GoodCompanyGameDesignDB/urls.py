@@ -37,4 +37,6 @@ urlpatterns = [
     url(r'^goodcompany/helper/setbalancingtablevalue', setBalancingTableValue, name="setbalancingtablevalue"),
     url(r'^goodcompany/helper/commands', commandsView, name="commands"),
     url(r'^goodcompany/helper/runcommand/(?P<commandname>\w+)/(?P<arguments>\w*)', runCommand, name="runcommand"),
+    url(r'^goodcompany/helper/researchoverview', researchOverview, name="researchoverview"),
+    url(r'^goodcompany/helper/researchdetail/(\d+)', researchDetail, name="researchdetail"),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
