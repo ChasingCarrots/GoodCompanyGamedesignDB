@@ -50,6 +50,7 @@ class DevelopmentProject(models.Model):
     UnlocksModules = models.ManyToManyField("Production.Module", blank=True, related_name="UnlockedByResearch")
     UnlocksBuildables = models.ManyToManyField("ObjectTypes.ObjectType", blank=True, related_name="UnlockedByResearch")
     UnlocksProductTypes = models.ManyToManyField("Production.ProductType", blank=True, related_name="UnlockedByResearch")
+    UnlocksProductFunctions = models.ManyToManyField("Production.ProductFunction", blank=True, related_name="UnlockedByResearch")
 
     def getJsonObject(self):
         requiredData = [reqDat.getJsonObject() for reqDat in self.RequiredData.all()]
@@ -57,6 +58,7 @@ class DevelopmentProject(models.Model):
         unlocksModules = [module.id for module in self.UnlocksModules.all()]
         unlocksBuildables = [objType.id for objType in self.UnlocksBuildables.all()]
         unlocksProductTypes = [prodType.id for prodType in self.UnlocksProductTypes.all()]
+        unlocksProductFunctions = [prodFunc.id for prodFunc in self.UnlocksProductFunctions.all()]
 
         return {
             "Name": self.Name,
@@ -65,7 +67,8 @@ class DevelopmentProject(models.Model):
             "RequiredData": requiredData,
             "UnlocksModules": unlocksModules,
             "UnlocksBuildables": unlocksBuildables,
-            "UnlocksProductTypes": unlocksProductTypes
+            "UnlocksProductTypes": unlocksProductTypes,
+            "UnlocksProductFunctions": unlocksProductFunctions
         }
 
     class Meta:
