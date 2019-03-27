@@ -22,7 +22,6 @@ from django.views.generic import TemplateView
 from Helpers.views import *
 
 urlpatterns = [
-    url(r'^goodcompany/grappelli/', include('grappelli.urls')),
     url(r'^goodcompany/$', TemplateView.as_view(template_name="helpers/home.html")),
     url(r'^goodcompany/admin/', include(admin.site.urls)),
     url(r'^goodcompany/gamedataManifest/', getManifestJson),
