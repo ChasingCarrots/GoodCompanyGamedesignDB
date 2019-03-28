@@ -162,6 +162,47 @@ class ProductFunctionBaseMarketPrice(ColumnBase):
         product.ProductFunction.BaseMarketPrice = int(value)
         product.ProductFunction.save()
 
+class ModulesSellPriceSum(ColumnBase):
+    def GetHeader(self):
+        return "Raw Module Value"
+
+    def GetRowStrings(self, query):
+        rows = []
+        for product in query.all():
+            totalSellPrice = 0
+            for module in product.Modules.all():
+                totalSellPrice += module.BaseMarketPrice
+
+            rows.append("%.2f" % totalSellPrice)
+        return rows
+
+class ProductValueRatio(ColumnBase):
+    def GetHeader(self):
+        return "Module/Product Price Ration"
+
+    def IsEditable(self):
+        return True
+
+    def GetRowStrings(self, query):
+        rows = []
+        for product in query.all():
+            totalSellPrice = 0
+            for module in product.Modules.all():
+                totalSellPrice += module.BaseMarketPrice
+
+            rows.append("%.2f" % (product.ProductFunction.BaseMarketPrice / totalSellPrice))
+        return rows
+
+    def SetValue(self, objID, value):
+        product = SampleProduct.objects.get(id=objID)
+
+        totalSellPrice = 0
+        for module in product.Modules.all():
+             totalSellPrice += module.BaseMarketPrice
+
+        product.ProductFunction.BaseMarketPrice = int(value) * totalSellPrice
+        product.ProductFunction.save()
+
 class ProductProductionCostPerProduct(ColumnBase):
     def GetHeader(self):
         return "Cost/Product"
@@ -242,13 +283,15 @@ class ProductProfitPerProduct(ColumnBase):
         product.ProductFunction.BaseMarketPrice = float(value) + totalProductionCosts
         product.ProductFunction.save()
 
+
+
 class ProductProfitPerDay(ColumnBase):
     def GetHeader(self):
         return "Profit/Day"
 
 
     def IsEditable(self):
-        return True
+        return False
 
     def GetRowStrings(self, query):
         secondsPerDay = float(TuningValue.objects.get(Name="SecondsPerDay").Value)
@@ -362,16 +405,35 @@ class ProductProfitability(ColumnBase):
 class ProductBalancingTable(BalancingTableBase):
     def __init__(self, limitFrom, limitTo):
         BalancingTableBase.__init__(self, SampleProduct.objects.all()[limitFrom:limitTo])
+        #self.AddColumn(ProductNumProductionSteps())
+        #self.AddColumn(ProductNumLogisticSteps())
+        self.AddColumn(ProductNumProductionComplexity())
+        #self.AddColumn(ProductProductionTime())
+        #self.AddColumn(ProductNumProductionComplexity2())
+        #self.AddColumn(ProductEmployeeCostColumn())
+        #self.AddColumn(ProductTotalProductionTimeColumn())
+        self.AddColumn(ProductMaterialCostColumn())
+        self.AddColumn(ProductProductionCostPerProduct())
+        self.AddColumn(ModulesSellPriceSum())
+        self.AddColumn(ProductFunctionBaseMarketPrice())
+        self.AddColumn(ProductValueRatio())
+        self.AddColumn(ProductProfitPerProduct())
+        self.AddColumn(ProductProfitPerDay())
+        self.AddColumn(ProductProfitability())
+
+class ProductProductionOverview(BalancingTableBase):
+    def __init__(self, limitFrom, limitTo):
+        BalancingTableBase.__init__(self, SampleProduct.objects.all()[limitFrom:limitTo])
         self.AddColumn(ProductNumProductionSteps())
         self.AddColumn(ProductNumLogisticSteps())
         self.AddColumn(ProductNumProductionComplexity())
         self.AddColumn(ProductProductionTime())
         #self.AddColumn(ProductNumProductionComplexity2())
-        #self.AddColumn(ProductMaterialCostColumn())
         #self.AddColumn(ProductEmployeeCostColumn())
         #self.AddColumn(ProductTotalProductionTimeColumn())
+        self.AddColumn(ProductMaterialCostColumn())
         self.AddColumn(ProductProductionCostPerProduct())
-        self.AddColumn(ProductFunctionBaseMarketPrice())
+        #self.AddColumn(ProductFunctionBaseMarketPrice())
         self.AddColumn(ProductProfitPerProduct())
-        self.AddColumn(ProductProfitPerDay())
+        #self.AddColumn(ProductProfitPerDay())
         self.AddColumn(ProductProfitability())
