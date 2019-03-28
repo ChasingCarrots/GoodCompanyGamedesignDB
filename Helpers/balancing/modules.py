@@ -23,7 +23,7 @@ class ModuleStackSizeColumn(ColumnBase):
 
 class ModuleOutputAmountColumn(ColumnBase):
     def GetHeader(self):
-        return "Output Amount"
+        return "BatchSize"
 
     def IsEditable(self):
         return True
@@ -41,7 +41,7 @@ class ModuleOutputAmountColumn(ColumnBase):
 
 class ModuleProductionTimeColumn(ColumnBase):
     def GetHeader(self):
-        return "Time/Stack"
+        return "Time/Batch"
 
     def IsEditable(self):
         return True
@@ -91,25 +91,6 @@ class ModuleRawEmployeeCostColumn(ColumnBase):
                 rows.append("%.2f" % ((moduleProductionTime / secondsPerDay) * employeeCostsPerDay))
         return rows
 
-class ModuleCostColumn(ColumnBase):
-    def GetHeader(self):
-        return "Costs/Item"
-
-
-    def GetRowStrings(self, query):
-        secondsPerDay = float(TuningValue.objects.get(Name="SecondsPerDay").Value)
-        employeeWagePerSecond = float(TuningValue.objects.get(Name="EmployeeWage").Value) / secondsPerDay
-        rows = []
-        for module in query.all():
-            rawMaterialCost = module.rawMaterialCost()
-            productionTime = getModuleTotalProductionTime(module)
-            productionCost = rawMaterialCost + employeeWagePerSecond * productionTime
-
-            if productionTime == 0:
-                rows.append("err")
-            else:
-                rows.append("%.2f" % (productionCost))
-        return rows
 
 
 class NumQueuesPerDay(ColumnBase):
@@ -189,12 +170,46 @@ def getModuleNumMaterialSteps(module):
 
 class ModuleNumProductionSteps(ColumnBase):
     def GetHeader(self):
-        return "Steps"
+        return "Production Steps"
 
     def GetRowStrings(self, query):
         rows = []
         for module in query.all():
             rows.append("%.2f"%getModuleNumProductionSteps(module))
+        return rows
+
+class ModuleNumLogisticSteps(ColumnBase):
+    def GetHeader(self):
+        return "Logistic Steps"
+
+    def GetRowStrings(self, query):
+        rows = []
+        for module in query.all():
+            rows.append(getModuleNumMaterialSteps(module))
+        return rows
+
+class ModuleComplexityRating(ColumnBase):
+    def GetHeader(self):
+        return "Complexity"
+
+    def GetRowStrings(self, query):
+        rows = []
+        for module in query.all():
+            count = 0
+            stepsMods = 0
+            stepsMats = 0
+            highestMods = 0;
+            highestMats = 0;
+            steps = getModuleNumProductionSteps(module)
+            stepsMods += steps
+            if steps > highestMods:
+                highestMods = steps
+            steps = getModuleNumMaterialSteps(module)
+            stepsMats += steps
+            if steps > highestMats:
+                highestMats = steps
+            count += 1
+            rows.append("%.2f" % (((highestMods + highestMats)**0.5 + (stepsMats / count + stepsMods / count)**0.5) * 0.25))
         return rows
 
 class ModuleBaseMarketPrice(ColumnBase):
@@ -215,9 +230,65 @@ class ModuleBaseMarketPrice(ColumnBase):
         module.BaseMarketPrice = float(value)
         module.save()
 
+
+class ModuleCostColumn(ColumnBase):
+    def GetHeader(self):
+        return "Costs/Item"
+
+
+    def GetRowStrings(self, query):
+        secondsPerDay = float(TuningValue.objects.get(Name="SecondsPerDay").Value)
+        employeeWagePerSecond = float(TuningValue.objects.get(Name="EmployeeWage").Value) / secondsPerDay
+        rows = []
+        for module in query.all():
+            rawMaterialCost = module.rawMaterialCost()
+            productionTime = getModuleTotalProductionTime(module)
+            productionCost = rawMaterialCost + employeeWagePerSecond * productionTime
+
+            if productionTime == 0:
+                rows.append("err")
+            else:
+                rows.append("%.2f" % (productionCost))
+        return rows
+
+class ModuleProfitPerItem(ColumnBase):
+    def GetHeader(self):
+        return "Profit/Item"
+
+    def IsEditable(self):
+        return True
+
+    def GetRowStrings(self, query):
+        secondsPerDay = float(TuningValue.objects.get(Name="SecondsPerDay").Value)
+        employeeWagePerSecond = float(TuningValue.objects.get(Name="EmployeeWage").Value) / secondsPerDay
+        rows = []
+        for module in query.all():
+            rawMaterialCost = module.rawMaterialCost()
+            productionTime = getModuleTotalProductionTime(module)
+            productionCost = rawMaterialCost + employeeWagePerSecond * productionTime
+
+
+            if productionTime == 0:
+                rows.append("err")
+            else:
+                rows.append("%.2f" % (module.BaseMarketPrice - productionCost))
+        return rows
+
+    def SetValue(self, objID, value):
+        module = Module.objects.get(id=objID)
+        secondsPerDay = float(TuningValue.objects.get(Name="SecondsPerDay").Value)
+        employeeWagePerSecond = float(TuningValue.objects.get(Name="EmployeeWage").Value) / secondsPerDay
+
+        rawMaterialCost = module.rawMaterialCost()
+        productionTime = getModuleTotalProductionTime(module)
+        productionCost = rawMaterialCost + employeeWagePerSecond * productionTime
+
+        module.BaseMarketPrice = float(value + productionCost)
+        module.save()
+
 class ModuleProfitPerDay(ColumnBase):
     def GetHeader(self):
-        return "Profit per Day"
+        return "ProfitPerDay"
 
     def IsEditable(self):
         return True
@@ -310,17 +381,42 @@ class ModuleProfitability(ColumnBase):
 class ModuleBalancingTable(BalancingTableBase):
     def __init__(self, limitFrom, limitTo):
         BalancingTableBase.__init__(self, Module.objects.all()[limitFrom:limitTo])
-        self.AddColumn(ModuleStackSizeColumn())
+        #self.AddColumn(ModuleStackSizeColumn())
         self.AddColumn(ModuleProductionTimeColumn())
         self.AddColumn(ModuleOutputAmountColumn())
-        self.AddColumn(ModuleNumProductionSteps())
+        #self.AddColumn(ModuleNumProductionSteps())
+        #self.AddColumn(ModuleNumLogisticSteps())
+        #self.AddColumn(ModuleComplexityRating())
         #self.AddColumn(ModuleTotalProductionTimeColumn())
         self.AddColumn(NumModulesPerDay())
         #self.AddColumn(NumQueuesPerDay())
         #self.AddColumn(ModuleRawMaterialCostColumn())
         #self.AddColumn(ModuleRawEmployeeCostColumn())
         self.AddColumn(ModuleCostColumn())
+        #self.AddColumn(ModuleProfitPerItem())
         self.AddColumn(ModuleProductionCostPerDay())
         self.AddColumn(ModuleBaseMarketPrice())
         self.AddColumn(ModuleProfitability())
         self.AddColumn(ModuleProfitPerDay())
+
+
+class ModuleProductionOverview(BalancingTableBase):
+    def __init__(self, limitFrom, limitTo):
+        BalancingTableBase.__init__(self, Module.objects.all()[limitFrom:limitTo])
+        self.AddColumn(ModuleStackSizeColumn())
+        self.AddColumn(ModuleProductionTimeColumn())
+        self.AddColumn(ModuleOutputAmountColumn())
+        self.AddColumn(ModuleNumProductionSteps())
+        self.AddColumn(ModuleNumLogisticSteps())
+        self.AddColumn(ModuleComplexityRating())
+        self.AddColumn(ModuleTotalProductionTimeColumn())
+        self.AddColumn(NumModulesPerDay())
+        self.AddColumn(NumQueuesPerDay())
+        #self.AddColumn(ModuleRawMaterialCostColumn())
+        #self.AddColumn(ModuleRawEmployeeCostColumn())
+        self.AddColumn(ModuleCostColumn())
+        self.AddColumn(ModuleProfitPerItem())
+        #self.AddColumn(ModuleProductionCostPerDay())
+        #self.AddColumn(ModuleBaseMarketPrice())
+        #self.AddColumn(ModuleProfitability())
+        #self.AddColumn(ModuleProfitPerDay())
