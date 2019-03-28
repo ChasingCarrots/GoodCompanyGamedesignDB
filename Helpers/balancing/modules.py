@@ -195,21 +195,11 @@ class ModuleComplexityRating(ColumnBase):
     def GetRowStrings(self, query):
         rows = []
         for module in query.all():
-            count = 0
             stepsMods = 0
             stepsMats = 0
-            highestMods = 0;
-            highestMats = 0;
-            steps = getModuleNumProductionSteps(module)
-            stepsMods += steps
-            if steps > highestMods:
-                highestMods = steps
-            steps = getModuleNumMaterialSteps(module)
-            stepsMats += steps
-            if steps > highestMats:
-                highestMats = steps
-            count += 1
-            rows.append("%.2f" % (((highestMods + highestMats)**0.5 + (stepsMats / count + stepsMods / count)**0.5) * 0.25))
+            stepsMods += getModuleNumProductionSteps(module)
+            stepsMats += getModuleNumMaterialSteps(module)
+            rows.append("%.2f" % ((stepsMats * 0.3 + stepsMods * 0.7)**0.25))
         return rows
 
 class ModuleBaseMarketPrice(ColumnBase):
@@ -256,7 +246,7 @@ class ModuleProfitPerItem(ColumnBase):
         return "Profit/Item"
 
     def IsEditable(self):
-        return True
+        return False
 
     def GetRowStrings(self, query):
         secondsPerDay = float(TuningValue.objects.get(Name="SecondsPerDay").Value)
@@ -386,9 +376,9 @@ class ModuleBalancingTable(BalancingTableBase):
         self.AddColumn(ModuleOutputAmountColumn())
         #self.AddColumn(ModuleNumProductionSteps())
         #self.AddColumn(ModuleNumLogisticSteps())
-        #self.AddColumn(ModuleComplexityRating())
         #self.AddColumn(ModuleTotalProductionTimeColumn())
         self.AddColumn(NumModulesPerDay())
+        self.AddColumn(ModuleComplexityRating())
         #self.AddColumn(NumQueuesPerDay())
         #self.AddColumn(ModuleRawMaterialCostColumn())
         #self.AddColumn(ModuleRawEmployeeCostColumn())

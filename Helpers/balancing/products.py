@@ -19,6 +19,19 @@ class ProductNumProductionSteps(ColumnBase):
             rows.append("%.2f" % steps)
         return rows
 
+class ProductNumLogisticSteps(ColumnBase):
+    def GetHeader(self):
+        return "Logistic Steps"
+
+    def GetRowStrings(self, query):
+        rows = []
+        for product in query.all():
+            steps = 0
+            for module in product.Modules.all():
+                steps += getModuleNumMaterialSteps(module)
+            rows.append(steps)
+        return rows
+
 class ProductNumProductionComplexity(ColumnBase):
     def GetHeader(self):
         return "Production Complexity"
@@ -41,7 +54,7 @@ class ProductNumProductionComplexity(ColumnBase):
                 if steps > highestMats:
                     highestMats = steps
                 count += 1
-            rows.append("%.2f" % (((highestMods + highestMats)**0.5 + (stepsMats / count + stepsMods / count)**0.5) * 0.25))
+            rows.append("%.2f" % (((highestMods*0.3 + highestMats*0.7)**0.3 + (stepsMats*0.3 + stepsMods*0.7)**0.7) * 0.25))
         return rows
 
 
@@ -133,7 +146,7 @@ class ProductTotalProductionTimeColumn(ColumnBase):
 
 class ProductFunctionBaseMarketPrice(ColumnBase):
     def GetHeader(self):
-        return "ProductFunction Sellprice"
+        return "Sellprice"
 
     def IsEditable(self):
         return True
@@ -350,6 +363,7 @@ class ProductBalancingTable(BalancingTableBase):
     def __init__(self, limitFrom, limitTo):
         BalancingTableBase.__init__(self, SampleProduct.objects.all()[limitFrom:limitTo])
         self.AddColumn(ProductNumProductionSteps())
+        self.AddColumn(ProductNumLogisticSteps())
         self.AddColumn(ProductNumProductionComplexity())
         self.AddColumn(ProductProductionTime())
         #self.AddColumn(ProductNumProductionComplexity2())
