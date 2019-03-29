@@ -171,16 +171,13 @@ def getModuleNumMaterialSteps(module):
 def getModuleNumUniqueMaterialSteps(module, materials):
     steps = 0
     for inputMat in module.InputMaterials.all():
-        isInList = 0
-        steps += 1
-        for material in materials:
-            if material == inputMat:
-                isInList = 1
-        if isInList == 0:
-            materials.append(inputMat)
+        if inputMat.id not in materials:
+            materials.append(inputMat.id)
             moduleMatQuery = Module.objects.filter(Material=inputMat.Material)
             if moduleMatQuery.exists():
                 steps += getModuleNumUniqueMaterialSteps(moduleMatQuery.all()[0], materials)
+            else:
+                steps += 1
     return steps
 
 class ModuleNumProductionSteps(ColumnBase):
