@@ -168,6 +168,21 @@ def getModuleNumMaterialSteps(module):
             steps += getModuleNumMaterialSteps(moduleMatQuery.all()[0])
     return steps
 
+def getModuleNumUniqueMaterialSteps(module, materials):
+    steps = 0
+    for inputMat in module.InputMaterials.all():
+        isInList = 0
+        steps += 1
+        for material in materials:
+            if material == inputMat:
+                isInList = 1
+        if isInList == 0:
+            materials.append(inputMat)
+            moduleMatQuery = Module.objects.filter(Material=inputMat.Material)
+            if moduleMatQuery.exists():
+                steps += getModuleNumUniqueMaterialSteps(moduleMatQuery.all()[0], materials)
+    return steps
+
 class ModuleNumProductionSteps(ColumnBase):
     def GetHeader(self):
         return "Production Steps"
@@ -188,6 +203,17 @@ class ModuleNumLogisticSteps(ColumnBase):
             rows.append(getModuleNumMaterialSteps(module))
         return rows
 
+class ModuleNumUniqueLogisticSteps(ColumnBase):
+    def GetHeader(self):
+        return "Unique Logistic Steps"
+
+    def GetRowStrings(self, query):
+        rows = []
+        for module in query.all():
+            materials = []
+            rows.append(getModuleNumUniqueMaterialSteps(module, materials))
+        return rows
+
 class ModuleComplexityRating(ColumnBase):
     def GetHeader(self):
         return "Complexity"
@@ -199,6 +225,22 @@ class ModuleComplexityRating(ColumnBase):
             stepsMats = 0
             stepsMods += getModuleNumProductionSteps(module)
             stepsMats += getModuleNumMaterialSteps(module)
+            rows.append("%.2f" % ((stepsMats * 0.3 + stepsMods * 0.7)**0.25))
+        return rows
+
+
+class ModuleComplexityRating2(ColumnBase):
+    def GetHeader(self):
+        return "Complexity2"
+
+    def GetRowStrings(self, query):
+        rows = []
+        for module in query.all():
+            materials = []
+            stepsMods = 0
+            stepsMats = 0
+            stepsMods += getModuleNumProductionSteps(module)
+            stepsMats += getModuleNumUniqueMaterialSteps(module, materials)
             rows.append("%.2f" % ((stepsMats * 0.3 + stepsMods * 0.7)**0.25))
         return rows
 
@@ -378,7 +420,7 @@ class ModuleBalancingTable(BalancingTableBase):
         #self.AddColumn(ModuleNumLogisticSteps())
         #self.AddColumn(ModuleTotalProductionTimeColumn())
         self.AddColumn(NumModulesPerDay())
-        self.AddColumn(ModuleComplexityRating())
+        self.AddColumn(ModuleComplexityRating2())
         #self.AddColumn(NumQueuesPerDay())
         self.AddColumn(ModuleRawMaterialCostColumn())
         #self.AddColumn(ModuleRawEmployeeCostColumn())
@@ -398,7 +440,9 @@ class ModuleProductionOverview(BalancingTableBase):
         self.AddColumn(ModuleOutputAmountColumn())
         self.AddColumn(ModuleNumProductionSteps())
         self.AddColumn(ModuleNumLogisticSteps())
+        self.AddColumn(ModuleNumUniqueLogisticSteps())
         self.AddColumn(ModuleComplexityRating())
+        self.AddColumn(ModuleComplexityRating2())
         self.AddColumn(ModuleTotalProductionTimeColumn())
         self.AddColumn(NumModulesPerDay())
         self.AddColumn(NumQueuesPerDay())

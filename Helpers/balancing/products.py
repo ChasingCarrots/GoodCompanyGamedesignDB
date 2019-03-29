@@ -3,7 +3,7 @@ from Production.models import *
 from ObjectTypes.models import *
 from Tuning.models import *
 from BalancingHelper.models import *
-from modules import getModuleTotalProductionTime, getModuleNumProductionSteps, getModuleNumMaterialSteps
+from modules import getModuleTotalProductionTime, getModuleNumProductionSteps, getModuleNumMaterialSteps, getModuleNumUniqueMaterialSteps
 
 
 class ProductNumProductionSteps(ColumnBase):
@@ -32,6 +32,20 @@ class ProductNumLogisticSteps(ColumnBase):
             rows.append(steps)
         return rows
 
+class ProductNumUnqiueLogisticSteps(ColumnBase):
+    def GetHeader(self):
+        return "Unique Logistic Steps"
+
+    def GetRowStrings(self, query):
+        rows = []
+        for product in query.all():
+            materials = []
+            steps = 0
+            for module in product.Modules.all():
+                steps += getModuleNumUniqueMaterialSteps(module, materials)
+            rows.append(steps)
+        return rows
+
 class ProductNumProductionComplexity(ColumnBase):
     def GetHeader(self):
         return "Production Complexity"
@@ -39,7 +53,6 @@ class ProductNumProductionComplexity(ColumnBase):
     def GetRowStrings(self, query):
         rows = []
         for product in query.all():
-            count = 0
             stepsMods = 0
             stepsMats = 0
             highestMods = 0
@@ -53,27 +66,32 @@ class ProductNumProductionComplexity(ColumnBase):
                 stepsMats += steps
                 if steps > highestMats:
                     highestMats = steps
-                count += 1
             rows.append("%.2f" % (((highestMods*0.3 + highestMats*0.7)**0.3 + (stepsMats*0.3 + stepsMods*0.7)**0.7) * 0.25))
         return rows
 
 
 class ProductNumProductionComplexity2(ColumnBase):
     def GetHeader(self):
-        return "Production Complexity2"
+        return "Unique Production Complexity"
 
     def GetRowStrings(self, query):
         rows = []
         for product in query.all():
-            steps = 0
-            count = 0
-            highest = 0
+            materials = []
+            stepsMods = 0
+            stepsMats = 0
+            highestMods = 0
+            highestMats = 0
             for module in product.Modules.all():
-                steps = getModuleNumMaterialSteps(module)
-                if steps > highest:
-                    highest = steps
-                count += 1
-            rows.append("%.2f" % (highest)**1)
+                steps = getModuleNumProductionSteps(module)
+                stepsMods += steps
+                if steps > highestMods:
+                    highestMods = steps
+                steps = getModuleNumUniqueMaterialSteps(module, materials)
+                stepsMats += steps
+                if steps > highestMats:
+                    highestMats = steps
+            rows.append("%.2f" % (((highestMods*0.3 + highestMats*0.7)**0.3 + (stepsMats*0.3 + stepsMods*0.7)**0.7) * 0.25))
         return rows
 
 class ProductMaterialCostColumn(ColumnBase):
@@ -407,9 +425,9 @@ class ProductBalancingTable(BalancingTableBase):
         BalancingTableBase.__init__(self, SampleProduct.objects.all()[limitFrom:limitTo])
         #self.AddColumn(ProductNumProductionSteps())
         #self.AddColumn(ProductNumLogisticSteps())
-        self.AddColumn(ProductNumProductionComplexity())
+        #self.AddColumn(ProductNumProductionComplexity())
         #self.AddColumn(ProductProductionTime())
-        #self.AddColumn(ProductNumProductionComplexity2())
+        self.AddColumn(ProductNumProductionComplexity2())
         #self.AddColumn(ProductEmployeeCostColumn())
         #self.AddColumn(ProductTotalProductionTimeColumn())
         self.AddColumn(ProductMaterialCostColumn())
@@ -426,9 +444,10 @@ class ProductProductionOverview(BalancingTableBase):
         BalancingTableBase.__init__(self, SampleProduct.objects.all()[limitFrom:limitTo])
         self.AddColumn(ProductNumProductionSteps())
         self.AddColumn(ProductNumLogisticSteps())
+        self.AddColumn(ProductNumUnqiueLogisticSteps())
         self.AddColumn(ProductNumProductionComplexity())
+        self.AddColumn(ProductNumProductionComplexity2())
         self.AddColumn(ProductProductionTime())
-        #self.AddColumn(ProductNumProductionComplexity2())
         #self.AddColumn(ProductEmployeeCostColumn())
         #self.AddColumn(ProductTotalProductionTimeColumn())
         self.AddColumn(ProductMaterialCostColumn())
