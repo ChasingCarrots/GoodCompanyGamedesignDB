@@ -416,7 +416,7 @@ class ModuleProfitability(ColumnBase):
         rows = []
         for module in query.all():
             rawMaterialCost = module.rawMaterialCost()
-            productionTime = getModuleTotalProductionTime(module)
+            productionTime = getModuleTotalProductionTime(module, normalExtraTimePerBatch)
             sellPrice = module.BaseMarketPrice
             productionCost = rawMaterialCost + employeeWagePerSecond * productionTime
 
@@ -431,7 +431,7 @@ class ModuleProfitability(ColumnBase):
         employeeWagePerSecond = getEmployeeCostPerSecond()
 
         rawMaterialCost = module.rawMaterialCost()
-        productionTime = getModuleTotalProductionTime(module)
+        productionTime = getModuleTotalProductionTime(module, normalExtraTimePerBatch)
         productionCost = rawMaterialCost + employeeWagePerSecond * productionTime
 
         module.BaseMarketPrice = float(value) * productionCost
