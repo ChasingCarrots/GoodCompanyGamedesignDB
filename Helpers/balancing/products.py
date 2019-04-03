@@ -5,6 +5,7 @@ from Tuning.models import *
 from BalancingHelper.models import *
 from modules import getModuleTotalProductionTime, getModuleNumProductionSteps, getModuleNumMaterialSteps, getModuleNumUniqueMaterialSteps
 
+extraTimePerBatch = 5.0
 
 class ProductNumProductionSteps(ColumnBase):
     def GetHeader(self):
@@ -123,7 +124,7 @@ class ProductEmployeeCostColumn(ColumnBase):
                 if assemblyDuration.exists():
                     totalTime = assemblyDuration.all()[0].Duration
                     for module in product.Modules.all():
-                        totalTime += getModuleTotalProductionTime(module)
+                        totalTime += getModuleTotalProductionTime(module, extraTimePerBatch)
             rows.append("%.2f" % ((totalTime / secondsPerDay) * employeeCostsPerDay))
         return rows
 
@@ -140,7 +141,7 @@ class ProductProductionTime(ColumnBase):
                 if assemblyDuration.exists():
                     totalTime = assemblyDuration.all()[0].Duration
                     for module in product.Modules.all():
-                        totalTime += getModuleTotalProductionTime(module)
+                        totalTime += getModuleTotalProductionTime(module, extraTimePerBatch)
             rows.append("%.2f" % ((totalTime)))
         return rows
 
@@ -158,7 +159,7 @@ class ProductTotalProductionTimeColumn(ColumnBase):
                 if assemblyDuration.exists():
                     totalTime = assemblyDuration.all()[0].Duration
                     for module in product.Modules.all():
-                        totalTime += getModuleTotalProductionTime(module)
+                        totalTime += getModuleTotalProductionTime(module, extraTimePerBatch)
             rows.append("%.2f" % totalTime)
         return rows
 
@@ -241,7 +242,7 @@ class ProductProductionCostPerProduct(ColumnBase):
                 continue
 
             for module in product.Modules.all():
-                totalProductionTime += getModuleTotalProductionTime(module)
+                totalProductionTime += getModuleTotalProductionTime(module, extraTimePerBatch)
                 totalRawMaterialCost += module.rawMaterialCost()
 
             totalProductionCosts = totalRawMaterialCost + totalProductionTime * employeeWagePerSecond
@@ -272,7 +273,7 @@ class ProductProfitPerProduct(ColumnBase):
                 continue
 
             for module in product.Modules.all():
-                totalProductionTime += getModuleTotalProductionTime(module)
+                totalProductionTime += getModuleTotalProductionTime(module, extraTimePerBatch)
                 totalRawMaterialCost += module.rawMaterialCost()
 
             totalProductionCosts = totalRawMaterialCost + totalProductionTime * employeeWagePerSecond
@@ -292,7 +293,7 @@ class ProductProfitPerProduct(ColumnBase):
             totalProductionTime = assemblyDuration.all()[0].Duration
 
         for module in product.Modules.all():
-            totalProductionTime += getModuleTotalProductionTime(module)
+            totalProductionTime += getModuleTotalProductionTime(module, extraTimePerBatch)
             totalRawMaterialCost += module.rawMaterialCost()
 
         totalProductionCosts = totalRawMaterialCost + totalProductionTime * employeeWagePerSecond
@@ -326,7 +327,7 @@ class ProductProfitPerDay(ColumnBase):
                 continue
 
             for module in product.Modules.all():
-                totalProductionTime += getModuleTotalProductionTime(module)
+                totalProductionTime += getModuleTotalProductionTime(module, extraTimePerBatch)
                 totalRawMaterialCost += module.rawMaterialCost()
 
             sellPrice = product.ProductFunction.BaseMarketPrice
@@ -349,13 +350,13 @@ class ProductProfitPerDay(ColumnBase):
             totalProductionTime = assemblyDuration.all()[0].Duration
 
         for module in product.Modules.all():
-            totalProductionTime += getModuleTotalProductionTime(module)
+            totalProductionTime += getModuleTotalProductionTime(module, extraTimePerBatch)
             totalRawMaterialCost += module.rawMaterialCost()
 
-        sellPrice = product.ProductFunction.BaseMarketPrice
+        #sellPrice = product.ProductFunction.BaseMarketPrice
         totalProductionCosts = totalRawMaterialCost + totalProductionTime * employeeWagePerSecond
-        profitPerProduct = sellPrice - totalProductionCosts
-        profitPerDay = secondsPerDay * (profitPerProduct / totalProductionTime)
+        #profitPerProduct = sellPrice - totalProductionCosts
+        #profitPerDay = secondsPerDay * (profitPerProduct / totalProductionTime)
 
         #module.BaseMarketPrice = float(value) / (secondsPerDay / productionTime) + productionCost
 
@@ -386,7 +387,7 @@ class ProductProfitability(ColumnBase):
                 continue
 
             for module in product.Modules.all():
-                totalProductionTime += getModuleTotalProductionTime(module)
+                totalProductionTime += getModuleTotalProductionTime(module, extraTimePerBatch)
                 totalRawMaterialCost += module.rawMaterialCost()
 
             totalProductionCosts = totalRawMaterialCost + totalProductionTime * employeeWagePerSecond
@@ -411,7 +412,7 @@ class ProductProfitability(ColumnBase):
             totalProductionTime = assemblyDuration.all()[0].Duration
 
         for module in product.Modules.all():
-            totalProductionTime += getModuleTotalProductionTime(module)
+            totalProductionTime += getModuleTotalProductionTime(module, extraTimePerBatch)
             totalRawMaterialCost += module.rawMaterialCost()
 
         totalProductionCosts = totalRawMaterialCost + totalProductionTime * employeeWagePerSecond
