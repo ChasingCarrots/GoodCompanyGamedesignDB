@@ -8,7 +8,7 @@ class ModuleStackSizeColumn(ColumnBase):
         return "StackSize"
 
     def IsEditable(self):
-        return True
+        return False
 
     def GetRowStrings(self, query):
         rows = []
@@ -26,7 +26,7 @@ class ModuleOutputAmountColumn(ColumnBase):
         return "BatchSize"
 
     def IsEditable(self):
-        return True
+        return False
 
     def GetRowStrings(self, query):
         rows = []
@@ -44,7 +44,7 @@ class ModuleProductionTimeColumn(ColumnBase):
         return "Time/Batch"
 
     def IsEditable(self):
-        return True
+        return False
 
     def GetRowStrings(self, query):
         rows = []
@@ -148,7 +148,7 @@ class ModuleTotalProductionTimeColumn(ColumnBase):
     def GetRowStrings(self, query):
         rows = []
         for module in query.all():
-            rows.append(getModuleTotalProductionTime(module))
+            rows.append("%.2f"%getModuleTotalProductionTime(module))
         return rows
 
 def getModuleNumProductionSteps(module):
