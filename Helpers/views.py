@@ -211,6 +211,10 @@ def getManifestJson(request):
     for invgProp in InventoryGroupProperty.objects.all():
         inventoryGroupProperties[str(invgProp.ObjectType.id)] = invgProp.getJsonObject()
 
+    logisticsWorkplaces = {}
+    for logWork in LogisticsWorkplaceProperty.objects.all():
+        logisticsWorkplaces[str(logWork.ObjectType.id)] = logWork.getJsonObject()
+
     tuningValues = {}
     for tuningValue in TuningValue.objects.all():
         tuningValues[tuningValue.Name] = tuningValue.getJsonValue()
@@ -248,6 +252,7 @@ def getManifestJson(request):
         "ResearchAndDevelopmentProperties": researchAndDevelopmentProperties,
         "ConveyorProperties": conveyorProperties,
         "InventoryGroupProperties": inventoryGroupProperties,
+        "LogisticsWorkplaceProperties": logisticsWorkplaces,
         "TuningValues": tuningValues,
         "ResearchDataTypes": researchDataTypes,
         "DevelopmentProjects": developmentProjects

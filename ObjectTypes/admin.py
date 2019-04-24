@@ -120,6 +120,9 @@ class ConveyorPropertyInlineAdmin(SuperInlineModelAdmin, admin.StackedInline):
     model = ConveyorProperty
     extra = 0
 
+class LogisticsWorkplaceInlineAdmin(SuperInlineModelAdmin, admin.StackedInline):
+    model = LogisticsWorkplaceProperty
+    extra = 0
 
 class HasPropertyFilter(admin.SimpleListFilter):
     title = 'Filter title not set'
@@ -213,6 +216,10 @@ class HasConveyorPropertyFilter(HasPropertyFilter):
     title = "Conveyor Property"
     parameter_name = "ConveyorProperty"
 
+class HasLogisticsWorkplaceFilter(HasPropertyFilter):
+    title = "LogisticsWorkplace Property"
+    parameter_name = "LogisticsWorkplaceProperty"
+
 class ObjectTypeAdmin(SuperModelAdmin):
     list_display = ("id", "__unicode__")
     inlines = (MovablePropertyInlineAdmin,
@@ -231,7 +238,8 @@ class ObjectTypeAdmin(SuperModelAdmin):
                BlueprintPrinterPropertyInlineAdmin,
                ResearchAndDevelopmentPropertyInlineAdmin,
                InventoryGroupPropertyInlineAdmin,
-               ConveyorPropertyInlineAdmin)
+               ConveyorPropertyInlineAdmin,
+               LogisticsWorkplaceInlineAdmin)
     list_filter = (HasMovablePropertyFilter,
                    HasObjectLookPropertyFilter,
                    HasIconPropertyFilter,
@@ -248,5 +256,6 @@ class ObjectTypeAdmin(SuperModelAdmin):
                    HasBlueprintPrinterPropertyFilter,
                    HasResearchAndDevelopmentPropertyFilter,
                    HasInventoryGroupPropertyFilter,
-                   HasConveyorPropertyFilter)
+                   HasConveyorPropertyFilter,
+                   HasLogisticsWorkplaceFilter)
 admin.site.register(ObjectType, ObjectTypeAdmin)

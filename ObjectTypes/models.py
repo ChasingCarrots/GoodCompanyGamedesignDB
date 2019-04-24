@@ -512,3 +512,21 @@ class ConveyorProperty(models.Model):
 
     def __unicode__(self):
         return u"ConveyorProperty of %s" % (self.ObjectType)
+
+
+class LogisticsWorkplaceProperty(models.Model):
+    history = HistoricalRecords()
+    ObjectType = models.OneToOneField(ObjectType, related_name="LogisticsWorkplaceProperty", blank=False)
+    Reach = models.IntegerField(blank=False)
+
+    def getJsonObject(self):
+        return {
+            "Reach": self.Reach
+        }
+
+    class Meta:
+        verbose_name = 'Logistics Workplace Property'
+        verbose_name_plural = "Logistics Workplace Properties"
+
+    def __unicode__(self):
+        return u"LogisticsWorkplaceProperty of %s" % (self.ObjectType)
