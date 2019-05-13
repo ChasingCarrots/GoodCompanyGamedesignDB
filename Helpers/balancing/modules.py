@@ -3,6 +3,429 @@ from Production.models import *
 from ObjectTypes.models import *
 from Tuning.models import *
 
+
+class ComponentBalancing(BalancingTableBase):
+    def __init__(self, limitFrom, limitTo, displayMode = 0, logisticTime = 0):
+        BalancingTableBase.__init__(self, Module.objects.all()[limitFrom:limitTo])
+        self.AddColumn(ComponentLogisticSteps(displayMode, logisticTime))
+        self.AddColumn(ComponentProductionSteps(displayMode, logisticTime))
+        self.AddColumn(ComponentComplexity(displayMode, logisticTime))
+        self.AddColumn(ComponentBatches(displayMode, logisticTime))
+        self.AddColumn(ComponentCraftingTime(displayMode, logisticTime))
+        self.AddColumn(ComponentMaterialCosts(displayMode, logisticTime))
+        self.AddColumn(ComponentEmployeeCosts(displayMode, logisticTime))
+        self.AddColumn(ComponentCosts(displayMode, logisticTime))
+        self.AddColumn(ComponentSellPrice(displayMode, logisticTime))
+        self.AddColumn(ComponentProfit(displayMode, logisticTime))
+
+#region Complexity
+#region Complexity Functions
+def getComponentLogisticSteps(module, materials, useUniqueSteps = False):
+    steps = 0
+    for inputMat in module.InputMaterials.all():
+        if inputMat.id not in materials and useUniqueSteps:
+            materials.append(inputMat.id)
+            materialQuery = Module.objects.filter(Material=inputMat.Material)
+            if materialQuery.exists():
+                steps += getComponentLogisticSteps(materialQuery.all()[0], materials, useUniqueSteps)
+            else:
+                steps += 1
+        if not useUniqueSteps:
+            steps += 1
+            materialQuery = Module.objects.filter(Material=inputMat.Material)
+            if materialQuery.exists():
+                steps += getComponentLogisticSteps(materialQuery.all()[0], materials, useUniqueSteps)
+    return steps
+
+def getComponentProductionSteps(module, getFullSteps = False):
+    if getFullSteps:
+        steps = 1.0
+    else:
+        steps = 1.0 / module.OutputAmount
+    for inputMat in module.InputMaterials.all():
+        moduleMatQuery = Module.objects.filter(Material=inputMat.Material)
+        if moduleMatQuery.exists():
+            steps += getComponentProductionSteps(moduleMatQuery.all()[0], getFullSteps) * inputMat.Amount
+    return steps
+
+def getComponentComplexity(module, getOptimizedValue = False):
+    complexityLogisticsWeight = 0.6
+    value = 0
+    if getOptimizedValue:
+        value = getComponentProductionSteps(module, False) * (1.0 - complexityLogisticsWeight) + getComponentLogisticSteps(module, [], True) * complexityLogisticsWeight
+    else:
+        value = getComponentProductionSteps(module, True) * (1.0 - complexityLogisticsWeight) + getComponentLogisticSteps(module, [], False) * complexityLogisticsWeight
+    return value ** 0.33
+#endregion
+
+#region Complexity Fields
+class ComponentLogisticSteps(ColumnBase):
+    def GetHeader(self):
+        return "Logistic Steps"
+
+    def GetRowStrings(self, query):
+        rows = []
+        for module in query.all():
+            all = getComponentLogisticSteps(module, [], False)
+            unique = getComponentLogisticSteps(module, [], True)
+            if (self.displayMode == 2 and all != unique) or self.displayMode == 3:
+                rows.append("All: &nbsp;&nbsp; " + str("%.0f" % (all)) + "<br>" +
+                        "Uq: &nbsp;&nbsp; " + str("%.0f" % (unique)))
+
+            if self.displayMode == 0 or (self.displayMode == 2 and all == unique):
+                rows.append("All: &nbsp;&nbsp; " + str("%.0f" % (all)))
+
+            if self.displayMode == 1:
+                rows.append("Uq: &nbsp;&nbsp; " + str("%.0f" % (unique)))
+        return rows
+
+class ComponentProductionSteps(ColumnBase):
+    def GetHeader(self):
+        return "Production Steps"
+
+    def GetRowStrings(self, query):
+        rows = []
+        for module in query.all():
+            full = getComponentProductionSteps(module, True)
+            part = getComponentProductionSteps(module, False)
+            if (self.displayMode == 2 and full != part) or self.displayMode == 3:
+                rows.append("Full: &nbsp;&nbsp;&nbsp; " + str("%.0f" % (full)) + "<br>" +
+                        "Part: &nbsp;&nbsp; " + str("%.1f" % (part)))
+            if self.displayMode == 0 or (self.displayMode == 2 and full == part):
+                rows.append("Full: &nbsp;&nbsp;&nbsp; " + str("%.0f" % (full)))
+            if self.displayMode == 1:
+                rows.append("Part: &nbsp;&nbsp; " + str("%.1f" % (part)))
+        return rows
+
+class ComponentComplexity(ColumnBase):
+    def GetHeader(self):
+        return "Complexity"
+
+    def GetRowStrings(self, query):
+        rows = []
+        for module in query.all():
+            full = getComponentComplexity(module, False)
+            optimized = getComponentComplexity(module, True)
+            if (self.displayMode == 2 and full != optimized) or self.displayMode == 3:
+                rows.append("Full: &nbsp;&nbsp;&nbsp; " + str("%.2f" % (full)) + "<br>" +
+                        "Opt: &nbsp;&nbsp;&nbsp; " + str("%.2f" % (optimized)))
+            if self.displayMode == 0 or (self.displayMode == 2 and full == optimized):
+                rows.append("Full: &nbsp;&nbsp;&nbsp; " + str("%.2f" % (full)))
+            if self.displayMode == 1:
+                rows.append("Part: &nbsp;&nbsp; " + str("%.2f" % (optimized)))
+        return rows
+#endregion
+#endregion
+
+#region Module Data
+def getBatchString(module, getBatch = True):
+    if getBatch:
+        return "Bt (" + str("%.0f" % module.OutputAmount) + "): &nbsp;&nbsp;&nbsp; "
+    else:
+        return "Each : &nbsp;&nbsp;&nbsp;&nbsp; "
+
+def getComponentCraftingTime(module, handlingtime = 0, fullProductionLine = True):
+    totalTime = 0
+    if fullProductionLine:
+        for inputMat in module.InputMaterials.all():
+            moduleMatQuery = Module.objects.filter(Material=inputMat.Material)
+            if moduleMatQuery.exists():
+                totalTime += getComponentCraftingTime(moduleMatQuery.all()[0], handlingtime) * inputMat.Amount
+    craftingDuration = CrafterPropertyModuleDuration.objects.filter(Module=module).order_by("id")
+    if craftingDuration.exists():
+        totalTime += (craftingDuration.all()[0].Duration + handlingtime) / module.OutputAmount
+        return totalTime
+    else:
+        return 0
+
+class ComponentBatches(ColumnBase):
+    def GetHeader(self):
+        return "Batch"
+
+    def GetRowStrings(self, query):
+        rows = []
+        for module in query.all():
+            rows.append(str("%.0f" % module.OutputAmount))
+        return rows
+
+class ComponentCraftingTime(ColumnBase):
+    def GetHeader(self):
+        return "Time"
+
+    def GetRowStrings(self, query):
+        rows = []
+        for module in query.all():
+            craftingDuration = getComponentCraftingTime(module, self.logisticsTime)
+            if (self.displayMode == 2 and module.OutputAmount > 1) or self.displayMode == 3:
+                rows.append(getBatchString(module, True) + str("%.1f" % (craftingDuration)) + "<br>" +
+                    getBatchString(module, False) + str("%.1f" % (craftingDuration / module.OutputAmount)))
+            if self.displayMode == 0 or (self.displayMode == 2 and module.OutputAmount == 1):
+                rows.append(getBatchString(module, True) + str("%.1f" % (craftingDuration)))
+            if self.displayMode == 1:
+                rows.append(getBatchString(module, False) + str("%.1f" % (craftingDuration / module.OutputAmount)))
+        return rows
+#endregion
+
+#region Finances
+#region Finance Values
+def daysPerSecond():
+        return 1.0 / float(TuningValue.objects.get(Name="SecondsPerDay").Value)
+def daysPerMinute():
+        return daysPerSecond() * 60
+def daysPerHour():
+        return daysPerMinute() * 60
+
+def employeeCostPerSecond():
+    return daysPerSecond() * float(TuningValue.objects.get(Name="EmployeeWage").Value)
+def employeeCostPerMinute():
+    return employeeCostPerSecond() * 60
+def employeeCostPerHour():
+    return employeeCostPerMinute() * 60
+#endregion
+
+class ComponentMaterialCosts(ColumnBase):
+    def GetHeader(self):
+        return "Material Costs"
+
+    def GetRowStrings(self, query):
+        rows = []
+        for module in query.all():
+            if (self.displayMode == 2 and module.OutputAmount > 1) or self.displayMode == 3:
+                rows.append(getBatchString(module, True) + str("%.0f" % (module.rawMaterialCost())) + "<br>" +
+                        getBatchString(module, False) + str("%.0f" % (module.rawMaterialCost() / module.OutputAmount)))
+            if self.displayMode == 0 or (self.displayMode == 2 and module.OutputAmount == 1):
+                rows.append(getBatchString(module, True) + str("%.0f" % (module.rawMaterialCost())))
+            if self.displayMode == 1:
+                rows.append(getBatchString(module, False) + str("%.0f" % (module.rawMaterialCost() / module.OutputAmount)))
+        return rows
+
+class ComponentEmployeeCosts(ColumnBase):
+    def GetHeader(self):
+        return "Employee Costs"
+
+    def GetRowStrings(self, query):
+        rows = []
+        for module in query.all():
+            craftingDuration = getComponentCraftingTime(module, self.logisticsTime)
+            employeeCosts = employeeCostPerSecond() * craftingDuration
+            if (self.displayMode == 2 and module.OutputAmount > 1) or self.displayMode == 3:
+                rows.append(getBatchString(module, True) + str("%.0f" % (employeeCosts)) + "<br>" +
+                    getBatchString(module, False) + str("%.0f" % (employeeCosts / module.OutputAmount)))
+            if self.displayMode == 0 or (self.displayMode == 2 and module.OutputAmount == 1):
+                rows.append(getBatchString(module, True) + str("%.0f" % (employeeCosts)))
+            if self.displayMode == 1:
+                rows.append(getBatchString(module, False) + str("%.0f" % (employeeCosts / module.OutputAmount)))
+        return rows
+
+class ComponentCosts(ColumnBase):
+    def GetHeader(self):
+        return "Component Costs"
+
+    def GetRowStrings(self, query):
+        rows = []
+        for module in query.all():
+            craftingDuration = self.logisticsTime
+            craftingDurationQuery = CrafterPropertyModuleDuration.objects.filter(Module=module).order_by("id")
+            if craftingDurationQuery.exists():
+                craftingDuration += craftingDurationQuery.all()[0].Duration
+                employeeCosts = employeeCostPerSecond() * craftingDuration
+                totalCosts = employeeCosts + module.rawMaterialCost()
+
+                if (self.displayMode == 2 and module.OutputAmount > 1) or self.displayMode == 3:
+                    rows.append(getBatchString(module, True) + str("%.0f" % (totalCosts)) + "<br>" +
+                        getBatchString(module, False) + str("%.0f" % (totalCosts / module.OutputAmount)))
+                if self.displayMode == 0 or (self.displayMode == 2 and module.OutputAmount == 1):
+                    rows.append(getBatchString(module, True) + str("%.0f" % (totalCosts)))
+                if self.displayMode == 1:
+                    rows.append(getBatchString(module, False) + str("%.0f" % (totalCosts / module.OutputAmount)))
+            else:
+                rows.append("N/A")
+        return rows
+
+class ComponentSellPrice(ColumnBase):
+    def GetHeader(self):
+        return "Sell Price"
+
+    def IsEditable(self):
+        if self.displayMode == 1:
+            return True
+        else:
+            return False
+
+    def GetRowStrings(self, query):
+        rows = []
+        for module in query.all():
+            if (self.displayMode == 2 and module.OutputAmount > 1) or self.displayMode == 3:
+                rows.append(getBatchString(module, True) + str("%.0f" % (module.BaseMarketPrice)) + "<br>" +
+                    getBatchString(module, False) + str("%.0f" % (module.BaseMarketPrice / module.OutputAmount)))
+            if self.displayMode == 0 or (self.displayMode == 2 and module.OutputAmount == 1):
+                rows.append(getBatchString(module, True) + str("%.0f" % (module.BaseMarketPrice / module.OutputAmount)))
+            if self.displayMode == 1:
+                rows.append(module.BaseMarketPrice / module.OutputAmount)
+        return rows
+
+    def SetValue(self, objID, value):
+        module = Module.objects.get(id=objID)
+        module.BaseMarketPrice = float(value) * module.OutputAmount
+        module.save()
+
+class ComponentProfit(ColumnBase):
+    def GetHeader(self):
+        return "Profit"
+
+    def IsEditable(self):
+        if self.displayMode == 1 and self.logisticsTime == 0:
+            return True
+        else:
+            return False
+
+    def GetRowStrings(self, query):
+        rows = []
+        for module in query.all():
+            craftingDuration = self.logisticsTime
+            craftingDurationQuery = CrafterPropertyModuleDuration.objects.filter(Module=module).order_by("id")
+            if craftingDurationQuery.exists():
+                craftingDuration += craftingDurationQuery.all()[0].Duration
+                employeeCosts = employeeCostPerSecond() * craftingDuration
+                totalCosts = employeeCosts + module.rawMaterialCost()
+                profit = module.BaseMarketPrice - totalCosts
+                if (self.displayMode == 2 and module.OutputAmount > 1) or self.displayMode == 3:
+                    rows.append(getBatchString(module, True) + str("%.0f" % (profit)) + "<br>" +
+                        getBatchString(module, False) + str("%.0f" % (profit / module.OutputAmount)))
+                if self.displayMode == 0 or (self.displayMode == 2 and module.OutputAmount == 1):
+                    rows.append(getBatchString(module, True) + str("%.0f" % (profit)))
+                if self.displayMode == 1 and self.logisticsTime > 0:
+                    rows.append(getBatchString(module, False) + str("%.0f" % (profit / module.OutputAmount)))
+                if self.displayMode == 1 and self.logisticsTime == 0:
+                    rows.append(profit / module.OutputAmount)
+            else:
+                rows.append("N/A")
+        return rows
+
+    def SetValue(self, objID, value):
+        module = Module.objects.get(id=objID)
+
+        craftingDurationQuery = CrafterPropertyModuleDuration.objects.filter(Module=module).order_by("id")
+        craftingDuration = craftingDurationQuery.all()[0].Duration
+        employeeCosts = employeeCostPerSecond() * craftingDuration
+        totalCosts = employeeCosts + module.rawMaterialCost()
+
+        module.BaseMarketPrice = float(value) * module.OutputAmount + totalCosts
+        module.save()
+#endregion
+
+
+#region Old Complexity
+def getModuleNumProductionSteps(module):
+    steps = 1.0 / module.OutputAmount
+    for inputMat in module.InputMaterials.all():
+        moduleMatQuery = Module.objects.filter(Material=inputMat.Material)
+        if moduleMatQuery.exists():
+            steps += getModuleNumProductionSteps(moduleMatQuery.all()[0]) * inputMat.Amount
+    return steps
+
+def getModuleNumMaterialSteps(module):
+    steps = 0
+    for inputMat in module.InputMaterials.all():
+        steps += 1
+        moduleMatQuery = Module.objects.filter(Material=inputMat.Material)
+        if moduleMatQuery.exists():
+            steps += getModuleNumMaterialSteps(moduleMatQuery.all()[0])
+    return steps
+
+def getModuleNumUniqueMaterialSteps(module, materials):
+    steps = 0
+    for inputMat in module.InputMaterials.all():
+        if inputMat.id not in materials:
+            materials.append(inputMat.id)
+            moduleMatQuery = Module.objects.filter(Material=inputMat.Material)
+            if moduleMatQuery.exists():
+                steps += getModuleNumUniqueMaterialSteps(moduleMatQuery.all()[0], materials)
+            else:
+                steps += 1
+    return steps
+
+
+
+class ModuleNumProductionSteps(ColumnBase):
+    def GetHeader(self):
+        return "Production Steps"
+
+    def GetRowStrings(self, query):
+        rows = []
+        for module in query.all():
+            rows.append("%.2f"%getModuleNumProductionSteps(module))
+        return rows
+class ModuleNumLogisticSteps(ColumnBase):
+    def GetHeader(self):
+        return "Logistic Steps"
+
+    def GetRowStrings(self, query):
+        rows = []
+        for module in query.all():
+            rows.append(getModuleNumMaterialSteps(module))
+        return rows
+class ModuleNumUniqueLogisticSteps(ColumnBase):
+    def GetHeader(self):
+        return "Unique Logistic Steps"
+
+    def GetRowStrings(self, query):
+        rows = []
+        for module in query.all():
+            materials = []
+            rows.append(getModuleNumUniqueMaterialSteps(module, materials))
+        return rows
+
+class ModuleComplexityRating(ColumnBase):
+    def GetHeader(self):
+        return "Complexity"
+
+    def GetRowStrings(self, query):
+        rows = []
+        for module in query.all():
+            stepsMods = 0
+            stepsMats = 0
+            stepsMods += getModuleNumProductionSteps(module)
+            stepsMats += getModuleNumMaterialSteps(module)
+            rows.append("%.2f" % ((stepsMats * 0.3 + stepsMods * 0.7)**0.25))
+        return rows
+
+
+class ModuleComplexityRating2(ColumnBase):
+    def GetHeader(self):
+        return "Complexity2"
+
+    def GetRowStrings(self, query):
+        rows = []
+        for module in query.all():
+            materials = []
+            stepsMods = 0
+            stepsMats = 0
+            stepsMods += getModuleNumProductionSteps(module)
+            stepsMats += getModuleNumUniqueMaterialSteps(module, materials)
+            rows.append("%.2f" % ((stepsMats * 0.3 + stepsMods * 0.7)**0.25))
+        return rows
+
+#endregion
+
+#region Legacy
+class ModuleRawEmployeeCostColumn(ColumnBase):
+    def GetHeader(self):
+        return "Employee Cost"
+
+    def GetRowStrings(self, query):
+        employeeCostPerSecond = 1
+        rows = []
+        for module in query.all():
+            moduleProductionTime = getModuleTotalProductionTime(module)
+            if moduleProductionTime == 0:
+                rows.append("err")
+            else:
+                rows.append(str("%.1f" % (moduleProductionTime + efficentExtraTimePerBatch) * employeeCostPerSecond) + "<br>" +
+                    str("%.1f" % (moduleProductionTime + normalExtraTimePerBatch) * employeeCostPerSecond) + "<br>" +
+                    str("%.1f" % (moduleProductionTime + irregularExtraTimePerBatch) * employeeCostPerSecond))
+        return rows
+
 efficentExtraTimePerBatch = 2.0
 normalExtraTimePerBatch = 5.0
 irregularExtraTimePerBatch = 15.0
@@ -70,7 +493,6 @@ class ModuleBatchProductionTimeColumn(ColumnBase):
             property.Duration = int(value)
             property.save()
 
-
 class ModuleProductionTimeColumn(ColumnBase):
     def GetHeader(self):
         return "Time/Each"
@@ -97,19 +519,12 @@ class ModuleRawMaterialCostColumn(ColumnBase):
             rows.append("%.2f" % module.rawMaterialCost())
         return rows
 
-
-def getEmployeeCostPerSecond():
-    secondsPerDay = float(TuningValue.objects.get(Name="SecondsPerDay").Value)
-    employeeCostsPerDay = float(TuningValue.objects.get(Name="EmployeeWage").Value)
-    return employeeCostsPerDay / secondsPerDay
-
-
 class ModuleRawEmployeeCostColumn(ColumnBase):
     def GetHeader(self):
         return "Employee Cost"
 
     def GetRowStrings(self, query):
-        employeeCostPerSecond = getEmployeeCostPerSecond()
+        employeeCostPerSecond = 1
         rows = []
         for module in query.all():
             moduleProductionTime = getModuleTotalProductionTime(module)
@@ -120,8 +535,6 @@ class ModuleRawEmployeeCostColumn(ColumnBase):
                     str("%.1f" % (moduleProductionTime + normalExtraTimePerBatch) * employeeCostPerSecond) + "<br>" +
                     str("%.1f" % (moduleProductionTime + irregularExtraTimePerBatch) * employeeCostPerSecond))
         return rows
-
-
 
 class NumQueuesPerDay(ColumnBase):
     def GetHeader(self):
@@ -177,36 +590,6 @@ def getModuleTotalProductionTime(module, handlingtime = 0):
         totalTime += (craftingDuration.all()[0].Duration + handlingtime) / module.OutputAmount
     return totalTime
 
-def getModuleNumProductionSteps(module):
-    steps = 1.0 / module.OutputAmount
-    for inputMat in module.InputMaterials.all():
-        moduleMatQuery = Module.objects.filter(Material=inputMat.Material)
-        if moduleMatQuery.exists():
-            steps += getModuleNumProductionSteps(moduleMatQuery.all()[0]) * inputMat.Amount
-    return steps
-
-def getModuleNumMaterialSteps(module):
-    steps = 0
-    for inputMat in module.InputMaterials.all():
-        steps += 1
-        moduleMatQuery = Module.objects.filter(Material=inputMat.Material)
-        if moduleMatQuery.exists():
-            steps += getModuleNumMaterialSteps(moduleMatQuery.all()[0])
-    return steps
-
-def getModuleNumUniqueMaterialSteps(module, materials):
-    steps = 0
-    for inputMat in module.InputMaterials.all():
-        if inputMat.id not in materials:
-            materials.append(inputMat.id)
-            moduleMatQuery = Module.objects.filter(Material=inputMat.Material)
-            if moduleMatQuery.exists():
-                steps += getModuleNumUniqueMaterialSteps(moduleMatQuery.all()[0], materials)
-            else:
-                steps += 1
-    return steps
-
-
 class ModuleTotalProductionTimeColumn(ColumnBase):
     def GetHeader(self):
         return "Queue Time"
@@ -219,67 +602,6 @@ class ModuleTotalProductionTimeColumn(ColumnBase):
             rows.append(str("%.2f" % ((queuetime + efficentExtraTimePerBatch * productionSteps))) + "<br>" +
                         str("%.2f" % ((queuetime + normalExtraTimePerBatch * productionSteps))) + "<br>" +
                         str("%.2f" % ((queuetime + irregularExtraTimePerBatch * productionSteps))))
-        return rows
-
-class ModuleNumProductionSteps(ColumnBase):
-    def GetHeader(self):
-        return "Production Steps"
-
-    def GetRowStrings(self, query):
-        rows = []
-        for module in query.all():
-            rows.append("%.2f"%getModuleNumProductionSteps(module))
-        return rows
-
-class ModuleNumLogisticSteps(ColumnBase):
-    def GetHeader(self):
-        return "Logistic Steps"
-
-    def GetRowStrings(self, query):
-        rows = []
-        for module in query.all():
-            rows.append(getModuleNumMaterialSteps(module))
-        return rows
-
-class ModuleNumUniqueLogisticSteps(ColumnBase):
-    def GetHeader(self):
-        return "Unique Logistic Steps"
-
-    def GetRowStrings(self, query):
-        rows = []
-        for module in query.all():
-            materials = []
-            rows.append(getModuleNumUniqueMaterialSteps(module, materials))
-        return rows
-
-class ModuleComplexityRating(ColumnBase):
-    def GetHeader(self):
-        return "Complexity"
-
-    def GetRowStrings(self, query):
-        rows = []
-        for module in query.all():
-            stepsMods = 0
-            stepsMats = 0
-            stepsMods += getModuleNumProductionSteps(module)
-            stepsMats += getModuleNumMaterialSteps(module)
-            rows.append("%.2f" % ((stepsMats * 0.3 + stepsMods * 0.7)**0.25))
-        return rows
-
-
-class ModuleComplexityRating2(ColumnBase):
-    def GetHeader(self):
-        return "Complexity2"
-
-    def GetRowStrings(self, query):
-        rows = []
-        for module in query.all():
-            materials = []
-            stepsMods = 0
-            stepsMats = 0
-            stepsMods += getModuleNumProductionSteps(module)
-            stepsMats += getModuleNumUniqueMaterialSteps(module, materials)
-            rows.append("%.2f" % ((stepsMats * 0.3 + stepsMods * 0.7)**0.25))
         return rows
 
 class ModuleBaseMarketPrice(ColumnBase):
@@ -300,14 +622,13 @@ class ModuleBaseMarketPrice(ColumnBase):
         module.BaseMarketPrice = float(value)
         module.save()
 
-
 class ModuleCostColumn(ColumnBase):
     def GetHeader(self):
         return "Costs/Item"
 
 
     def GetRowStrings(self, query):
-        employeeWagePerSecond = getEmployeeCostPerSecond()
+        employeeWagePerSecond = 1
         rows = []
         for module in query.all():
             rawMaterialCost = module.rawMaterialCost()
@@ -328,7 +649,7 @@ class ModuleProfitPerItem(ColumnBase):
         return False
 
     def GetRowStrings(self, query):
-        employeeWagePerSecond = getEmployeeCostPerSecond()
+        employeeWagePerSecond = 1
         rows = []
         for module in query.all():
             rawMaterialCost = module.rawMaterialCost()
@@ -364,7 +685,7 @@ class ModuleProfitPerDay(ColumnBase):
 
     def GetRowStrings(self, query):
         secondsPerDay = float(TuningValue.objects.get(Name="SecondsPerDay").Value)
-        employeeWagePerSecond = getEmployeeCostPerSecond()
+        employeeWagePerSecond = 1
         rows = []
         for module in query.all():
             rawMaterialCost = module.rawMaterialCost()
@@ -391,7 +712,7 @@ class ModuleProductionCostPerDay(ColumnBase):
 
     def GetRowStrings(self, query):
         secondsPerDay = float(TuningValue.objects.get(Name="SecondsPerDay").Value)
-        employeeWagePerSecond = getEmployeeCostPerSecond()
+        employeeWagePerSecond = 1
         rows = []
         for module in query.all():
             rawMaterialCost = module.rawMaterialCost()
@@ -412,7 +733,7 @@ class ModuleProfitability(ColumnBase):
         return True
 
     def GetRowStrings(self, query):
-        employeeWagePerSecond = getEmployeeCostPerSecond()
+        employeeWagePerSecond = 1
         rows = []
         for module in query.all():
             rawMaterialCost = module.rawMaterialCost()
@@ -428,7 +749,7 @@ class ModuleProfitability(ColumnBase):
 
     def SetValue(self, objID, value):
         module = Module.objects.get(id=objID)
-        employeeWagePerSecond = getEmployeeCostPerSecond()
+        employeeWagePerSecond = 1
 
         rawMaterialCost = module.rawMaterialCost()
         productionTime = getModuleTotalProductionTime(module, normalExtraTimePerBatch)
@@ -438,7 +759,7 @@ class ModuleProfitability(ColumnBase):
         module.save()
 
 class ModuleBalancingTable(BalancingTableBase):
-    def __init__(self, limitFrom, limitTo):
+    def __init__(self, limitFrom, limitTo, displayMode = 0, logisticTime = 0):
         BalancingTableBase.__init__(self, Module.objects.all()[limitFrom:limitTo])
         #self.AddColumn(ModuleStackSizeColumn())
         self.AddColumn(ModuleOutputAmountColumn())
@@ -458,9 +779,8 @@ class ModuleBalancingTable(BalancingTableBase):
         self.AddColumn(ModuleProfitability())
         self.AddColumn(ModuleProfitPerDay())
 
-
 class ModuleProductionOverview(BalancingTableBase):
-    def __init__(self, limitFrom, limitTo):
+    def __init__(self, limitFrom, limitTo, displayMode = 0, logisticTime = 0):
         BalancingTableBase.__init__(self, Module.objects.all()[limitFrom:limitTo])
         self.AddColumn(ModuleStackSizeColumn())
         self.AddColumn(ModuleProductionTimeColumn())
@@ -482,3 +802,4 @@ class ModuleProductionOverview(BalancingTableBase):
         #self.AddColumn(ModuleBaseMarketPrice())
         #self.AddColumn(ModuleProfitability())
         #self.AddColumn(ModuleProfitPerDay())
+#endregion

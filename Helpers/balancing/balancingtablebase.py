@@ -1,6 +1,10 @@
 import json
 
 class ColumnBase(object):
+    def __init__(self, displayMode = 2, logisticTime = 0):
+        self.displayMode = displayMode
+        self.logisticsTime = logisticTime
+
     def GetHeader(self):
         return "undefined"
 

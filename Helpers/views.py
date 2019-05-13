@@ -281,10 +281,10 @@ def balancingTablesView(request):
     return render(request, "helpers/balancingtables.html", { "tables": balancingTables })
 
 @csrf_exempt
-def getBalancingTableJson(request, tablename, limitFrom, limitTo):
+def getBalancingTableJson(request, tablename, limitFrom, limitTo, displayMode, logisticTime):
     for table in BalancingTableBase.__subclasses__():
         if tablename == table.__name__:
-            balancingTable = table(int(limitFrom), int(limitTo))
+            balancingTable = table(int(limitFrom), int(limitTo), int(displayMode), int(logisticTime))
             return HttpResponse(balancingTable.GetJson(), content_type='application/json')
 
     raise Http404()

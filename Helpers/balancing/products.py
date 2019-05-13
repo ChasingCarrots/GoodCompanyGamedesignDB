@@ -422,7 +422,7 @@ class ProductProfitability(ColumnBase):
         product.ProductFunction.save()
 
 class ProductBalancingTable(BalancingTableBase):
-    def __init__(self, limitFrom, limitTo):
+    def __init__(self, limitFrom, limitTo, displayMode = 0, logisticTime = 0):
         BalancingTableBase.__init__(self, SampleProduct.objects.all()[limitFrom:limitTo])
         #self.AddColumn(ProductNumProductionSteps())
         #self.AddColumn(ProductNumLogisticSteps())
@@ -441,7 +441,7 @@ class ProductBalancingTable(BalancingTableBase):
         self.AddColumn(ProductProfitability())
 
 class ProductProductionOverview(BalancingTableBase):
-    def __init__(self, limitFrom, limitTo):
+    def __init__(self, limitFrom, limitTo, displayMode = 0, logisticTime = 0):
         BalancingTableBase.__init__(self, SampleProduct.objects.all()[limitFrom:limitTo])
         self.AddColumn(ProductNumProductionSteps())
         self.AddColumn(ProductNumLogisticSteps())
