@@ -386,7 +386,11 @@ def daysPerSecond():
     return 1.0 / float(TuningValue.objects.get(Name="SecondsPerDay").Value)
 
 def componentsPerSecond(module, handlingtime):
-    return 1.0 / getComponentCraftingTime(module, handlingtime, False)
+    craftingtime = getComponentCraftingTime(module, handlingtime, False)
+    if (craftingtime > 0):
+        return (1.0 / craftingtime)
+    else:
+        return 0
 
 def employeeCostPerSecond():
     return daysPerSecond() * float(TuningValue.objects.get(Name="EmployeeWage").Value)
