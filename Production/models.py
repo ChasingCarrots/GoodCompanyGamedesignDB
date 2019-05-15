@@ -184,7 +184,7 @@ class Module(models.Model):
             "OutputAmount":self.OutputAmount,
             "BaseMarketPrice":self.BaseMarketPrice
         }
-    
+
     class Meta:
         verbose_name = 'Module'
         verbose_name_plural = 'Modules'

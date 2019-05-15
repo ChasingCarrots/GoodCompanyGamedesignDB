@@ -15,20 +15,25 @@
                 {% endfor %}
             </div>
         </div>
+        &nbsp;&nbsp;&nbsp;&nbsp;
         <div class="ui selection dropdown">
             <input type="hidden" name="displaymode" id="displaymode">
             <i class="dropdown icon"></i>
             <div class="default text">Select table</div>
             <div class="menu">
-                    <div class="item" data-value="0">Batch View</div>
-                    <div class="item" data-value="1">Single View</div>
-                    <div class="item" data-value="2">Combined View</div>
-                    <div class="item" data-value="3">Full View</div>
+                    <div class="item" data-value="0">By Batch</div>
+                    <div class="item" data-value="1">By Item</div>
+                    <div class="item" data-value="2">Combined</div>
+                    <div class="item" data-value="3">Force Combined</div>
             </div>
         </div>
+        &nbsp;&nbsp;&nbsp;&nbsp;
         <input type="text" id="logisticTime" placeholder="Add. Logistic Time: 0">
-        <input type="text" id="limitFrom" placeholder="Starting From: 0">
-        <input type="text" id="limitTo" placeholder="Result Amounts: 10">
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <input type="text" id="limitFrom" placeholder="Starting At: 0">
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <input type="text" id="limitTo" placeholder="End Before: 10">
+        &nbsp;&nbsp;&nbsp;&nbsp;
         <div class="ui button" id="go">GO</div>
     </div>
     <div id="tablecontent"></div>
@@ -66,18 +71,20 @@
     };
 
     var TableTemplate = `<table class="ui very compact small striped celled table">
-  <thead>
-    <tr>
-        <%for(var colIndex in this.columns) { %>
-        <th class="one wide"><%this.columns[colIndex].header%></th>
-        <% } %>
-    </tr>
-  </thead>
-  <tbody>
+    <br>
     <%for(var rowIndex in this.rows) { %>
-    <tr>
+        <% if(rowIndex % 15 == 0)  { %>
+        <thead style="text-align: center;" border="1">
+            <tr>
+                <%for(var colIndex in this.columns) { %>
+                <th class="one wide" style="background-color: #e0eae7;"><%this.columns[colIndex].header%></th>
+                <% } %>
+            </tr>
+        </thead>
+        <% } %>
+    <tr style="text-align: center;">
         <%for(var colIndex in this.rows[rowIndex].columns) { %>
-        <td>
+        <td style="text-align: center;">
             <%if(this.columns[colIndex].editable) { %>
             <div class="ui action fluid mini input cell" data-objid="<%this.rows[rowIndex].id%>" data-column="<%colIndex - 1%>">
                 <input type="text" value="<%this.rows[rowIndex].columns[colIndex]%>">
@@ -93,7 +100,7 @@
     </tr>
     <% } %>
   </tbody>
-</table>`;
+</table><br><br>`;
 
     function updateTable(tablename, limitFrom, limitTo, displayMode, logisticTime) {
         $('#go').addClass("disabled loading");

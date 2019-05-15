@@ -1,9 +1,10 @@
 import json
 
 class ColumnBase(object):
-    def __init__(self, displayMode = 2, logisticTime = 0):
+    def __init__(self, displayMode = 2, logisticTime = 0, option = ""):
         self.displayMode = displayMode
         self.logisticsTime = logisticTime
+        self.option = option
 
     def GetHeader(self):
         return "undefined"

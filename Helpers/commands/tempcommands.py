@@ -1,4 +1,4 @@
-from Helpers.balancing.modules import getModuleNumProductionSteps
+from Helpers.balancing.modules import getComponentProductionSteps
 from Tuning.models import TuningValue
 from commandbase import CommandBase
 from Production.models import *
@@ -15,7 +15,7 @@ class InitAllModuleMarketPrices(CommandBase):
         addCostPerStep = float(TuningValue.objects.get(Name="ModuleSellPriceAddCostPerStep").Value)
         materialCostFactor = float(TuningValue.objects.get(Name="ModuleSellPriceMaterialCostFactor").Value)
         for module in Module.objects.all():
-            price = getModuleNumProductionSteps(module) * addCostPerStep
+            price = getComponentProductionSteps(module, True) * addCostPerStep
             price += module.rawMaterialCost() * materialCostFactor
             module.BaseMarketPrice = price
             module.save()
