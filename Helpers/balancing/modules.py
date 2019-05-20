@@ -235,10 +235,10 @@ class ComponentBatches(ColumnBase):
 
 #region Finances
 def employeeCostPerComponent(module, handlingtime):
-    return employeeCostPerSecond() * getComponentCraftingTime(module, handlingtime)
+    return employeeCostPerSecond() * getComponentCraftingTime(module, handlingtime, True)
 
 def totalCostPerComponent(module, handlingtime):
-    return employeeCostPerComponent(module, handlingtime) + module.rawMaterialCost() / module.OutputAmount
+    return employeeCostPerComponent(module, handlingtime) + module.rawMaterialCost()
 
 def totalProfitPerComponent(module, handlingtime):
     return (module.BaseMarketPrice / module.OutputAmount) - totalCostPerComponent(module, handlingtime)
@@ -256,12 +256,12 @@ class ComponentMaterialCosts(ColumnBase):
         rows = []
         for module in query.all():
             if (self.displayMode == 2 and module.OutputAmount > 1) or self.displayMode == 3:
-                rows.append(getBatchString(module, True) + formatCellText(str("%6.0f" % (module.rawMaterialCost()))) + "<br>" +
-                        getBatchString(module, False) + formatCellText(str("%6.0f" % (module.rawMaterialCost() / module.OutputAmount))))
+                rows.append(getBatchString(module, True) + formatCellText(str("%6.0f" % (module.rawMaterialCost() * module.OutputAmount))) + "<br>" +
+                        getBatchString(module, False) + formatCellText(str("%6.0f" % (module.rawMaterialCost()))))
             if self.displayMode == 0 or (self.displayMode == 2 and module.OutputAmount == 1):
-                rows.append(getBatchString(module, True) + formatCellText(str("%6.0f" % (module.rawMaterialCost()))))
+                rows.append(getBatchString(module, True) + formatCellText(str("%6.0f" % (module.rawMaterialCost() * module.OutputAmount))))
             if self.displayMode == 1:
-                rows.append(getBatchString(module, False) + formatCellText(str("%6.0f" % (module.rawMaterialCost() / module.OutputAmount))))
+                rows.append(getBatchString(module, False) + formatCellText(str("%6.0f" % (module.rawMaterialCost()))))
         return rows
 
 class ComponentEmployeeCosts(ColumnBase):
@@ -273,12 +273,12 @@ class ComponentEmployeeCosts(ColumnBase):
         for module in query.all():
             employeeCosts = employeeCostPerComponent(module, self.logisticsTime)
             if (self.displayMode == 2 and module.OutputAmount > 1) or self.displayMode == 3:
-                rows.append(getBatchString(module, True) + formatCellText(str("%5.0f" % (employeeCosts))) + "<br>" +
-                    getBatchString(module, False) + formatCellText(str("%5.0f" % (employeeCosts / module.OutputAmount))))
+                rows.append(getBatchString(module, True) + formatCellText(str("%5.0f" % (employeeCosts * module.OutputAmount))) + "<br>" +
+                    getBatchString(module, False) + formatCellText(str("%5.0f" % (employeeCosts))))
             if self.displayMode == 0 or (self.displayMode == 2 and module.OutputAmount == 1):
-                rows.append(getBatchString(module, True) + formatCellText(str("%5.0f" % (employeeCosts))))
+                rows.append(getBatchString(module, True) + formatCellText(str("%5.0f" % (employeeCosts * module.OutputAmount))))
             if self.displayMode == 1:
-                rows.append(getBatchString(module, False) + formatCellText(str("%5.0f" % (employeeCosts / module.OutputAmount))))
+                rows.append(getBatchString(module, False) + formatCellText(str("%5.0f" % (employeeCosts))))
         return rows
 
 class ComponentCosts(ColumnBase):
