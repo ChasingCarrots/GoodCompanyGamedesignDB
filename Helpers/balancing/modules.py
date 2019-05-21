@@ -245,7 +245,7 @@ def totalProfitPerComponent(module, handlingtime):
 
 def getComponentProfitability(module, handlingtime):
     totalCosts = totalCostPerComponent(module, handlingtime)
-    return ((module.BaseMarketPrice - totalCosts) / totalCosts) * 100
+    return (((module.BaseMarketPrice / module.OutputAmount) - totalCosts ) / totalCosts) * 100
 
 
 class ComponentMaterialCosts(ColumnBase):
