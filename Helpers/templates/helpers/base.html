@@ -22,6 +22,27 @@
             margin: 5em 0em 0em;
             padding: 5em 0em;
         }
+
+        .tooltip {
+        }
+
+        .tooltip .tooltiptext {
+          visibility: hidden;
+          background-color: black;
+          color: #fff;
+          text-align: center;
+          border-radius: 6px;
+          padding: 5px;
+
+          /* Position the tooltip */
+          position: absolute;
+          z-index: 5;
+        }
+
+        .tooltip:hover .tooltiptext {
+          visibility: visible;
+        }
+
         {% block customcss %}{% endblock %}
     </style>
 
