@@ -151,7 +151,7 @@ def sampleProduct(request, productId):
             "moduleValue": getProductModuleValue(product),
             "moduleValueDifference": product.ProductFunction.BaseMarketPrice - getProductModuleValue(product),
             "craftingTime": getProductCraftingTime(product,0,False),
-            "perMinuteRate": productCostsPerSecond(product, 0) * 60,
+            "perMinuteRate": (1.0 / getProductCraftingTime(product, 0, False)) * 60,
             "perMinuteProfit": productProfitPerSecond(product, 0) * 60,
             "complexity": getProductComplexity(product, True),
             "moduleCount": moduleCount,
