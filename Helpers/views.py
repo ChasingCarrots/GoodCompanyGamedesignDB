@@ -15,13 +15,155 @@ from commands.tempcommands import *
 def productTypeOverview(request):
     productTypes = []
     for productType in ProductType.objects.all():
+
+        moduleCount = 0
+        for slot in productType.Slots.all():
+            moduleQuery = Module.objects.filter(FitsIntoSlot=slot)
+            if moduleQuery.exists():
+                moduleCount += len(moduleQuery)
+
+        functionCount = 0
+        functionQuery = ProductFunction.objects.filter(ViableProductTypes=productType)
+        if functionQuery.exists():
+            functionCount += len(functionQuery)
+
         productTypes.append({
             "id": productType.id,
             "name": productType.Name,
             "slotCount": productType.Slots.count(),
-            "relevantModules": 0
+            "icon": productType.IconAssetID,
+            "functions": functionCount,
+            "relevantModules": moduleCount
         })
     return render(request, "helpers/producttypeoverview.html", {"productTypes": productTypes})
+
+
+def productTypeDetail(request, typeID):
+
+    productType = get_object_or_404(ProductType, pk=typeID)
+    productSlots = []
+    modules = []
+    functions = []
+    samples = []
+
+    moduleCount = 0
+    functionCount = 0
+
+    for slot in productType.Slots.all():
+        productSlots.append({
+            "id": slot.id,
+            "name": slot.Name,
+            "isOptional": slot.IsOptional
+        })
+        moduleQuery = Module.objects.filter(FitsIntoSlot=slot)
+        for module in moduleQuery.all():
+            moduleCount += 1
+            modules.append({
+                "slot": slot.id,
+                "id": module.id,
+                "name": module.Name,
+                "icon": module.IconAssetID,
+            })
+
+    functionQuery = ProductFunction.objects.filter(ViableProductTypes=productType)
+    for function in functionQuery.all():
+        functionCount += 1
+        functions.append({
+            "id": function.id,
+            "name": function.Name,
+            "icon": function.IconAssetID,
+            "price": function.BaseMarketPrice
+        })
+        sampleQuery = SampleProduct.objects.filter(ProductFunction=function)
+        for sample in sampleQuery.all():
+            samples.append({
+                "function": function.id,
+                "id": sample.id,
+                "name": sample.Name
+            })
+
+
+
+
+    return render(request, "helpers/producttypedetail.html", {
+        "productType": {
+            "id": productType.id,
+            "name": productType.Name,
+            "icon": productType.IconAssetID,
+            "slotCount": productType.Slots.count(),
+            "functionCound": functionCount,
+            "moduleCount": moduleCount,
+            "slots": productSlots,
+            "modules": modules,
+            "functions": functions,
+            "samples": samples
+        }
+    })
+
+
+def sampleProduct(request, productId):
+    product = get_object_or_404(SampleProduct, pk=productId)
+
+    totalAmount = 0
+    totalCost = 0
+    moduleBaseMaterials = product.collectMaterials()
+
+    for _, mat in moduleBaseMaterials.items():
+        totalAmount += mat["amount"]
+        totalCost += mat["totalcost"]
+
+    modules = []
+    moduleCount = 0
+
+    for module in product.Modules.all():
+        modules.append({
+            "name": module.Name,
+            "icon": module.IconAssetID,
+            "id": module.id,
+            "materialId": module.Material.id,
+            "complexity": getComponentComplexity(module),
+            "costs": totalCostPerComponent(module, 0),
+            "profit": totalProfitPerComponent(module, 0),
+            "income": module.BaseMarketPrice,
+            "profitability": getComponentProfitability(module, 0),
+            "craftingTime": getComponentCraftingTime(module, 0, False),
+            "perMinuteRate": componentsPerSecond(module, 0) * 60,
+            "perMinuteProfit": componentProfitPerSecond(module, 0) * 60,
+            "outputAmount": module.OutputAmount,
+        })
+
+    commands = []
+    for command in CommandBase.__subclasses__():
+        commands.append(command.__name__)
+
+    return render(request, "helpers/sampleproduct.html", {
+        "product": {
+            "id": product.id,
+            "name": product.Name,
+            "function": product.ProductFunction.id,
+            "icon": product.ProductFunction.IconAssetID,
+            "costsMaterial": materialCostPerProduct(product),
+            "costsEmployees": employeeCostPerProduct(product, 0),
+            "costs": totalCostPerProduct(product, 0),
+            "profit": totalProfitPerProduct(product, 0),
+            "profitability": getProductProfitability(product, 0),
+            "income": product.ProductFunction.BaseMarketPrice,
+            "moduleValue": getProductModuleValue(product),
+            "moduleValueDifference": product.ProductFunction.BaseMarketPrice - getProductModuleValue(product),
+            "craftingTime": getProductCraftingTime(product,0,False),
+            "perMinuteRate": productCostsPerSecond(product, 0) * 60,
+            "perMinuteProfit": productProfitPerSecond(product, 0) * 60,
+            "complexity": getProductComplexity(product, True),
+            "moduleCount": moduleCount,
+            "modules": modules
+        },
+        "materials": moduleBaseMaterials,
+        "total": {
+            "amount": totalAmount,
+            "totalcost": totalCost,
+        },
+        "commands": commands,
+    })
 
 def moduleOverview(request):
     modules = []
@@ -42,6 +184,10 @@ def moduleDetail(request, moduleID):
         totalAmount += mat["amount"]
         totalCost += mat["totalcost"]
 
+    commands = []
+    for command in CommandBase.__subclasses__():
+        commands.append(command.__name__)
+
     moduleInputMaterials = []
     for moduleInputMat in module.InputMaterials.all():
         moduleInputMatModuleID = -1
@@ -55,6 +201,7 @@ def moduleDetail(request, moduleID):
             cost = moduleInputModule.rawMaterialCost()
         moduleInputMaterials.append({
             "name": moduleInputMat.Material.Name,
+            "icon": moduleInputMat.Material.IconAssetID,
             "amount": moduleInputMat.Amount,
             "moduleID": moduleInputMatModuleID,
             "materialID": moduleInputMatMaterialID,
@@ -64,12 +211,25 @@ def moduleDetail(request, moduleID):
         "module": {
             "name": module.Name,
             "inputMaterials": moduleInputMaterials,
+            "icon": module.IconAssetID,
+            "id": module.id,
+            "materialId": module.Material.id,
+            "complexity": getComponentComplexity(module),
+            "costs": totalCostPerComponent(module, 0),
+            "profit": totalProfitPerComponent(module, 0),
+            "income": module.BaseMarketPrice,
+            "profitability": getComponentProfitability(module, 0),
+            "craftingTime": getComponentCraftingTime(module, 0, False),
+            "perMinuteRate": componentsPerSecond(module, 0) * 60,
+            "perMinuteProfit": componentProfitPerSecond(module, 0) * 60,
+            "outputAmount": module.OutputAmount,
         },
         "materials": moduleBaseMaterials,
         "total": {
             "amount": totalAmount,
             "totalcost": totalCost,
         },
+        "commands": commands,
     })
 
 def materialOverview(request):
@@ -107,6 +267,7 @@ def materialDetail(request, materialID):
             "stackSize": material.StackSize,
             "stackPrice": material.StackBuyPrice,
             "unitPrice": material.getPricePerUnit(),
+            "icon": material.IconAssetID,
         },
         "modules": modules,
         "appliedValues": appliedValues,

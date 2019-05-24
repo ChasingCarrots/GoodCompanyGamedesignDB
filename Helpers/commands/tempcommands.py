@@ -125,45 +125,48 @@ class ProductTree(CommandBase):
 
         for n in range(count):
             if type(materials[n]) == ProductFunction:
-                output += "<a class='tooltip' target='_blank' href='/goodcompany/admin/Production/productfunction/"+str(materials[n].id)+"/'>"
-                output += "<span class='tooltiptext' style='left: "+str(depths[n] * paddingX - size * 0)+"px; top: "+str(positions[n] * paddingY + size*0.75)+"px;'>" + materials[n].Name + "</span>"
+                output += "<a class='tooltip' target='_self' href='/goodcompany/admin/Production/productfunction/"+str(materials[n].id)+"/'>"
+                output += "<span class='tooltiptext' style='left: "+str(depths[n] * paddingX + size * 1.2 - paddingX * 0.75)+"px; top: "+str(positions[n] * paddingY + paddingY * 0.5 + size * 0.25)+"px;'>"
+                output += materials[n].Name + "</span>"
             if type(materials[n]) == Module:
-                output += "<a class='tooltip' target='_blank' href='/goodcompany/admin/Production/module/"+str(materials[n].id)+"/'>"
-                output += "<span class='tooltiptext' style='left: "+str(depths[n] * paddingX - size * 0.5)+"px; top: "+str(positions[n] * paddingY + size*0.5)+"px;'>" + materials[n].Name + "</span>"
+                output += "<a class='tooltip' target='_self' href='/goodcompany/helper/moduledetail/"+str(materials[n].id)+"/'>"
+                output += "<span class='tooltiptext' style='left: "+str(depths[n] * paddingX + size * 1.2 - paddingX * 0.75)+"px; top: "+str(positions[n] * paddingY + paddingY * 0.5 + size * 0.25)+"px;'>"
+                output += materials[n].Name + " | output: " + str(materials[n].OutputAmount) + "</span>"
             if type(materials[n]) == Material:
-                output += "<a class='tooltip' target='_blank' href='/goodcompany/admin/Production/material/"+str(materials[n].id)+"/'>"
-                output += "<span class='tooltiptext' style='left: "+str(depths[n] * paddingX - size * 0)+"px; top: "+str(positions[n] * paddingY + size*0.75)+"px;'>" + materials[n].Name + "</span>"
+                output += "<a class='tooltip' target='_self' href='/goodcompany/helper/materialdetail/"+str(materials[n].id)+"/'>"
+                output += "<span class='tooltiptext' style='left: "+str(depths[n] * paddingX + size * 1.2 - paddingX * 0.75)+"px; top: "+str(positions[n] * paddingY  + paddingY * 0.5 + size * 0.25)+"px;'>"
+                output += materials[n].Name + "</span>"
 
-            output += "<img src='/goodcompany/static/"+materials[n].IconAssetID+".png' style=' z-index: 2;"
+            output += "<img src='/goodcompany/static/img/"+materials[n].IconAssetID+".png' onerror='this.src=\\\"/goodcompany/static/img/unknown.png/\\\";' style='z-index: 2;"
             output += "height: "+str(size)+"px; width: "+str(size)+"px; position: absolute; "
-            output += "left: "+str(depths[n] * paddingX - size * 1.5)+"px; top: "+str(positions[n] * paddingY + size*0.5)+"px;' "
+            output += "left: "+str(depths[n] * paddingX - paddingX * 0.75)+"px; top: "+str(positions[n] * paddingY + paddingY * 0.5)+"px;' "
             output += "alt='"+materials[n].Name+"'>"
 
             output += "<p style='position: absolute; z-index: 3; line-height: 80%;"
             output += "height: "+str(size/2)+"px; width: "+str(size*2)+"px; font-size: "+str(size/2)+"px; font-weight: bolder; color: #222; text-align: center; text-shadow: 1px 1px white, -1px 1px white, 1px -1px white, -1px -1px white;"
-            output += "left: "+str(depths[n] * paddingX - size * 2)+"px; top: "+str(positions[n] * paddingY + size * 0.75)+"px;'>"
+            output += "left: "+str(depths[n] * paddingX - size * 0.5 - paddingX * 0.75)+"px; top: "+str(positions[n] * paddingY + paddingY * 0.5 + size * 0.5)+"px;'>"
 
 
             if type(materials[n]) == ProductFunction:
-                output += str(amounts[n])
+                output += str("%3.1f" % amounts[n])
             if type(materials[n]) == Module:
                 if materials[n].OutputAmount != 1:
-                    output += str(amounts[n])
-                    output += "<small><br>("+str((amounts[n] / materials[n].OutputAmount))+")</small>"
+                    output += str("%3.1f" % amounts[n])
+                    output += "<small><br>("+str("%3.1f" % (amounts[n] / materials[n].OutputAmount))+")</small>"
                 else:
-                    output += str(amounts[n])
+                    output += str("%3.1f" % amounts[n])
             if type(materials[n]) == Material:
-                output += str(amounts[n])
+                output += str("%3.1f" % amounts[n])
 
             output += "</p></a>"
 
             if parents[n] != None:
-                distanceX = (depths[n] * paddingX - size) - (depths[parents[n]] * paddingX - size)
-                distanceY = (positions[n] * paddingY + size) - (positions[parents[n]] * paddingY + size) + 2
+                distanceX = (depths[n] * paddingX - paddingX * 0.75) - (depths[parents[n]] * paddingX - paddingX * 0.75)
+                distanceY = (positions[n] * paddingY + paddingY * 0.5 + size * 0.5) - (positions[parents[n]] * paddingY + paddingY * 0.5 + size * 0.5) + 2
                 if distanceY >= 0:
-                    output += "<svg style='z-index: 1; position: absolute; left: "+str(depths[parents[n]] * paddingX - size)+"px; top: "+str(positions[parents[n]] * paddingY + size)+"px;' "
+                    output += "<svg style='z-index: 1; position: absolute; left: "+str(depths[parents[n]] * paddingX - paddingX * 0.75 + size * 0.5)+"px; top: "+str(positions[parents[n]] * paddingY + paddingY * 0.5 + size * 0.5)+"px;' "
                     output += "width='"+str(distanceX)+"' height='"+str(distanceY)+"'><line x1='0' y1='0' x2='"+str(distanceX)+"' y2='"+str(distanceY)+"' style='stroke:rgb(50,180,250);stroke-width:2' /></svg>"
                 else:
-                    output += "<svg style='z-index: 1; position: absolute; left: "+str(depths[parents[n]] * paddingX - size)+"px; top: "+str(positions[n] * paddingY + size)+"px;' "
+                    output += "<svg style='z-index: 1; position: absolute; left: "+str(depths[parents[n]] * paddingX - paddingX * 0.75 + size * 0.5)+"px; top: "+str(positions[n] * paddingY + paddingY * 0.5 + size * 0.5)+"px;' "
                     output += "width='"+str(distanceX)+"' height='"+str(-distanceY)+"'><line x1='0' y1='"+str(-distanceY)+"' x2='"+str(distanceX)+"' y2='0' style='stroke:rgb(50,180,250);stroke-width:2' /></svg>"
         return output

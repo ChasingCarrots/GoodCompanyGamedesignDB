@@ -1,0 +1,131 @@
+{% extends 'helpers/base.html' %}
+
+{% block title %}{{ product.name }} Details{% endblock %}
+
+{% block content %}
+
+    <h1 class="ui header" id="modname">{{ product.name | title}}</h1>
+    <a href="/goodcompany/admin/BalancingHelper/sampleproduct/{{product.id}}/"><img height="100" src="/goodcompany/static/img/{{product.icon}}.png/" onerror="this.src='/goodcompany/static/img/unknown.png/';"></a><br>
+    <a href="/goodcompany/admin/Production/productfunction/{{product.function}}/">Edit Function</a>
+
+    <h2 class="ui header">Product Details</h2>
+    <table class="ui celled table" style="text-align:center;">
+        <thead>
+            <tr>
+                <th width="10%">Costs</th>
+                <th width="10%">SellPrice</th>
+                <th width="10%">Profit</th>
+                <th width="10%">ExtraToModule</th>
+                <th width="10%">Profitability</th>
+                <th width="10%">CraftTime</th>
+                <th width="10%">CraftPerMinute</th>
+                <th width="10%">ProfitPerMinute</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{product.costs|floatformat:0}}</td>
+                <td>{{product.income|floatformat:0}}</td>
+                <td>{{product.profit|floatformat:0}}</td>
+                <td>{{product.moduleValueDifference|floatformat:0}}</td>
+                <td>{{product.profitability|floatformat:0}}</td>
+                <td>{{product.craftingTime|floatformat:1}}</td>
+                <td>{{product.perMinuteRate|floatformat:1}}</td>
+                <td>{{product.perMinuteProfit|floatformat:0}}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2 class="ui header">Modules</h2>
+    <table class="ui celled table" style="text-align:center;">
+        <thead>
+            <tr>
+                <th width="14%">Icon</th>
+                <th width="30%">Name</th>
+                <th width="14%">Value</th>
+                <th width="14%">CraftingTime</th>
+                <th width="14%">CraftPerMinute</th>
+                <th width="14%">OutputAmount</th>
+            </tr>
+        </thead>
+        <tbody>
+    {% for module in product.modules %}
+        <tr>
+            <td>
+                <a  href="{% url 'moduledetail' module.id %}"><img height="40" src="/goodcompany/static/img/{{module.icon}}.png/" onerror="this.src='/goodcompany/static/img/unknown.png/';"></a>
+            </td>
+            <td><a  href="{% url 'moduledetail' module.id %}">{{ module.name }}</a></td>
+            <td>{{ module.income|floatformat:0 }}</td>
+            <td>{{ module.craftingTime|floatformat:1 }}</td>
+            <td>{{ module.perMinuteRate|floatformat:1 }}</td>
+            <td>{{ module.outputAmount|floatformat:0 }}</td>
+        </tr>
+    {% endfor %}
+        </tbody>
+    </table>
+
+    <h2 class="ui header">Needed Base Materials</h2>
+    <table class="ui celled table" style="text-align:center;">
+        <thead>
+            <tr>
+                <th width="15%">Icon</th>
+                <th width="35%">Material</th>
+                <th width="25%">Amount</th>
+                <th width="25%">Total cost</th>
+            </tr>
+        </thead>
+        <tbody>
+    {% for materialID, material in materials.items %}
+        <tr>
+            <td>
+                <a  href="{% url 'materialdetail' materialID %}"><img height="40" src="/goodcompany/static/img/{{material.icon}}.png/" onerror="this.src='/goodcompany/static/img/unknown.png/';"></a>
+            </td>
+            <td><a href="{% url 'materialdetail' materialID %}">{{ material.name | title}}</a></td>
+            <td>{{ material.amount|floatformat:0}}</td>
+            <td>{{ material.totalcost|floatformat:0}}</td>
+        </tr>
+    {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr>
+                <th></th>
+                <th>Total</th>
+                <th>{{ total.amount }}</th>
+                <th>{{ total.totalcost }}</th>
+            </tr>
+        </tfoot>
+    </table>
+
+    <br><h2 class="ui header">Production Tree</h2>
+    <div id="commandoutput" class="ui message"></div>
+
+
+
+
+{% endblock %}
+
+
+{% block customjavascript %}
+    <script>
+    // our json calls can take very long and we don't want them to timeout
+    $.ajaxSetup({
+        timeout: 30000 // that number is in miliseconds!
+    });
+
+    function runCommand(commandname, arguments) {
+        $('#run').addClass("disabled loading");
+        var runcommandURL = "{% url "runcommand" commandname="commandname" arguments="arguments"%}";
+        runcommandURL = runcommandURL.replace("commandname", commandname)
+        runcommandURL = runcommandURL.replace("arguments", arguments)
+        $.getJSON(runcommandURL, function (data, status) {
+            console.log("runcommand returned...");
+            $('#commandoutput').html(data.output);
+            $('#run').removeClass("disabled loading");
+        }).done(function() { console.log( "second success" ); }) .fail(function(jqXHR, textStatus, errorThrown) {
+            console.log("error " + textStatus);
+        console.log("incoming Text " + jqXHR.responseText); }) .always(function() { console.log( "complete" ); });
+    }
+
+    runCommand("ProductTree",  '{{ product.name }}'.split(' ').join('_'));
+    </script>
+{% endblock %}

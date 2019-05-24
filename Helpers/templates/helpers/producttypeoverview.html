@@ -3,19 +3,23 @@
 {% block title %}Product Type Overview{% endblock %}
 
 {% block content %}
-    <table class="ui celled table">
+    <table class="ui celled table" style="text-align:center;">
         <thead>
             <tr>
-                <th>Product Type</th>
-                <th>Slot Count</th>
-                <th>Relevant Modules Count</th>
+                <th width="15%">Icons</th>
+                <th width="40%">Product Type</th>
+                <th width="15%">Slot Count</th>
+                <th width="15%">Available Functions</th>
+                <th width="15%">Relevant Modules</th>
             </tr>
         </thead>
         <tbody>
         {% for type in productTypes %}
             <tr>
-                <td><a href="{% url 'moduledetail' type.id %}">{{ type.name | title}}</a></td>
+                <td><a href="{% url 'producttypedetail' type.id %}"><img height="60" src="/goodcompany/static/img/{{ type.icon }}.png" onerror="this.src='/goodcompany/static/img/unknown.png/';"></a></td>
+                <td><a href="{% url 'producttypedetail' type.id %}">{{ type.name | title}}</a></td>
                 <td>{{ type.slotCount }}</td>
+                <td>{{ type.functions }}</td>
                 <td>{{ type.relevantModules }}</td>
             </tr>
         {% endfor %}

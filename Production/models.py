@@ -61,6 +61,7 @@ class Material(models.Model):
                     "amount": module_input.Amount * amount,
                     "cost": module.rawMaterialCost(),
                     "id": module.id,
+                    "icon": module.IconAssetID
                 }
 
             # get modules made from this one recursively
@@ -231,6 +232,7 @@ class Module(models.Model):
                         "name": inputMat.Material.Name,
                         "amount": inputMat.Amount,
                         "totalcost": inputMat.Amount * inputMat.Material.getPricePerUnit(),
+                        "icon": inputMat.Material.IconAssetID
                     }
         return localMaterials
 
