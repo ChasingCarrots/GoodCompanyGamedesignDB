@@ -170,8 +170,10 @@ def moduleOverview(request):
     for module in Module.objects.all():
         modules.append({
             "id": module.id,
+            "icon": module.IconAssetID,
             "name": module.Name,
             "matCost": module.rawMaterialCost(),
+            "income": module.BaseMarketPrice
         })
     return render(request, "helpers/moduleoverview.html", {"modules": modules})
 
@@ -240,6 +242,7 @@ def materialOverview(request):
             "id": material.id,
             "name": material.Name,
             "cost": material.getPricePerUnit(),
+            "icon": material.IconAssetID
         })
 
     return render(request, "helpers/materialoverview.html", {"materials": materials})
