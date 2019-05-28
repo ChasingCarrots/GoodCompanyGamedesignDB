@@ -12,9 +12,46 @@ from balancing.products import *
 from commands.sanitychecks import *
 from commands.tempcommands import *
 
+def functionOverview(request):
+    functions = []
+    samples = []
+    productTypes = []
+
+    for function in ProductFunction.objects.all().order_by("Name"):
+
+        functions.append({
+            "id": function.id,
+            "name": function.Name,
+            "value": function.BaseMarketPrice,
+            "icon": function.IconAssetID,
+        })
+
+        for sample in SampleProduct.objects.filter(ProductFunction=function):
+            samples.append({
+                "function": function.id,
+                "id": sample.id,
+                "name": sample.Name
+            })
+
+        for productType in ProductType.objects.all():
+            query = ProductFunction.objects.filter(ViableProductTypes=productType, id=function.id)
+            if query.exists():
+                productTypes.append({
+                    "function": function.id,
+                    "id": productType.id,
+                    "name": productType.Name,
+                    "icon": productType.IconAssetID
+                })
+
+    return render(request, "helpers/functionoverview.html", {
+        "functions": functions,
+        "samples": samples,
+        "productTypes": productTypes
+    })
+
 def productTypeOverview(request):
     productTypes = []
-    for productType in ProductType.objects.all():
+    for productType in ProductType.objects.all().order_by("Name"):
 
         moduleCount = 0
         for slot in productType.Slots.all():
@@ -49,14 +86,14 @@ def productTypeDetail(request, typeID):
     moduleCount = 0
     functionCount = 0
 
-    for slot in productType.Slots.all():
+    for slot in productType.Slots.all().order_by("Name"):
         productSlots.append({
             "id": slot.id,
             "name": slot.Name,
             "isOptional": slot.IsOptional
         })
         moduleQuery = Module.objects.filter(FitsIntoSlot=slot)
-        for module in moduleQuery.all():
+        for module in moduleQuery.all().order_by("BaseMarketPrice"):
             moduleCount += 1
             modules.append({
                 "slot": slot.id,
@@ -66,7 +103,7 @@ def productTypeDetail(request, typeID):
             })
 
     functionQuery = ProductFunction.objects.filter(ViableProductTypes=productType)
-    for function in functionQuery.all():
+    for function in functionQuery.all().order_by("Name"):
         functionCount += 1
         functions.append({
             "id": function.id,
@@ -74,8 +111,8 @@ def productTypeDetail(request, typeID):
             "icon": function.IconAssetID,
             "price": function.BaseMarketPrice
         })
-        sampleQuery = SampleProduct.objects.filter(ProductFunction=function)
-        for sample in sampleQuery.all():
+        sampleQuery = SampleProduct.objects.filter(ProductFunction=function, ProductType=productType)
+        for sample in sampleQuery.all().order_by("Name"):
             samples.append({
                 "function": function.id,
                 "id": sample.id,
@@ -115,7 +152,7 @@ def sampleProduct(request, productId):
     modules = []
     moduleCount = 0
 
-    for module in product.Modules.all():
+    for module in product.Modules.all().order_by("Name"):
         modules.append({
             "name": module.Name,
             "icon": module.IconAssetID,
@@ -167,14 +204,25 @@ def sampleProduct(request, productId):
 
 def moduleOverview(request):
     modules = []
-    for module in Module.objects.all():
-        modules.append({
-            "id": module.id,
-            "icon": module.IconAssetID,
-            "name": module.Name,
-            "matCost": module.rawMaterialCost(),
-            "income": module.BaseMarketPrice
-        })
+    for module in Module.objects.all().order_by("FitsIntoSlot", "BaseMarketPrice"):
+        if module.FitsIntoSlot != None:
+            modules.append({
+                "id": module.id,
+                "slot": module.FitsIntoSlot.Name,
+                "icon": module.IconAssetID,
+                "name": module.Name,
+                "matCost": module.rawMaterialCost(),
+                "income": module.BaseMarketPrice
+            })
+        else:
+            modules.append({
+                "id": module.id,
+                "slot": "None",
+                "icon": module.IconAssetID,
+                "name": module.Name,
+                "matCost": module.rawMaterialCost(),
+                "income": module.BaseMarketPrice
+            })
     return render(request, "helpers/moduleoverview.html", {"modules": modules})
 
 def moduleDetail(request, moduleID):
@@ -237,7 +285,7 @@ def moduleDetail(request, moduleID):
 def materialOverview(request):
     materials = []
     # get all materials
-    for material in Material.objects.filter(module=None).all():
+    for material in Material.objects.filter(module=None).all().order_by("StackBuyPrice"):
         materials.append({
             "id": material.id,
             "name": material.Name,

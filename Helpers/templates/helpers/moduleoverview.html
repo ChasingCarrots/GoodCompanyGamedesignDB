@@ -7,7 +7,8 @@
         <thead>
             <tr>
                 <th width="10%">Icon</th>
-                <th width="20%">Module</th>
+                <th width="25%">Module</th>
+                <th width="15%">Slot</th>
                 <th width="10%">Material Cost</th>
                 <th width="10%">SellPrice</th>
             </tr>
@@ -19,6 +20,7 @@
                     <a href="{% url 'moduledetail' module.id %}"><img height="40" src="/goodcompany/static/img/{{module.icon}}.png" onerror="this.src='/goodcompany/static/img/unknown.png';"></a>
                 </td>
                 <td><a href="{% url 'moduledetail' module.id %}">{{ module.name }}</a></td>
+                <td>{{ module.slot }}</td>
                 <td>{{ module.matCost|floatformat:0 }}</td>
                 <td>{{ module.income|floatformat:0 }}</td>
             </tr>

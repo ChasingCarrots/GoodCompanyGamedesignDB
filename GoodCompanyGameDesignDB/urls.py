@@ -40,4 +40,5 @@ urlpatterns = [
     url(r'^goodcompany/helper/runcommand/(?P<commandname>\w+)/(?P<arguments>\w*)', runCommand, name="runcommand"),
     url(r'^goodcompany/helper/researchoverview', researchOverview, name="researchoverview"),
     url(r'^goodcompany/helper/researchdetail/(\d+)', researchDetail, name="researchdetail"),
+    url(r'^goodcompany/helper/functionoverview', functionOverview, name="functionoverview"),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

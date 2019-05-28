@@ -8,6 +8,7 @@ class SampleProduct(models.Model):
     Name = models.CharField(max_length=255)
     ProductFunction = models.ForeignKey(ProductFunction)
     Modules = models.ManyToManyField(Module)
+    ProductType = models.ForeignKey(ProductType)
 
     class Meta:
         verbose_name = 'Sample Product'
