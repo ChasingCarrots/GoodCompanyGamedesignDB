@@ -5,7 +5,7 @@
 {% block content %}
 
     <h1 class="ui header">{{ productType.name | title}}</h1>
-    <a href="/goodcompany/admin/Production/producttype/{{productType.id}}/"><img src="/goodcompany/static/img/{{productType.icon}}.png/" onerror="this.src='/goodcompany/static/img/unknown.png/';"></a><br>
+    <a href="/goodcompany/admin/Production/producttype/{{productType.id}}/"><img src="/goodcompany/static/img/{{productType.icon}}.png" onerror="this.src='/goodcompany/static/img/unknown.png';"></a><br>
 
     <h2 class="ui header">Slot Overview</h2>
     <table class="ui celled table">
@@ -22,7 +22,7 @@
             <td>
                 {% for module in productType.modules %}
                     {% if module.slot == slot.id %}
-                <a  class='tooltip' href="{% url 'moduledetail' module.id %}"><img height="40" height="100" src="/goodcompany/static/img/{{module.icon}}.png/" onerror="this.src='/goodcompany/static/img/unknown.png/';">
+                <a  class='tooltip' href="{% url 'moduledetail' module.id %}"><img height="40" height="100" src="/goodcompany/static/img/{{module.icon}}.png" onerror="this.src='/goodcompany/static/img/unknown.png';">
                     <span class='tooltiptext'>{{module.name}}</span>
                 </a>
                     {% endif %}
@@ -47,7 +47,7 @@
     {% for function in productType.functions %}
         <tr>
             <td>
-                <a  href="/goodcompany/admin/Production/productfunction/{{ function.id }}"><img height="40" src="/goodcompany/static/img/{{function.icon}}.png/" onerror="this.src='/goodcompany/static/img/unknown.png/';"></a>
+                <a  href="/goodcompany/admin/Production/productfunction/{{ function.id }}"><img height="40" src="/goodcompany/static/img/{{function.icon}}.png" onerror="this.src='/goodcompany/static/img/unknown.png';"></a>
             </td>
             <td>{{ function.name }}</td>
             <td>{{ function.price }}</td>

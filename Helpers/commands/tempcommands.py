@@ -137,7 +137,7 @@ class ProductTree(CommandBase):
                 output += "<span class='tooltiptext' style='left: "+str(depths[n] * paddingX + size * 1.2 - paddingX * 0.75)+"px; top: "+str(positions[n] * paddingY  + paddingY * 0.5 + size * 0.25)+"px;'>"
                 output += materials[n].Name + "</span>"
 
-            output += "<img src='/goodcompany/static/img/"+materials[n].IconAssetID+".png' onerror='this.src=\\\"/goodcompany/static/img/unknown.png/\\\";' style='z-index: 2;"
+            output += "<img src='/goodcompany/static/img/"+materials[n].IconAssetID+".png' onerror='this.src=\\\"/goodcompany/static/img/unknown.png\\\";' style='z-index: 2;"
             output += "height: "+str(size)+"px; width: "+str(size)+"px; position: absolute; "
             output += "left: "+str(depths[n] * paddingX - paddingX * 0.75)+"px; top: "+str(positions[n] * paddingY + paddingY * 0.5)+"px;' "
             output += "alt='"+materials[n].Name+"'>"

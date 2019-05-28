@@ -15,7 +15,7 @@
     {% for material in materials %}
         <tr>
             <td>
-                <a href="{% url 'materialdetail' material.id %}"><img height="40" src="/goodcompany/static/img/{{material.icon}}.png/" onerror="this.src='/goodcompany/static/img/unknown.png/';"></a>
+                <a href="{% url 'materialdetail' material.id %}"><img height="40" src="/goodcompany/static/img/{{material.icon}}.png" onerror="this.src='/goodcompany/static/img/unknown.png';"></a>
             </td>
             <td><a href="{% url 'materialdetail' material.id %}">{{ material.name | title }}</a></td>
             <td>{{ material.cost|floatformat:0 }}</td>

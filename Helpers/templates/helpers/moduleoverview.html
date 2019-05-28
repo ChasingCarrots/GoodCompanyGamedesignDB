@@ -16,7 +16,7 @@
         {% for module in modules %}
             <tr>
                 <td>
-                    <a href="{% url 'moduledetail' module.id %}"><img height="40" src="/goodcompany/static/img/{{module.icon}}.png/" onerror="this.src='/goodcompany/static/img/unknown.png/';"></a>
+                    <a href="{% url 'moduledetail' module.id %}"><img height="40" src="/goodcompany/static/img/{{module.icon}}.png" onerror="this.src='/goodcompany/static/img/unknown.png';"></a>
                 </td>
                 <td><a href="{% url 'moduledetail' module.id %}">{{ module.name }}</a></td>
                 <td>{{ module.matCost|floatformat:0 }}</td>

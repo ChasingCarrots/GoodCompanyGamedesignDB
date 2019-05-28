@@ -5,7 +5,7 @@
 {% block content %}
 
     <h1 class="ui header" id="modname">{{ module.name | title}}</h1>
-    <a href="/goodcompany/admin/Production/module/{{module.id}}/"><img height="100" src="/goodcompany/static/img/{{module.icon}}.png/" onerror="this.src='/goodcompany/static/img/unknown.png/';"></a><br>
+    <a href="/goodcompany/admin/Production/module/{{module.id}}/"><img height="100" src="/goodcompany/static/img/{{module.icon}}.png" onerror="this.src='/goodcompany/static/img/unknown.png';"></a><br>
     <a href="/goodcompany/admin/Production/material/{{module.materialId}}/">Edit Material</a>
 
 
@@ -52,12 +52,12 @@
         <tr>
             {% if material.moduleID == -1 %}
             <td>
-                <a  href="{% url 'materialdetail' material.materialID %}"><img height="40" src="/goodcompany/static/img/{{material.icon}}.png/" onerror="this.src='/goodcompany/static/img/unknown.png/';"></a>
+                <a  href="{% url 'materialdetail' material.materialID %}"><img height="40" src="/goodcompany/static/img/{{material.icon}}.png" onerror="this.src='/goodcompany/static/img/unknown.png';"></a>
             </td>
             <td><a href="{% url 'materialdetail' material.materialID %}">{{ material.name | title}}</a></td>
             {% else %}
             <td>
-                <a  href="{% url 'moduledetail' material.moduleID %}"><img height="40" src="/goodcompany/static/img/{{material.icon}}.png/" onerror="this.src='/goodcompany/static/img/unknown.png/';"></a>
+                <a  href="{% url 'moduledetail' material.moduleID %}"><img height="40" src="/goodcompany/static/img/{{material.icon}}.png" onerror="this.src='/goodcompany/static/img/unknown.png';"></a>
             </td>
             <td><a href="{% url 'moduledetail' material.moduleID %}">{{ material.name | title}}</a></td>
             {% endif %}
@@ -82,7 +82,7 @@
     {% for materialID, material in materials.items %}
         <tr>
             <td>
-                <a  href="{% url 'materialdetail' materialID %}"><img height="40" src="/goodcompany/static/img/{{material.icon}}.png/" onerror="this.src='/goodcompany/static/img/unknown.png/';"></a>
+                <a  href="{% url 'materialdetail' materialID %}"><img height="40" src="/goodcompany/static/img/{{material.icon}}.png" onerror="this.src='/goodcompany/static/img/unknown.png';"></a>
             </td>
             <td><a href="{% url 'materialdetail' materialID %}">{{ material.name | title}}</a></td>
             <td>{{ material.amount|floatformat:0 }}</td>
