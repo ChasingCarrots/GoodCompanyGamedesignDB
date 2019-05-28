@@ -126,6 +126,6 @@
         console.log("incoming Text " + jqXHR.responseText); }) .always(function() { console.log( "complete" ); });
     }
 
-    runCommand("ProductTree",  '{{ product.name }}'.split(' ').join('_'));
+    runCommand("ProductTree",  '{{ product.name }}'.split(' ').join('___'));
     </script>
 {% endblock %}

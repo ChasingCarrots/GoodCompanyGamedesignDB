@@ -74,9 +74,9 @@ def getTreeNode(module, parent, count, materials, parents, amount, amounts, posi
 
 class ProductTree(CommandBase):
     def RunCommand(self, productName):
-        productName = str(productName).replace("_", " ")
+
+        productName = str(productName).replace("___", " ")
         output = ""
-        data = []
 
         count = 0
         depth = []
@@ -93,7 +93,8 @@ class ProductTree(CommandBase):
         positions = []
         depths = []
 
-        productQuery = SampleProduct.objects.filter(Name=str(productName).strip())
+        #productQuery = SampleProduct.objects.filter(Name=str(productName).strip())
+        productQuery = SampleProduct.objects.filter(Name=str(productName))
         if productQuery.exists():
             id = count
             count += 1
@@ -111,7 +112,8 @@ class ProductTree(CommandBase):
             positions[id] = (pos + position[0] - 1) / 2.0
 
 
-        moduleQuery = Module.objects.filter(Name=str(productName).strip())
+        #moduleQuery = Module.objects.filter(Name=str(productName).strip())
+        moduleQuery = Module.objects.filter(Name=productName)
         if moduleQuery.exists():
             count = getTreeNode(moduleQuery.all()[0], None, count, materials, parents, 1, amounts, position, positions, depth, depths, maxDepth)
 
