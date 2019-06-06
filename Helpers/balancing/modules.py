@@ -241,11 +241,11 @@ def totalCostPerComponent(module, handlingtime):
     return employeeCostPerComponent(module, handlingtime) + module.rawMaterialCost()
 
 def totalProfitPerComponent(module, handlingtime):
-    return (module.BaseMarketPrice / module.OutputAmount) - totalCostPerComponent(module, handlingtime)
+    return module.BaseMarketPrice - totalCostPerComponent(module, handlingtime)
 
 def getComponentProfitability(module, handlingtime):
     totalCosts = totalCostPerComponent(module, handlingtime)
-    return (((module.BaseMarketPrice / module.OutputAmount) - totalCosts ) / totalCosts) * 100
+    return ((module.BaseMarketPrice - totalCosts) / totalCosts) * 100
 
 
 class ComponentMaterialCosts(ColumnBase):
@@ -322,7 +322,7 @@ class ComponentSellPrice(ColumnBase):
 
     def SetValue(self, objID, value):
         module = Module.objects.get(id=objID)
-        module.BaseMarketPrice = float(value) * module.OutputAmount
+        module.BaseMarketPrice = float(value)
         module.save()
 
 class ComponentProfit(ColumnBase):
@@ -352,7 +352,7 @@ class ComponentProfit(ColumnBase):
 
     def SetValue(self, objID, value):
         module = Module.objects.get(id=objID)
-        module.BaseMarketPrice = (float(value) + totalCostPerComponent(module)) * module.OutputAmount
+        module.BaseMarketPrice = float(value) + totalCostPerComponent(module)
         module.save()
 
 class ComponentProfitability(ColumnBase):
@@ -405,7 +405,7 @@ def componentCostsPerSecond(module, handlingtime = 0):
 def componentIncomePerSecond(module, handlingtime = 0):
     craftingtime = getComponentCraftingTime(module, handlingtime, False)
     if (craftingtime > 0):
-        return module.BaseMarketPrice / (craftingtime * module.OutputAmount)
+        return module.BaseMarketPrice / craftingtime
     else:
         return 0
 
