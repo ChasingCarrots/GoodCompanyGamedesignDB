@@ -164,6 +164,7 @@ class Module(models.Model):
     OutputAmount = models.IntegerField(default=1)
     BaseMarketPrice = models.FloatField(default=1)
     BaseMarketCapacity = models.IntegerField(default=50)
+    MarketRecoveryFactor = models.FloatField(default=0.5);
 
     def getJsonObject(self):
         fitsIntoSlot = 0
@@ -185,7 +186,8 @@ class Module(models.Model):
             "ResearchDataYield":researchDataYield,
             "OutputAmount":self.OutputAmount,
             "BaseMarketPrice":self.BaseMarketPrice,
-            "BaseMarketCapacity":self.BaseMarketCapacity
+            "BaseMarketCapacity":self.BaseMarketCapacity,
+            "MarketRecoveryFactor":self.MarketRecoveryFactor
         }
 
     class Meta:
