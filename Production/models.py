@@ -163,6 +163,7 @@ class Module(models.Model):
     Material = models.ForeignKey(Material)
     OutputAmount = models.IntegerField(default=1)
     BaseMarketPrice = models.FloatField(default=1)
+    BaseMarketCapacity = models.IntegerField(default=50)
 
     def getJsonObject(self):
         fitsIntoSlot = 0
@@ -183,7 +184,8 @@ class Module(models.Model):
             "InputMaterials":inputMaterials,
             "ResearchDataYield":researchDataYield,
             "OutputAmount":self.OutputAmount,
-            "BaseMarketPrice":self.BaseMarketPrice
+            "BaseMarketPrice":self.BaseMarketPrice,
+            "BaseMarketCapacity":self.BaseMarketCapacity
         }
 
     class Meta:
