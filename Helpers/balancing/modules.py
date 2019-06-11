@@ -5,8 +5,17 @@ from ObjectTypes.models import *
 from Tuning.models import *
 
 class ComponentBalancing(BalancingTableBase):
-    def __init__(self, limitFrom, limitTo, displayMode = 0, logisticTime = 0):
-        BalancingTableBase.__init__(self, Module.objects.all()[limitFrom:limitTo])
+    def __init__(self, limitFrom, limitTo, displayMode = 0, logisticTime = 0, option = None):
+        BalancingTableBase.__init__(self, Module.objects.all().order_by("FitsIntoSlot", "BaseMarketPrice")[limitFrom:limitTo])
+
+        try:
+            if (int(option) == 0):
+                BalancingTableBase.__init__(self, Module.objects.all().filter(FitsIntoSlot=None).order_by("BaseMarketPrice")[limitFrom:limitTo])
+            else:
+                BalancingTableBase.__init__(self, Module.objects.all().filter(FitsIntoSlot=int(option)).order_by("BaseMarketPrice")[limitFrom:limitTo])
+        except:
+            BalancingTableBase.__init__(self, Module.objects.all().order_by("FitsIntoSlot", "BaseMarketPrice")[limitFrom:limitTo])
+
         self.AddColumn(ComponentComplexity(displayMode, logisticTime))
         self.AddColumn(ComponentCosts(displayMode, logisticTime))
         self.AddColumn(ComponentSellPrice(displayMode, logisticTime))
@@ -15,8 +24,18 @@ class ComponentBalancing(BalancingTableBase):
         self.AddColumn(ModuleDataYield(displayMode, logisticTime))
 
 class ComponentFinances(BalancingTableBase):
-    def __init__(self, limitFrom, limitTo, displayMode = 0, logisticTime = 0):
-        BalancingTableBase.__init__(self, Module.objects.all()[limitFrom:limitTo])
+    def __init__(self, limitFrom, limitTo, displayMode = 0, logisticTime = 0, option = None):
+
+        try:
+            if (int(option) == 0):
+                BalancingTableBase.__init__(self, Module.objects.all().filter(FitsIntoSlot=None).order_by("BaseMarketPrice")[limitFrom:limitTo])
+            else:
+                BalancingTableBase.__init__(self, Module.objects.all().filter(FitsIntoSlot=int(option)).order_by("BaseMarketPrice")[limitFrom:limitTo])
+        except:
+            BalancingTableBase.__init__(self, Module.objects.all().order_by("FitsIntoSlot", "BaseMarketPrice")[limitFrom:limitTo])
+
+
+        BalancingTableBase.__init__(self, Module.objects.all().order_by("FitsIntoSlot", "BaseMarketPrice")[limitFrom:limitTo])
         self.AddColumn(ComponentMaterialCosts(displayMode, logisticTime))
         self.AddColumn(ComponentEmployeeCosts(displayMode, logisticTime))
         self.AddColumn(ComponentSellPrice(displayMode, logisticTime))
@@ -26,8 +45,16 @@ class ComponentFinances(BalancingTableBase):
         self.AddColumn(ComponentProfitPerMinute(displayMode, logisticTime))
 
 class ComponentComplexit(BalancingTableBase):
-    def __init__(self, limitFrom, limitTo, displayMode = 0, logisticTime = 0):
-        BalancingTableBase.__init__(self, Module.objects.all()[limitFrom:limitTo])
+    def __init__(self, limitFrom, limitTo, displayMode = 0, logisticTime = 0, option = None):
+
+        try:
+            if (int(option) == 0):
+                BalancingTableBase.__init__(self, Module.objects.all().filter(FitsIntoSlot=None).order_by("BaseMarketPrice")[limitFrom:limitTo])
+            else:
+                BalancingTableBase.__init__(self, Module.objects.all().filter(FitsIntoSlot=int(option)).order_by("BaseMarketPrice")[limitFrom:limitTo])
+        except:
+            BalancingTableBase.__init__(self, Module.objects.all().order_by("FitsIntoSlot", "BaseMarketPrice")[limitFrom:limitTo])
+
         self.AddColumn(ComponentLogisticSteps(displayMode, logisticTime))
         self.AddColumn(ComponentProductionSteps(displayMode, logisticTime))
         self.AddColumn(ComponentComplexity(displayMode, logisticTime))
@@ -37,8 +64,16 @@ class ComponentComplexit(BalancingTableBase):
         self.AddColumn(ComponentProfitability(displayMode, logisticTime))
 
 class ComponentDataMinute(BalancingTableBase):
-    def __init__(self, limitFrom, limitTo, displayMode = 0, logisticTime = 0):
-        BalancingTableBase.__init__(self, Module.objects.all()[limitFrom:limitTo])
+    def __init__(self, limitFrom, limitTo, displayMode = 0, logisticTime = 0, option = None):
+
+        try:
+            if (int(option) == 0):
+                BalancingTableBase.__init__(self, Module.objects.all().filter(FitsIntoSlot=None).order_by("BaseMarketPrice")[limitFrom:limitTo])
+            else:
+                BalancingTableBase.__init__(self, Module.objects.all().filter(FitsIntoSlot=int(option)).order_by("BaseMarketPrice")[limitFrom:limitTo])
+        except:
+            BalancingTableBase.__init__(self, Module.objects.all().order_by("FitsIntoSlot", "BaseMarketPrice")[limitFrom:limitTo])
+
         self.AddColumn(ComponentSellPrice(displayMode, logisticTime))
         self.AddColumn(ComponentProfitability(displayMode, logisticTime))
         self.AddColumn(ComponentsPerMinute(displayMode, logisticTime))
@@ -48,8 +83,16 @@ class ComponentDataMinute(BalancingTableBase):
         self.AddColumn(ModuleDataYieldPerMinute(displayMode, logisticTime))
 
 class ComponentDataHour(BalancingTableBase):
-    def __init__(self, limitFrom, limitTo, displayMode = 0, logisticTime = 0):
-        BalancingTableBase.__init__(self, Module.objects.all()[limitFrom:limitTo])
+    def __init__(self, limitFrom, limitTo, displayMode = 0, logisticTime = 0, option = None):
+
+        try:
+            if (int(option) == 0):
+                BalancingTableBase.__init__(self, Module.objects.all().filter(FitsIntoSlot=None).order_by("BaseMarketPrice")[limitFrom:limitTo])
+            else:
+                BalancingTableBase.__init__(self, Module.objects.all().filter(FitsIntoSlot=int(option)).order_by("BaseMarketPrice")[limitFrom:limitTo])
+        except:
+            BalancingTableBase.__init__(self, Module.objects.all().order_by("FitsIntoSlot", "BaseMarketPrice")[limitFrom:limitTo])
+
         self.AddColumn(ComponentSellPrice(displayMode, logisticTime))
         self.AddColumn(ComponentProfitability(displayMode, logisticTime))
         self.AddColumn(ComponentsPerHour(displayMode, logisticTime))
@@ -59,8 +102,16 @@ class ComponentDataHour(BalancingTableBase):
         self.AddColumn(ModuleDataYieldPerHour(displayMode, logisticTime))
 
 class DataYieldOverview(BalancingTableBase):
-    def __init__(self, limitFrom, limitTo, displayMode = 0, logisticTime = 0):
-        BalancingTableBase.__init__(self, Module.objects.all()[limitFrom:limitTo])
+    def __init__(self, limitFrom, limitTo, displayMode = 0, logisticTime = 0, option = None):
+
+        try:
+            if (int(option) == 0):
+                BalancingTableBase.__init__(self, Module.objects.all().filter(FitsIntoSlot=None).order_by("BaseMarketPrice")[limitFrom:limitTo])
+            else:
+                BalancingTableBase.__init__(self, Module.objects.all().filter(FitsIntoSlot=int(option)).order_by("BaseMarketPrice")[limitFrom:limitTo])
+        except:
+            BalancingTableBase.__init__(self, Module.objects.all().order_by("FitsIntoSlot", "BaseMarketPrice")[limitFrom:limitTo])
+
         self.AddColumn(ModuleDataYield(displayMode, logisticTime))
         self.AddColumn(ComponentsPerMinute(displayMode, logisticTime))
         self.AddColumn(ModuleDataYieldPerMinute(displayMode, logisticTime))
@@ -68,9 +119,17 @@ class DataYieldOverview(BalancingTableBase):
         self.AddColumn(ModuleDataYieldCost(displayMode, logisticTime))
 
 class DataYieldBalanceDetails(BalancingTableBase):
-    def __init__(self, limitFrom, limitTo, displayMode = 0, logisticTime = 0):
-        BalancingTableBase.__init__(self, Module.objects.all()[limitFrom:limitTo])
-        self.AddColumn(ModuleDataYield(displayMode, logisticTime, "groundwork"))
+    def __init__(self, limitFrom, limitTo, displayMode = 0, logisticTime = 0, option = None):
+
+        try:
+            if (int(option) == 0):
+                BalancingTableBase.__init__(self, Module.objects.all().filter(FitsIntoSlot=None).order_by("BaseMarketPrice")[limitFrom:limitTo])
+            else:
+                BalancingTableBase.__init__(self, Module.objects.all().filter(FitsIntoSlot=int(option)).order_by("BaseMarketPrice")[limitFrom:limitTo])
+        except:
+            BalancingTableBase.__init__(self, Module.objects.all().order_by("FitsIntoSlot", "BaseMarketPrice")[limitFrom:limitTo])
+
+        self.AddColumn(ModuleDataYield(displayMode, logisticTime, "basic research"))
         self.AddColumn(ModuleDataYield(displayMode, logisticTime, "mechanics"))
         self.AddColumn(ModuleDataYield(displayMode, logisticTime, "electronics"))
         self.AddColumn(ModuleDataYield(displayMode, logisticTime, "power"))
@@ -79,10 +138,18 @@ class DataYieldBalanceDetails(BalancingTableBase):
         self.AddColumn(ModuleDataYield(displayMode, logisticTime, "heavy machinery"))
 
 class DataYieldCostDetails(BalancingTableBase):
-    def __init__(self, limitFrom, limitTo, displayMode = 0, logisticTime = 0):
-        BalancingTableBase.__init__(self, Module.objects.all()[limitFrom:limitTo])
+    def __init__(self, limitFrom, limitTo, displayMode = 0, logisticTime = 0, option = None):
+
+        try:
+            if (int(option) == 0):
+                BalancingTableBase.__init__(self, Module.objects.all().filter(FitsIntoSlot=None).order_by("BaseMarketPrice")[limitFrom:limitTo])
+            else:
+                BalancingTableBase.__init__(self, Module.objects.all().filter(FitsIntoSlot=int(option)).order_by("BaseMarketPrice")[limitFrom:limitTo])
+        except:
+            BalancingTableBase.__init__(self, Module.objects.all().order_by("FitsIntoSlot", "BaseMarketPrice")[limitFrom:limitTo])
+
         self.AddColumn(ComponentCosts(displayMode, logisticTime))
-        self.AddColumn(ModuleDataYieldCost(displayMode, logisticTime, "groundwork"))
+        self.AddColumn(ModuleDataYieldCost(displayMode, logisticTime, "basic research"))
         self.AddColumn(ModuleDataYieldCost(displayMode, logisticTime, "mechanics"))
         self.AddColumn(ModuleDataYieldCost(displayMode, logisticTime, "electronics"))
         self.AddColumn(ModuleDataYieldCost(displayMode, logisticTime, "power"))
@@ -91,10 +158,18 @@ class DataYieldCostDetails(BalancingTableBase):
         self.AddColumn(ModuleDataYieldCost(displayMode, logisticTime, "heavy machinery"))
 
 class DataYieldRateDetails(BalancingTableBase):
-    def __init__(self, limitFrom, limitTo, displayMode = 0, logisticTime = 0):
-        BalancingTableBase.__init__(self, Module.objects.all()[limitFrom:limitTo])
+    def __init__(self, limitFrom, limitTo, displayMode = 0, logisticTime = 0, option = None):
+
+        try:
+            if (int(option) == 0):
+                BalancingTableBase.__init__(self, Module.objects.all().filter(FitsIntoSlot=None).order_by("BaseMarketPrice")[limitFrom:limitTo])
+            else:
+                BalancingTableBase.__init__(self, Module.objects.all().filter(FitsIntoSlot=int(option)).order_by("BaseMarketPrice")[limitFrom:limitTo])
+        except:
+            BalancingTableBase.__init__(self, Module.objects.all().order_by("FitsIntoSlot", "BaseMarketPrice")[limitFrom:limitTo])
+            
         self.AddColumn(ComponentsPerMinute(displayMode, logisticTime))
-        self.AddColumn(ModuleDataYieldPerMinute(displayMode, logisticTime, "groundwork"))
+        self.AddColumn(ModuleDataYieldPerMinute(displayMode, logisticTime, "basic research"))
         self.AddColumn(ModuleDataYieldPerMinute(displayMode, logisticTime, "mechanics"))
         self.AddColumn(ModuleDataYieldPerMinute(displayMode, logisticTime, "electronics"))
         self.AddColumn(ModuleDataYieldPerMinute(displayMode, logisticTime, "power"))

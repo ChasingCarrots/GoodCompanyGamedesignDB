@@ -7,7 +7,7 @@ from modules import employeeCostPerComponent, totalCostPerComponent, formatCellT
 
 
 class ProductBalancing(BalancingTableBase):
-    def __init__(self, limitFrom, limitTo, displayMode = 0, logisticTime = 0):
+    def __init__(self, limitFrom, limitTo, displayMode = 0, logisticTime = 0, option = None):
         BalancingTableBase.__init__(self, SampleProduct.objects.all()[limitFrom:limitTo])
         self.AddColumn(ProductModuleAmount(displayMode, logisticTime))
         self.AddColumn(ProductComplexity(displayMode, logisticTime))
@@ -19,7 +19,7 @@ class ProductBalancing(BalancingTableBase):
         self.AddColumn(ProductProfitability(displayMode, logisticTime))
 
 class ProductFinances(BalancingTableBase):
-    def __init__(self, limitFrom, limitTo, displayMode = 0, logisticTime = 0):
+    def __init__(self, limitFrom, limitTo, displayMode = 0, logisticTime = 0, option = None):
         BalancingTableBase.__init__(self, SampleProduct.objects.all()[limitFrom:limitTo])
         self.AddColumn(ProductsPerMinute(displayMode, logisticTime))
         self.AddColumn(ProductMaterialCost(displayMode, logisticTime))
@@ -30,7 +30,7 @@ class ProductFinances(BalancingTableBase):
         self.AddColumn(ProductProfitPerMinute(displayMode, logisticTime))
 
 class ProductComplexit(BalancingTableBase):
-    def __init__(self, limitFrom, limitTo, displayMode = 0, logisticTime = 0):
+    def __init__(self, limitFrom, limitTo, displayMode = 0, logisticTime = 0, option = None):
         BalancingTableBase.__init__(self, SampleProduct.objects.all()[limitFrom:limitTo])
         self.AddColumn(ProductModuleAmount(displayMode, logisticTime))
         self.AddColumn(ProductLogisticSteps(displayMode, logisticTime))
@@ -42,7 +42,7 @@ class ProductComplexit(BalancingTableBase):
         self.AddColumn(ProductProfitability(displayMode, logisticTime))
 
 class ProductDataMinute(BalancingTableBase):
-    def __init__(self, limitFrom, limitTo, displayMode = 0, logisticTime = 0):
+    def __init__(self, limitFrom, limitTo, displayMode = 0, logisticTime = 0, option = None):
         BalancingTableBase.__init__(self, SampleProduct.objects.all()[limitFrom:limitTo])
         self.AddColumn(ProductPrice(displayMode, logisticTime))
         self.AddColumn(ProductProfitability(displayMode, logisticTime))
@@ -52,7 +52,7 @@ class ProductDataMinute(BalancingTableBase):
         self.AddColumn(ProductIncomePerMinute(displayMode, logisticTime))
 
 class ProductDataHour(BalancingTableBase):
-    def __init__(self, limitFrom, limitTo, displayMode = 0, logisticTime = 0):
+    def __init__(self, limitFrom, limitTo, displayMode = 0, logisticTime = 0, option = None):
         BalancingTableBase.__init__(self, SampleProduct.objects.all()[limitFrom:limitTo])
         self.AddColumn(ProductPrice(displayMode, logisticTime))
         self.AddColumn(ProductProfitability(displayMode, logisticTime))

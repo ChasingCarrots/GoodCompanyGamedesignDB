@@ -34,6 +34,8 @@
         &nbsp;&nbsp;&nbsp;&nbsp;
         <input type="text" id="limitTo" placeholder="End Before: 10">
         &nbsp;&nbsp;&nbsp;&nbsp;
+        <input type="text" id="option" placeholder="Options">
+        &nbsp;&nbsp;&nbsp;&nbsp;
         <div class="ui button" id="go">GO</div>
     </div>
     <div id="tablecontent"></div>
@@ -102,14 +104,15 @@
   </tbody>
 </table><br><br>`;
 
-    function updateTable(tablename, limitFrom, limitTo, displayMode, logisticTime) {
+    function updateTable(tablename, limitFrom, limitTo, displayMode, logisticTime, option) {
         $('#go').addClass("disabled loading");
-        var getTableJSONURL = "{% url "getbalancingtablejson" tablename="tablename" limitFrom=11 limitTo=22 displayMode=33 logisticTime=44%}";
+        var getTableJSONURL = "{% url "getbalancingtablejson" tablename="tablename" limitFrom=11 limitTo=22 displayMode=33 logisticTime=44 option=55%}";
         getTableJSONURL = getTableJSONURL.replace("tablename", tablename);
         getTableJSONURL = getTableJSONURL.replace("11", limitFrom);
         getTableJSONURL = getTableJSONURL.replace("22", limitTo);
         getTableJSONURL = getTableJSONURL.replace("33", displayMode);
         getTableJSONURL = getTableJSONURL.replace("44", logisticTime);
+        getTableJSONURL = getTableJSONURL.replace("55", option);
         $.getJSON(getTableJSONURL, function (data, status) {
             console.log("data received, using template to render table...");
             $('#tablecontent').html(TemplateEngine(TableTemplate, data));
@@ -126,7 +129,7 @@
                 $('.cell').addClass("disabled");
                 $(this).addClass("loading disabled");
                 $.post("{% url "setbalancingtablevalue" %}", postData, function(data) {
-                    updateTable(tablename, limitFrom, limitTo, displayMode, logisticTime);
+                    updateTable(tablename, limitFrom, limitTo, displayMode, logisticTime, option);
                 }, "json").fail(function (jqxhr, textStatus, error) {
                     console.log("setbalancingtablevalue failed! "+textStatus+" "+error);
                 });
@@ -170,7 +173,13 @@
                 var limitTo = $('#limitTo').val();
             }
 
-            updateTable(tableName, limitFrom, limitTo, displayMode, logisticTime);
+            if ($('#option').val() == "") {
+                var option = "None";
+            } else {
+                var option = $('#option').val();
+            }
+
+            updateTable(tableName, limitFrom, limitTo, displayMode, logisticTime, option);
         }
     });
     </script>
