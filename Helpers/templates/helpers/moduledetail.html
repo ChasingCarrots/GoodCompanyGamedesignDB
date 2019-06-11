@@ -85,7 +85,7 @@
                 <a  href="{% url 'materialdetail' materialID %}"><img height="40" src="/goodcompany/static/img/{{material.icon}}.png" onerror="this.src='/goodcompany/static/img/unknown.png';"></a>
             </td>
             <td><a href="{% url 'materialdetail' materialID %}">{{ material.name | title}}</a></td>
-            <td>{{ material.amount|floatformat:0 }}</td>
+            <td>{{ material.amount|floatformat:1 }}</td>
             <td>{{ material.totalcost|floatformat:0 }}</td>
         </tr>
     {% endfor %}
@@ -94,7 +94,7 @@
             <tr>
                 <th></th>
                 <th>Total</th>
-                <th>{{ total.amount|floatformat:0  }}</th>
+                <th>{{ total.amount|floatformat:1  }}</th>
                 <th>{{ total.totalcost|floatformat:0  }}</th>
             </tr>
         </tfoot>

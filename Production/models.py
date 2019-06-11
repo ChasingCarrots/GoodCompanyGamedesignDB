@@ -207,7 +207,7 @@ class Module(models.Model):
                 totalCost += moduleMatQuery.all()[0].rawMaterialCost() * inputMat.Amount
             else:
                 totalCost += inputMat.Material.getPricePerUnit() * inputMat.Amount
-        return totalCost / self.OutputAmount
+        return totalCost / float(self.OutputAmount)
 
     def collectMaterials(self):
         # type (Module) -> {}
@@ -232,8 +232,8 @@ class Module(models.Model):
                 else:
                     localMaterials[inputModMaterialID] = {
                         "name": inputMat.Material.Name,
-                        "amount": inputMat.Amount,
-                        "totalcost": inputMat.Amount * inputMat.Material.getPricePerUnit(),
+                        "amount": inputMat.Amount / float(self.OutputAmount),
+                        "totalcost": inputMat.Amount * inputMat.Material.getPricePerUnit() / float(self.OutputAmount),
                         "icon": inputMat.Material.IconAssetID
                     }
         return localMaterials
