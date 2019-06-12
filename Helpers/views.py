@@ -257,6 +257,22 @@ def moduleDetail(request, moduleID):
             "materialID": moduleInputMatMaterialID,
             "totalcost": cost * moduleInputMat.Amount,
         })
+
+    usedInModules = []
+    usedInModCount = 0
+    for mod in Module.objects.all():
+        if mod.InputMaterials.all().filter(Material = module.Material).exists():
+            usedInModules.append(mod)
+            usedInModCount += 1
+
+    usedInProduct = []
+    usedInProductCount = 0
+    for product in SampleProduct.objects.all():
+        if module in product.Modules.all():
+            usedInProduct.append(product)
+            usedInProductCount += 1
+
+
     return render(request, "helpers/moduledetail.html", {
         "module": {
             "name": module.Name,
@@ -273,8 +289,12 @@ def moduleDetail(request, moduleID):
             "perMinuteRate": componentsPerSecond(module, 0) * 60,
             "perMinuteProfit": componentProfitPerSecond(module, 0) * 60,
             "outputAmount": module.OutputAmount,
+            "usedinmodulescount": usedInModCount,
+            "usedinproductcount": usedInProductCount,
         },
         "materials": moduleBaseMaterials,
+        "usedinmodules": usedInModules,
+        "usedinproducts": usedInProduct,
         "total": {
             "amount": totalAmount,
             "totalcost": totalCost,

@@ -22,7 +22,7 @@
             <td>
                 {% for module in productType.modules %}
                     {% if module.slot == slot.id %}
-                <a  class='tooltip' href="{% url 'moduledetail' module.id %}"><img height="40" height="100" src="/goodcompany/static/img/{{module.icon}}.png" onerror="this.src='/goodcompany/static/img/unknown.png';">
+                <a class='tooltip' href="{% url 'moduledetail' module.id %}"><img height="40" height="100" src="/goodcompany/static/img/{{module.icon}}.png" onerror="this.src='/goodcompany/static/img/unknown.png';">
                     <span class='tooltiptext'>{{module.name}}</span>
                 </a>
                     {% endif %}

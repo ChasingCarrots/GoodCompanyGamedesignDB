@@ -37,6 +37,45 @@
         </tbody>
     </table>
 
+
+    <h2 class="ui header">Used In</h2>
+    <table class="ui celled table" style="text-align:center;">
+        <thead>
+            <tr>
+                <th width="15%">Type</th>
+                <th width="15%">Count</th>
+                <th width="70%">List</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Modules</td>
+                <td>{{module.usedinmodulescount|floatformat:0 }}</td>
+                <td>
+                    {% for mod in usedinmodules %}
+                    <a class='tooltip' href="{% url 'moduledetail' mod.id %}">
+                        <img height="40" src="/goodcompany/static/img/{{mod.IconAssetID}}.png" onerror="this.src='/goodcompany/static/img/unknown.png';">
+                        <span class='tooltiptext'>{{mod.Name}}</span>
+                    </a>
+                    {% endfor %}
+                </td>
+            </tr>
+            <tr>
+                <td>Products</td>
+                <td>{{module.usedinproductcount|floatformat:0 }}</td>
+                <td>
+                    {% for prod in usedinproducts %}
+                    <a class='tooltip' href="{% url 'sampleproduct' prod.id %}">
+                        <img height="40" src="/goodcompany/static/img/{{prod.ProductFunction.IconAssetID}}.png" onerror="this.src='/goodcompany/static/img/unknown.png';">
+                        <span class='tooltiptext'>{{prod.Name}}</span>
+                    </a>
+                    {% endfor %}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+
     <h2 class="ui header">Input Materials</h2>
     <table class="ui celled table" style="text-align:center;">
         <thead>
