@@ -8,7 +8,7 @@ class ComponentBalancing(BalancingTableBase):
     def __init__(self, limitFrom, limitTo, displayMode = 0, logisticTime = 0, option = None):
 
         try:
-            if (int(option) == 0):
+            if int(option) == 0:
                 BalancingTableBase.__init__(self, Module.objects.all().filter(FitsIntoSlot=None).order_by("BaseMarketPrice")[limitFrom:limitTo])
             else:
                 BalancingTableBase.__init__(self, Module.objects.all().filter(FitsIntoSlot=int(option)).order_by("BaseMarketPrice")[limitFrom:limitTo])
@@ -26,7 +26,7 @@ class ComponentFinances(BalancingTableBase):
     def __init__(self, limitFrom, limitTo, displayMode = 0, logisticTime = 0, option = None):
 
         try:
-            if (int(option) == 0):
+            if int(option) == 0:
                 BalancingTableBase.__init__(self, Module.objects.all().filter(FitsIntoSlot=None).order_by("BaseMarketPrice")[limitFrom:limitTo])
             else:
                 BalancingTableBase.__init__(self, Module.objects.all().filter(FitsIntoSlot=int(option)).order_by("BaseMarketPrice")[limitFrom:limitTo])
@@ -34,7 +34,6 @@ class ComponentFinances(BalancingTableBase):
             BalancingTableBase.__init__(self, Module.objects.all().order_by("FitsIntoSlot", "BaseMarketPrice")[limitFrom:limitTo])
 
 
-        BalancingTableBase.__init__(self, Module.objects.all().order_by("FitsIntoSlot", "BaseMarketPrice")[limitFrom:limitTo])
         self.AddColumn(ComponentMaterialCosts(displayMode, logisticTime))
         self.AddColumn(ComponentEmployeeCosts(displayMode, logisticTime))
         self.AddColumn(ComponentSellPrice(displayMode, logisticTime))
@@ -47,7 +46,7 @@ class ComponentComplexit(BalancingTableBase):
     def __init__(self, limitFrom, limitTo, displayMode = 0, logisticTime = 0, option = None):
 
         try:
-            if (int(option) == 0):
+            if int(option) == 0:
                 BalancingTableBase.__init__(self, Module.objects.all().filter(FitsIntoSlot=None).order_by("BaseMarketPrice")[limitFrom:limitTo])
             else:
                 BalancingTableBase.__init__(self, Module.objects.all().filter(FitsIntoSlot=int(option)).order_by("BaseMarketPrice")[limitFrom:limitTo])
@@ -66,7 +65,7 @@ class ComponentDataMinute(BalancingTableBase):
     def __init__(self, limitFrom, limitTo, displayMode = 0, logisticTime = 0, option = None):
 
         try:
-            if (int(option) == 0):
+            if int(option) == 0:
                 BalancingTableBase.__init__(self, Module.objects.all().filter(FitsIntoSlot=None).order_by("BaseMarketPrice")[limitFrom:limitTo])
             else:
                 BalancingTableBase.__init__(self, Module.objects.all().filter(FitsIntoSlot=int(option)).order_by("BaseMarketPrice")[limitFrom:limitTo])
@@ -85,7 +84,7 @@ class ComponentDataHour(BalancingTableBase):
     def __init__(self, limitFrom, limitTo, displayMode = 0, logisticTime = 0, option = None):
 
         try:
-            if (int(option) == 0):
+            if int(option) == 0:
                 BalancingTableBase.__init__(self, Module.objects.all().filter(FitsIntoSlot=None).order_by("BaseMarketPrice")[limitFrom:limitTo])
             else:
                 BalancingTableBase.__init__(self, Module.objects.all().filter(FitsIntoSlot=int(option)).order_by("BaseMarketPrice")[limitFrom:limitTo])
@@ -104,7 +103,7 @@ class DataYieldOverview(BalancingTableBase):
     def __init__(self, limitFrom, limitTo, displayMode = 0, logisticTime = 0, option = None):
 
         try:
-            if (int(option) == 0):
+            if int(option) == 0:
                 BalancingTableBase.__init__(self, Module.objects.all().filter(FitsIntoSlot=None).order_by("BaseMarketPrice")[limitFrom:limitTo])
             else:
                 BalancingTableBase.__init__(self, Module.objects.all().filter(FitsIntoSlot=int(option)).order_by("BaseMarketPrice")[limitFrom:limitTo])
@@ -121,7 +120,7 @@ class DataYieldBalanceDetails(BalancingTableBase):
     def __init__(self, limitFrom, limitTo, displayMode = 0, logisticTime = 0, option = None):
 
         try:
-            if (int(option) == 0):
+            if int(option) == 0:
                 BalancingTableBase.__init__(self, Module.objects.all().filter(FitsIntoSlot=None).order_by("BaseMarketPrice")[limitFrom:limitTo])
             else:
                 BalancingTableBase.__init__(self, Module.objects.all().filter(FitsIntoSlot=int(option)).order_by("BaseMarketPrice")[limitFrom:limitTo])
@@ -140,7 +139,7 @@ class DataYieldCostDetails(BalancingTableBase):
     def __init__(self, limitFrom, limitTo, displayMode = 0, logisticTime = 0, option = None):
 
         try:
-            if (int(option) == 0):
+            if int(option) == 0:
                 BalancingTableBase.__init__(self, Module.objects.all().filter(FitsIntoSlot=None).order_by("BaseMarketPrice")[limitFrom:limitTo])
             else:
                 BalancingTableBase.__init__(self, Module.objects.all().filter(FitsIntoSlot=int(option)).order_by("BaseMarketPrice")[limitFrom:limitTo])
@@ -160,7 +159,7 @@ class DataYieldRateDetails(BalancingTableBase):
     def __init__(self, limitFrom, limitTo, displayMode = 0, logisticTime = 0, option = None):
 
         try:
-            if (int(option) == 0):
+            if int(option) == 0:
                 BalancingTableBase.__init__(self, Module.objects.all().filter(FitsIntoSlot=None).order_by("BaseMarketPrice")[limitFrom:limitTo])
             else:
                 BalancingTableBase.__init__(self, Module.objects.all().filter(FitsIntoSlot=int(option)).order_by("BaseMarketPrice")[limitFrom:limitTo])
