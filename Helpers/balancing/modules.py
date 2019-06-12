@@ -6,7 +6,6 @@ from Tuning.models import *
 
 class ComponentBalancing(BalancingTableBase):
     def __init__(self, limitFrom, limitTo, displayMode = 0, logisticTime = 0, option = None):
-        BalancingTableBase.__init__(self, Module.objects.all().order_by("FitsIntoSlot", "BaseMarketPrice")[limitFrom:limitTo])
 
         try:
             if (int(option) == 0):
