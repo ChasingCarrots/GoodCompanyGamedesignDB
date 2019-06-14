@@ -300,6 +300,7 @@ class ProductFeature(models.Model):
             "Name": self.Name,
             "Description": self.Description,
             "Type": self.Type,
+            "Complementary": self.ComplementaryFeature,
             "SymbolAssetID": self.SymbolAssetID,
         }
 
@@ -329,6 +330,29 @@ class ProductFunctionFeatureRequirement(models.Model):
     def __unicode__(self):
         return u"%d x %s" %(self.FeatureValue, unicode(self.Feature))
 
+class ProductFunctionOptionalFeatures(models.Model):
+    history = HistoricalRecords()
+    Function = models.ForeignKey("ProductFunction", related_name="OptionalFeatures")
+    Feature = models.ForeignKey(ProductFeature)
+    IsNegative = models.BooleanField(default = False)
+    MinValue = models.IntegerField(default = 0)
+    MaxValue = models.IntegerField(default = 10)
+
+    def getJsonObject(self):
+        return {
+            "FeatureID":self.Feature.id,
+            "IsNegative":self.IsNegative,
+            "FeatureMin":self.MinValue,
+            "FeatureMax":self.MaxValue,
+        }
+
+    class Meta:
+        verbose_name = 'Optional Feature'
+        verbose_name_plural = 'Optional Features'
+
+    def __unicode__(self):
+        return u"%d - %d x %s" %(self.MinValue, self.MaxValue, unicode(self.Feature))
+
 class ProductFunction(models.Model):
     history = HistoricalRecords()
     Name = models.CharField(max_length=255)
@@ -342,6 +366,9 @@ class ProductFunction(models.Model):
         featureRequirements = []
         for req in self.FeatureRequirements.all():
             featureRequirements.append(req.getJsonObject())
+        optionalFeatures = []
+        for optional in self.OptionalFeatures.all():
+            optionalFeatures.append(optional.getJsonObject())
         productTypes = []
         for product in self.ViableProductTypes.all():
             productTypes.append(product.id)
@@ -350,6 +377,7 @@ class ProductFunction(models.Model):
             "IconAssetID":self.IconAssetID,
             "ViableProductTypes":productTypes,
             "FeatureRequirements":featureRequirements,
+            "OptionalFeatures":optionalFeatures,
             "BaseMarketPrice":self.BaseMarketPrice,
             "BaseMarketCapacity":self.BaseMarketCapacity,
             "MarketRecoveryFactor":self.MarketRecoveryFactor
