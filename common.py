@@ -23,12 +23,10 @@ SizeTypeChoices = (
     (LARGESLOT, "LargeSlot"),
 )
 
-MAXIMUM = 0
-MINIMUM = 1
-BINARY = 2
+ADDITIVE = 0
+BINARY = 1
 
 FeatureTypeChoices = (
-    (MAXIMUM, "Maximum"),
-    (MINIMUM, "Minimum"),
     (BINARY, "Binary"),
+    (ADDITIVE, "Additive"),
 )

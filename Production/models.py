@@ -290,7 +290,8 @@ class ProductFeature(models.Model):
     history = HistoricalRecords()
     Name = models.CharField(max_length=255)
     Description = models.TextField(blank=True)
-    Type = models.IntegerField(choices=common.FeatureTypeChoices, default=common.MAXIMUM)
+    Type = models.IntegerField(choices=common.FeatureTypeChoices, default=common.BINARY)
+    ComplementaryFeature = models.ForeignKey("ProductFeature", related_name="MainFeature", null=True, blank=True)
     SymbolAssetID = models.CharField(max_length=255)
     HelperEmoji = models.CharField(max_length=4)
 
