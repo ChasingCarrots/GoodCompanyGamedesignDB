@@ -316,11 +316,13 @@ class ProductFunctionFeatureRequirement(models.Model):
     Function = models.ForeignKey("ProductFunction", related_name="FeatureRequirements")
     Feature = models.ForeignKey(ProductFeature, related_name="ProductFunctions")
     FeatureValue = models.IntegerField()
+    FeatureValueMax = models.IntegerField(default = 10)
 
     def getJsonObject(self):
         return {
             "FeatureID":self.Feature.id,
             "FeatureValue":self.FeatureValue,
+            "FeatureValueMax":self.FeatureValueMax,
         }
 
     class Meta:
@@ -328,7 +330,7 @@ class ProductFunctionFeatureRequirement(models.Model):
         verbose_name_plural = 'Feature Requirements'
 
     def __unicode__(self):
-        return u"%d x %s" %(self.FeatureValue, unicode(self.Feature))
+        return u"%d/%d x %s" %(self.FeatureValue, self.FeatureValueMax, unicode(self.Feature))
 
 class ProductFunctionOptionalFeatures(models.Model):
     history = HistoricalRecords()

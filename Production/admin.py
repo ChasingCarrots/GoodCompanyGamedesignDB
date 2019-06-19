@@ -56,7 +56,6 @@ class ModuleAdmin(SuperModelAdmin):
     list_filter = ("FitsIntoSlot",)
     inlines = (ModuleInputMaterialAmountAdmin,
                ModuleFeatureAdmin,
-               ModuleFeatureRequirementAdmin,
                ModuleResearchDataYieldAdmin)
 admin.site.register(Module, ModuleAdmin)
 
