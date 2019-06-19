@@ -36,6 +36,26 @@
         </tbody>
     </table>
 
+<h2 class="ui header">Product Rating</h2>
+    <table class="ui celled table" style="text-align:center;">
+        <thead>
+            <tr>
+                <th width="10%">Product Rating</th>
+                <th width="10%">Mandatory Rating</th>
+                <th width="10%">Optional Rating</th>
+                <th width="10%">Drawbacks</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{product.productRating|floatformat:2}}</td>
+                <td>{{product.mandatoryRating|floatformat:2}}</td>
+                <td>{{product.optionalRating|floatformat:2}}</td>
+                <td>{{product.drawbackRating|floatformat:2}}</td>
+            </tr>
+        </tbody>
+    </table>
+
     <h2 class="ui header">Modules</h2>
     <table class="ui celled table" style="text-align:center;">
         <thead>
@@ -126,6 +146,6 @@
         console.log("incoming Text " + jqXHR.responseText); }) .always(function() { console.log( "complete" ); });
     }
 
-    runCommand("ProductTree",  '{{ product.name }}'.split(' ').join('___'));
+    runCommand("ProductTree",  '{{ product.name }}');
     </script>
 {% endblock %}

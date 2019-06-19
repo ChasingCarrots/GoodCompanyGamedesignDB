@@ -7,6 +7,7 @@ from ObjectTypes.models import *
 from Research.models import *
 
 
+# Function to generate just all
 class GenerateAllProducts(CommandBase):
     def RunCommand(self, commandline):
         string = ""

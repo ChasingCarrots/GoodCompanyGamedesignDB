@@ -19,6 +19,55 @@ class SampleProduct(models.Model):
     def __unicode__(self):
         return self.Name
 
+    def getFeatureValues(self):
+        featureValues = {}
+        for module in self.Modules.all():
+            for feature in module.Features.all():
+                if feature.ProductFeature.Name in featureValues:
+                    featureValues[feature.ProductFeature.Name] += feature.FeatureValue
+                else:
+                    featureValues[feature.ProductFeature.Name] = feature.FeatureValue
+        return featureValues
+
+
+    def getFullRating(self):
+        value = 0.0
+        value += self.getOptionalRating()
+        value += self.getMandatoryRating()
+        value += self.getDrawbackRating()
+        return value / 3.0
+
+    def getMandatoryRating(self):
+        i = 0.0
+        n = 0.0
+        featureValues = self.getFeatureValues()
+        for requirement in self.ProductFunction.FeatureRequirements.all():
+            if requirement.Feature.Name in featureValues:
+                i += 1
+                n += requirement.getRatingValue(featureValues[requirement.Feature.Name])
+        return 0.5 if i <= 0 else n / i
+
+
+    def getOptionalRating(self):
+        i = 0.0
+        n = 0.0
+        featureValues = self.getFeatureValues()
+        for feature in self.ProductFunction.OptionalFeatures.all():
+            if feature.Feature.Name in featureValues and not feature.IsNegative:
+                i += 1
+                n += feature.getRatingValue(featureValues[feature.Feature.Name])
+        return 0.5 if i <= 0 else n / i
+
+    def getDrawbackRating(self):
+        i = 0.0
+        n = 0.0
+        featureValues = self.getFeatureValues()
+        for feature in self.ProductFunction.OptionalFeatures.all():
+            if feature.Feature.Name in featureValues and feature.IsNegative:
+                i += 1
+                n -= feature.getRatingValue(featureValues[feature.Feature.Name])
+        return 0.5 if i <= 0 else -(n / i)
+
     def collectMaterials(self):
         localMaterials = {}
         for module in self.Modules.all():

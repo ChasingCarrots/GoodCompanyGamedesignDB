@@ -75,7 +75,6 @@ def getTreeNode(module, parent, count, materials, parents, amount, amounts, posi
 class ProductTree(CommandBase):
     def RunCommand(self, productName):
 
-        productName = str(productName).replace("___", " ")
         output = ""
 
         count = 0

@@ -311,6 +311,7 @@ class ProductFeature(models.Model):
     def __unicode__(self):
         return unicode(self.HelperEmoji + " " +  self.Name)
 
+
 class ProductFunctionFeatureRequirement(models.Model):
     history = HistoricalRecords()
     Function = models.ForeignKey("ProductFunction", related_name="FeatureRequirements")
@@ -328,6 +329,16 @@ class ProductFunctionFeatureRequirement(models.Model):
     class Meta:
         verbose_name = 'Feature Requirement'
         verbose_name_plural = 'Feature Requirements'
+
+    def getRatingValue(self, value):
+        if self.FeatureValue < self.FeatureValueMax and self.Feature.Type == common.ADDITIVE:
+            n = float(value - self.FeatureValue) / float(self.FeatureValueMax - self.FeatureValue)
+            if n > 1:
+                n = 1
+            elif n < 0:
+                n = 0
+            return n
+        return 0
 
     def __unicode__(self):
         return u"%d/%d x %s" %(self.FeatureValue, self.FeatureValueMax, unicode(self.Feature))
@@ -354,6 +365,16 @@ class ProductFunctionOptionalFeatures(models.Model):
 
     def __unicode__(self):
         return u"%d - %d x %s" %(self.MinValue, self.MaxValue, unicode(self.Feature))
+
+    def getRatingValue(self, value):
+        if self.MinValue < self.MaxValue:
+            n = float(value - self.MinValue) / float(self.MaxValue - self.MinValue)
+            if n > 1:
+                n = 1
+            elif n < 0:
+                n = 0
+            return n
+        return 0
 
 class ProductFunction(models.Model):
     history = HistoricalRecords()

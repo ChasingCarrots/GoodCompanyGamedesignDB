@@ -193,7 +193,11 @@ def sampleProduct(request, productId):
             "perMinuteProfit": productProfitPerSecond(product, 0) * 60,
             "complexity": getProductComplexity(product, True),
             "moduleCount": moduleCount,
-            "modules": modules
+            "modules": modules,
+            "productRating": product.getFullRating(),
+            "mandatoryRating": product.getMandatoryRating(),
+            "optionalRating": product.getOptionalRating(),
+            "drawbackRating": product.getDrawbackRating(),
         },
         "materials": moduleBaseMaterials,
         "total": {
