@@ -13,25 +13,17 @@
         <thead>
             <tr>
                 <th width="10%">Costs</th>
-                <th width="10%">SellPrice</th>
-                <th width="10%">Profit</th>
-                <th width="10%">ExtraToModule</th>
-                <th width="10%">Profitability</th>
-                <th width="10%">CraftTime</th>
-                <th width="10%">CraftPerMinute</th>
-                <th width="10%">ProfitPerMinute</th>
+                <th width="10%">Base Price</th>
+                <th width="10%">Price Multiplier</th>
+                <th width="10%">Optimal Price</th>
             </tr>
         </thead>
         <tbody>
             <tr>
                 <td>{{product.costs|floatformat:0}}</td>
-                <td>{{product.income|floatformat:0}}</td>
-                <td>{{product.profit|floatformat:0}}</td>
-                <td>{{product.moduleValueDifference|floatformat:0}}</td>
-                <td>{{product.profitability|floatformat:0}}</td>
-                <td>{{product.craftingTime|floatformat:1}}</td>
-                <td>{{product.perMinuteRate|floatformat:1}}</td>
-                <td>{{product.perMinuteProfit|floatformat:0}}</td>
+                <td>{{product.baseprice|floatformat:0}}</td>
+                <td>{{product.pricemultiplier|floatformat:2}}</td>
+                <td>{{product.optimalprice|floatformat:0}}</td>
             </tr>
         </tbody>
     </table>
