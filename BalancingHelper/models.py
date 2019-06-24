@@ -21,6 +21,17 @@ class SampleProduct(models.Model):
     def __unicode__(self):
         return self.Name
 
+    def getPriceMultiplier(self):
+        rating = self.getFullRating()
+        value = (rating+1)**self.ProductFunction.BaseMarketCurvePotential
+        value /= 2.0**self.ProductFunction.BaseMarketCurvePotential
+        value *= self.ProductFunction.BaseMarketMaxPriceFactor
+        value += 1
+        return value
+
+    def getOptimalPrice(self):
+        return self.ProductFunction.BaseMarketPrice * self.getPriceMultiplier()
+
     def getFeatureValues(self):
         featureValues = {}
         for module in self.Modules.all():
@@ -117,7 +128,7 @@ class SampleProduct(models.Model):
 def sortProductFeatures(featureName):
     feature = ProductFeature.objects.all().filter(Name=featureName)[0]
     if feature is not None:
-        if None in feature.MainFeature.all() and feature.ComplementaryFeature is not None:
+        if None in feature.MainFeature.all() and len(feature.ComplementaryFeature) > 0:
             return feature.Type * 5 + 0
         elif None in feature.MainFeature.all():
             return feature.Type * 5 + 1

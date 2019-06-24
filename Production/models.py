@@ -291,7 +291,7 @@ class ProductFeature(models.Model):
     Name = models.CharField(max_length=255)
     Description = models.TextField(blank=True)
     Type = models.IntegerField(choices=common.FeatureTypeChoices, default=common.BINARY)
-    ComplementaryFeature = models.ForeignKey("ProductFeature", related_name="MainFeature", null=True, blank=True)
+    ComplementaryFeature = models.ManyToManyField("self", related_name="MainFeature", symmetrical=False, blank=True)
     SymbolAssetID = models.CharField(max_length=255)
     HelperEmoji = models.CharField(max_length=4)
 
@@ -382,8 +382,8 @@ class ProductFunction(models.Model):
     IconAssetID = models.CharField(max_length=255)
     ViableProductTypes = models.ManyToManyField(ProductType, related_name="PossibleFunctions")
     BaseMarketPrice = models.IntegerField(default=100)
-    BaseMarketMaxPriceFactor = models.IntegerField(default=5)
-    BaseMarketCurvePotential = models.IntegerField(default=2)
+    BaseMarketMaxPriceFactor = models.FloatField(default=5)
+    BaseMarketCurvePotential = models.FloatField(default=2)
 
     #Outdates Values
     BaseMarketCapacity = models.IntegerField(default=50)
