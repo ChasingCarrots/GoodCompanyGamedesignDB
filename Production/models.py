@@ -367,8 +367,8 @@ class ProductFunctionOptionalFeatures(models.Model):
         return u"%d - %d x %s" %(self.MinValue, self.MaxValue, unicode(self.Feature))
 
     def getRatingValue(self, value):
-        if self.MinValue < self.MaxValue:
-            n = float(value - self.MinValue) / float(self.MaxValue - self.MinValue)
+        if self.MinValue <= self.MaxValue:
+            n = float(value - (self.MinValue - 1)) / float(self.MaxValue - (self.MinValue - 1))
             if n > 1:
                 n = 1
             elif n < 0:
@@ -382,6 +382,10 @@ class ProductFunction(models.Model):
     IconAssetID = models.CharField(max_length=255)
     ViableProductTypes = models.ManyToManyField(ProductType, related_name="PossibleFunctions")
     BaseMarketPrice = models.IntegerField(default=100)
+    BaseMarketMaxPriceFactor = models.IntegerField(default=5)
+    BaseMarketCurvePotential = models.IntegerField(default=2)
+
+    #Outdates Values
     BaseMarketCapacity = models.IntegerField(default=50)
     MarketRecoveryFactor = models.FloatField(default=0.5)
 

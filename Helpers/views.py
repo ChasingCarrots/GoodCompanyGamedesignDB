@@ -198,6 +198,10 @@ def sampleProduct(request, productId):
             "mandatoryRating": product.getMandatoryRating(),
             "optionalRating": product.getOptionalRating(),
             "drawbackRating": product.getDrawbackRating(),
+            "features": product.getSortedFeatureValues(),
+            "mandatory": product.ProductFunction.FeatureRequirements.all().order_by(),
+            "optionals": product.ProductFunction.OptionalFeatures.all().filter(IsNegative=False).order_by(),
+            "drawbacks": product.ProductFunction.OptionalFeatures.all().filter(IsNegative=True).order_by(),
         },
         "materials": moduleBaseMaterials,
         "total": {
@@ -205,6 +209,7 @@ def sampleProduct(request, productId):
             "totalcost": totalCost,
         },
         "commands": commands,
+        "range": range(1, 11),
     })
 
 def moduleOverview(request):

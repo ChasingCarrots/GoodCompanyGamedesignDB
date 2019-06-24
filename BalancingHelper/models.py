@@ -4,6 +4,8 @@ from __future__ import unicode_literals
 from django.db import models
 from Production.models import *
 
+
+
 class SampleProduct(models.Model):
     Name = models.CharField(max_length=255)
     ProductFunction = models.ForeignKey(ProductFunction)
@@ -27,8 +29,22 @@ class SampleProduct(models.Model):
                     featureValues[feature.ProductFeature.Name] += feature.FeatureValue
                 else:
                     featureValues[feature.ProductFeature.Name] = feature.FeatureValue
+        for req in self.ProductFunction.FeatureRequirements.all():
+            if req.Feature.Name not in featureValues:
+                featureValues[req.Feature.Name] = 0
+        for feat in self.ProductFunction.OptionalFeatures.all():
+            if feat.Feature.Name not in featureValues:
+                featureValues[feat.Feature.Name] = 0
         return featureValues
 
+    def getSortedFeatureValues(self):
+        features = self.getFeatureValues()
+        sorted = []
+        list = features.keys()
+        list.sort(key=sortProductFeatures)
+        for key in list:
+            sorted.append((key, features[key]))
+        return sorted
 
     def getFullRating(self):
         value = 0.0
@@ -52,8 +68,8 @@ class SampleProduct(models.Model):
         i = 0.0
         n = 0.0
         featureValues = self.getFeatureValues()
-        for feature in self.ProductFunction.OptionalFeatures.all():
-            if feature.Feature.Name in featureValues and not feature.IsNegative:
+        for feature in self.ProductFunction.OptionalFeatures.all().filter(IsNegative=False):
+            if feature.Feature.Name in featureValues:
                 i += 1
                 n += feature.getRatingValue(featureValues[feature.Feature.Name])
         return 0.5 if i <= 0 else n / i
@@ -62,11 +78,11 @@ class SampleProduct(models.Model):
         i = 0.0
         n = 0.0
         featureValues = self.getFeatureValues()
-        for feature in self.ProductFunction.OptionalFeatures.all():
-            if feature.Feature.Name in featureValues and feature.IsNegative:
+        for feature in self.ProductFunction.OptionalFeatures.all().filter(IsNegative=True):
+            if feature.Feature.Name in featureValues:
                 i += 1
-                n -= feature.getRatingValue(featureValues[feature.Feature.Name])
-        return 0.5 if i <= 0 else -(n / i)
+                n += feature.getRatingValue(featureValues[feature.Feature.Name])
+        return 0.5 if i <= 0 else -(n / i)+1
 
     def collectMaterials(self):
         localMaterials = {}
@@ -96,3 +112,15 @@ class SampleProduct(models.Model):
                             "icon": inputMat.Material.IconAssetID
                         }
         return localMaterials
+
+
+def sortProductFeatures(featureName):
+    feature = ProductFeature.objects.all().filter(Name=featureName)[0]
+    if feature is not None:
+        if None in feature.MainFeature.all() and feature.ComplementaryFeature is not None:
+            return feature.Type * 5 + 0
+        elif None in feature.MainFeature.all():
+            return feature.Type * 5 + 1
+        else:
+            return feature.Type * 5 + 2
+    return 999

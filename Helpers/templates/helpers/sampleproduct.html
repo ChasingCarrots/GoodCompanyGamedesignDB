@@ -36,19 +36,132 @@
         </tbody>
     </table>
 
-<h2 class="ui header">Product Rating</h2>
+<h2 class="ui header">Product Rating - {{product.productRating|floatformat:2}}</h2>
     <table class="ui celled table" style="text-align:center;">
         <thead>
             <tr>
-                <th width="10%">Product Rating</th>
-                <th width="10%">Mandatory Rating</th>
-                <th width="10%">Optional Rating</th>
+                <th width="10%">Mandatory</th>
+                <th width="10%">Optional</th>
                 <th width="10%">Drawbacks</th>
             </tr>
         </thead>
         <tbody>
             <tr>
-                <td>{{product.productRating|floatformat:2}}</td>
+                <td>
+                    {% for key, value in product.features %}
+                        {% for feature in product.mandatory %}
+                            {% if feature.Feature.Name == key %}
+                                {% if feature.Feature.Type == 0 %}
+                                    {{feature.Feature.HelperEmoji}} |
+                                        {% for i in range %}
+                                            {% if i <= value %}
+                                                {% if i < feature.FeatureValue %}
+                                                    <img height="10" src="/goodcompany/static/img/feature_filled_0.png">
+                                                {% elif i <= feature.FeatureValueMax %}
+                                                    <img height="10" src="/goodcompany/static/img/feature_filled_1.png">
+                                                {% else %}
+                                                    <img height="10" src="/goodcompany/static/img/feature_filled_0.png">
+                                                {% endif %}
+                                            {% else %}
+                                                {% if i < feature.FeatureValue %}
+                                                    <img height="10" src="/goodcompany/static/img/feature_empty_0.png">
+                                                {% elif i <= feature.FeatureValueMax %}
+                                                    <img height="10" src="/goodcompany/static/img/feature_empty_1.png">
+                                                {% else %}
+                                                    <img height="10" src="/goodcompany/static/img/feature_empty_0.png">
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endfor %}
+                                    | &nbsp;{{value}}&nbsp; <sup>({{feature.FeatureValue}} - {{feature.FeatureValueMax}})</sup>
+                                {% else %}
+                                    {{feature.Feature.HelperEmoji}}
+                                        {% if value == 1 %}<span style="color: #000099"> | {{feature.Feature.Name}} | ✔ </span>
+                                        {% else %}  <span style="color: #990000"> | {{feature.Feature.Name}} | ✗</span>
+                                        {% endif %}
+                                {% endif %}
+                                <br>
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                </td>
+                <td>
+                    {% for key, value in product.features %}
+                        {% for feature in product.optionals %}
+                            {% if feature.Feature.Name == key %}
+                                {% if feature.Feature.Type == 0 %}
+                                    {{feature.Feature.HelperEmoji}} |
+                                        {% for i in range %}
+                                            {% if i <= value %}
+                                                {% if i < feature.MinValue %}
+                                                    <img height="10" src="/goodcompany/static/img/feature_filled_0.png">
+                                                {% elif i <= feature.MaxValue %}
+                                                    <img height="10" src="/goodcompany/static/img/feature_filled_1.png">
+                                                {% else %}
+                                                    <img height="10" src="/goodcompany/static/img/feature_filled_0.png">
+                                                {% endif %}
+                                            {% else %}
+                                                {% if i < feature.MinValue %}
+                                                    <img height="10" src="/goodcompany/static/img/feature_empty_0.png">
+                                                {% elif i <= feature.MaxValue %}
+                                                    <img height="10" src="/goodcompany/static/img/feature_empty_1.png">
+                                                {% else %}
+                                                    <img height="10" src="/goodcompany/static/img/feature_empty_0.png">
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endfor %}
+                                    | &nbsp;{{value}}&nbsp; <sup>({{feature.MinValue}} - {{feature.MaxValue}})</sup>
+                                {% else %}
+                                    {{feature.Feature.HelperEmoji}}
+                                        {% if value == 1 %}<span style="color: #000099"> | {{feature.Feature.Name}} | ✔ </span>
+                                        {% else %}  <span style="color: #999999"> | {{feature.Feature.Name}} | ✗</span>
+                                        {% endif %}
+                                {% endif %}
+                                <br>
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+
+                </td>
+                <td>
+                    {% for key, value in product.features %}
+                        {% for feature in product.drawbacks %}
+                            {% if feature.Feature.Name == key %}
+                                {% if feature.Feature.Type == 0 %}
+                                    {{feature.Feature.HelperEmoji}} |
+                                        {% for i in range %}
+                                            {% if i <= value %}
+                                                {% if i < feature.MinValue %}
+                                                    <img height="10" src="/goodcompany/static/img/feature_filled_0.png">
+                                                {% elif i <= feature.MaxValue %}
+                                                    <img height="10" src="/goodcompany/static/img/feature_filled_2.png">
+                                                {% else %}
+                                                    <img height="10" src="/goodcompany/static/img/feature_filled_0.png">
+                                                {% endif %}
+                                            {% else %}
+                                                {% if i < feature.MinValue %}
+                                                    <img height="10" src="/goodcompany/static/img/feature_empty_0.png">
+                                                {% elif i <= feature.MaxValue %}
+                                                    <img height="10" src="/goodcompany/static/img/feature_empty_1.png">
+                                                {% else %}
+                                                    <img height="10" src="/goodcompany/static/img/feature_empty_0.png">
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endfor %}
+                                    | &nbsp;{{value}}&nbsp; <sup>({{feature.MinValue}} - {{feature.MaxValue}})</sup>
+                                {% else %}
+                                    {{feature.Feature.HelperEmoji}}
+                                        {% if value == 1 %}<span style="color: #990000"> | {{feature.Feature.Name}} | ✔ </span>
+                                        {% else %}  <span style="color: #999999"> | {{feature.Feature.Name}} | ✗</span>
+                                        {% endif %}
+                                {% endif %}
+                                <br>
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+
+                </td>
+            </tr>
+            <tr>
                 <td>{{product.mandatoryRating|floatformat:2}}</td>
                 <td>{{product.optionalRating|floatformat:2}}</td>
                 <td>{{product.drawbackRating|floatformat:2}}</td>
