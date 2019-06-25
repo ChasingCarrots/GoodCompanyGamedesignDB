@@ -35,6 +35,7 @@
                 <th width="10%">Mandatory</th>
                 <th width="10%">Optional</th>
                 <th width="10%">Drawbacks</th>
+                <th width="10%">Other</th>
             </tr>
         </thead>
         <tbody>
@@ -43,6 +44,7 @@
                     {% for key, value in product.features %}
                         {% for feature in product.mandatory %}
                             {% if feature.Feature.Name == key %}
+                    <span class='tooltip'>
                                 {% if feature.Feature.Type == 0 %}
                                     {{feature.Feature.HelperEmoji}} |
                                         {% for i in range %}
@@ -71,6 +73,7 @@
                                         {% else %}  <span style="color: #990000"> | {{feature.Feature.Name}} | ✗</span>
                                         {% endif %}
                                 {% endif %}
+                        <span class='tooltiptext'>{{feature.Feature.Name}}</span></span>
                                 <br>
                             {% endif %}
                         {% endfor %}
@@ -80,6 +83,7 @@
                     {% for key, value in product.features %}
                         {% for feature in product.optionals %}
                             {% if feature.Feature.Name == key %}
+                    <span class='tooltip'>
                                 {% if feature.Feature.Type == 0 %}
                                     {{feature.Feature.HelperEmoji}} |
                                         {% for i in range %}
@@ -108,6 +112,7 @@
                                         {% else %}  <span style="color: #999999"> | {{feature.Feature.Name}} | ✗</span>
                                         {% endif %}
                                 {% endif %}
+                        <span class='tooltiptext'>{{feature.Feature.Name}}</span></span>
                                 <br>
                             {% endif %}
                         {% endfor %}
@@ -118,6 +123,7 @@
                     {% for key, value in product.features %}
                         {% for feature in product.drawbacks %}
                             {% if feature.Feature.Name == key %}
+                    <span class='tooltip'>
                                 {% if feature.Feature.Type == 0 %}
                                     {{feature.Feature.HelperEmoji}} |
                                         {% for i in range %}
@@ -146,6 +152,35 @@
                                         {% else %}  <span style="color: #999999"> | {{feature.Feature.Name}} | ✗</span>
                                         {% endif %}
                                 {% endif %}
+                        <span class='tooltiptext'>{{feature.Feature.Name}}</span></span>
+                                <br>
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+
+                </td>
+                <td>
+                    {% for key, value in product.features %}
+                        {% for feature in product.otherFeatures %}
+                            {% if feature.Name == key %}
+                    <span class='tooltip'>
+                                {% if feature.Type == 0 %}
+                                    {{feature.HelperEmoji}} |
+                                        {% for i in range %}
+                                            {% if i <= value %}
+                                                <img height="10" src="/goodcompany/static/img/feature_filled_1.png">
+                                            {% else %}
+                                                <img height="10" src="/goodcompany/static/img/feature_empty_0.png">
+                                            {% endif %}
+                                        {% endfor %}
+                                    | &nbsp;{{value}}
+                                {% else %}
+                                    {{feature.HelperEmoji}}
+                                        {% if value == 1 %}<span style="color: #000099"> | {{feature.Name}} | ✔ </span>
+                                        {% else %}  <span style="color: #999999"> | {{feature.Name}} | ✗</span>
+                                        {% endif %}
+                                {% endif %}
+                        <span class='tooltiptext'>{{feature.Name}}</span></span>
                                 <br>
                             {% endif %}
                         {% endfor %}
@@ -157,6 +192,7 @@
                 <td>{{product.mandatoryRating|floatformat:2}}</td>
                 <td>{{product.optionalRating|floatformat:2}}</td>
                 <td>{{product.drawbackRating|floatformat:2}}</td>
+                <td>Not Rated</td>
             </tr>
         </tbody>
     </table>

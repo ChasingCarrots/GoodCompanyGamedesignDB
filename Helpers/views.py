@@ -201,6 +201,7 @@ def sampleProduct(request, productId):
             "optionalRating": product.getOptionalRating(),
             "drawbackRating": product.getDrawbackRating(),
             "features": product.getSortedFeatureValues(),
+            "otherFeatures": product.getFeatures(True),
             "mandatory": product.ProductFunction.FeatureRequirements.all().order_by(),
             "optionals": product.ProductFunction.OptionalFeatures.all().filter(IsNegative=False).order_by(),
             "drawbacks": product.ProductFunction.OptionalFeatures.all().filter(IsNegative=True).order_by(),

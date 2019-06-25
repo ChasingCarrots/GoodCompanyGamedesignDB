@@ -406,9 +406,30 @@ class ProductFunction(models.Model):
             "FeatureRequirements":featureRequirements,
             "OptionalFeatures":optionalFeatures,
             "BaseMarketPrice":self.BaseMarketPrice,
+            "BaseMarketMaxPriceFactor":self.BaseMarketMaxPriceFactor,
+            "BaseMarketCurvePotential":self.BaseMarketCurvePotential,
             "BaseMarketCapacity":self.BaseMarketCapacity,
             "MarketRecoveryFactor":self.MarketRecoveryFactor
         }
+
+    def getRequirementDict(self, getMax = False):
+        dictionary = {}
+        for req in self.FeatureRequirements.all():
+            dictionary[req.Feature.Name] = req.FeatureValue if not getMax else req.FeatureValueMax
+        return dictionary
+
+    def getOptionalsDict(self, getMax = False):
+        dictionary = {}
+        for feature in self.OptionalFeatures.all().filter(IsNegative=False):
+            dictionary[feature.Feature.Name] = feature.MinValue if not getMax else feature.MaxValue
+        return dictionary
+
+    def getDrawbacksDict(self, getMax = False):
+        dictionary = {}
+        for feature in self.OptionalFeatures.all().filter(IsNegative=True):
+            dictionary[feature.Feature.Name] = feature.MinValue if not getMax else feature.MaxValue
+        return dictionary
+
 
     class Meta:
         verbose_name = 'Product Function'

@@ -32,7 +32,24 @@ class SampleProduct(models.Model):
     def getOptimalPrice(self):
         return self.ProductFunction.BaseMarketPrice * self.getPriceMultiplier()
 
-    def getFeatureValues(self):
+    def getFeatures(self, onlyOthers = False):
+        featureList = []
+        for module in self.Modules.all():
+            for feature in module.Features.all():
+                if feature.ProductFeature not in featureList:
+                    featureList.append(feature.ProductFeature)
+
+        if onlyOthers:
+            for req in self.ProductFunction.FeatureRequirements.all():
+                if req.Feature in featureList:
+                    featureList.remove(req.Feature)
+            for optional in self.ProductFunction.OptionalFeatures.all():
+                if optional.Feature in featureList:
+                    featureList.remove(optional.Feature)
+        return featureList
+
+
+    def getFeatureValues(self, getAll = True):
         featureValues = {}
         for module in self.Modules.all():
             for feature in module.Features.all():
@@ -40,12 +57,13 @@ class SampleProduct(models.Model):
                     featureValues[feature.ProductFeature.Name] += feature.FeatureValue
                 else:
                     featureValues[feature.ProductFeature.Name] = feature.FeatureValue
-        for req in self.ProductFunction.FeatureRequirements.all():
-            if req.Feature.Name not in featureValues:
-                featureValues[req.Feature.Name] = 0
-        for feat in self.ProductFunction.OptionalFeatures.all():
-            if feat.Feature.Name not in featureValues:
-                featureValues[feat.Feature.Name] = 0
+        if getAll:
+            for req in self.ProductFunction.FeatureRequirements.all():
+                if req.Feature.Name not in featureValues:
+                    featureValues[req.Feature.Name] = 0
+            for feat in self.ProductFunction.OptionalFeatures.all():
+                if feat.Feature.Name not in featureValues:
+                    featureValues[feat.Feature.Name] = 0
         return featureValues
 
     def getSortedFeatureValues(self):
