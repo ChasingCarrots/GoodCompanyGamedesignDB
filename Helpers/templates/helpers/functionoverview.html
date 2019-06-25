@@ -8,21 +8,21 @@
     <table class="ui celled table" style="text-align:center;">
         <thead>
             <tr>
-                <th width="15%">Icon</th>
+                <th width="10%">Icon</th>
                 <th width="20%">Name</th>
-                <th width="15%">Value</th>
-                <th width="25%">Form Factors</th>
-                <th width="25%">Sample Products</th>
+                <th width="15%">Form Factors</th>
+                <th width="40%">Sample Products</th>
+                <th width="15%">Generate Products</th>
             </tr>
         </thead>
         <tbody>
     {% for function in functions %}
         <tr>
             <td>
-                <a  href="/goodcompany/admin/Production/productfunction/{{ function.id }}"><img height="40" src="/goodcompany/static/img/{{function.icon}}.png" onerror="this.src='/goodcompany/static/img/unknown.png';"></a>
+                <a class='tooltip' href="/goodcompany/admin/Production/productfunction/{{ function.id }}"><img height="40" src="/goodcompany/static/img/{{function.icon}}.png" onerror="this.src='/goodcompany/static/img/unknown.png';">
+                    <span class='tooltiptext'>{{function.name}}</span></a>
             </td>
             <td>{{ function.name }}</td>
-            <td>{{ function.value }}</td>
             <td>
                 {% for type in productTypes %}
                     {% if type.function == function.id %}
@@ -40,12 +40,16 @@
                     {% endif %}
                 {% endfor %}
             </td>
+            <td>
+                <button class="button">
+                    <a href="/goodcompany/helper/runcommand/GenerateProductByFunction/{{function.name}}" class="item" target="commandoutput">Generate</a>
+                </button>
+            </td>
         </tr>
     {% endfor %}
         </tbody>
     </table>
 <br><br><br>
-
-
-
+<iframe name="commandoutput" style="position: fixed; right:0px; top:40px; background-color:#eee;" frameBorder="0" height="80" width="200"
+        srcdoc="<span style='font-size:small;'>Generating Takes up to 2 minutes!<br>Output will appear here.</span>"></iframe>
 {% endblock %}

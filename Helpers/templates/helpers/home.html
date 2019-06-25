@@ -7,14 +7,24 @@
     <button class="ui button">
         <a href="{% url "admin:index" %}">Django Admin</a>
     </button>
+    <br><br>
+    <h3>Utilities</h3>
     <button class="ui button">
         <a href="{% url 'revertchanges' %}" class="item">Revert Changes</a>
     </button>
     <button class="ui button">
-        <a href="{% url 'moduleoverview' %}" class="item">Modules</a>
+        <a href="{% url 'balancingtables' %}" class="item">Balancing Tables</a>
     </button>
     <button class="ui button">
+        <a href="{% url 'commands' %}" class="item">Commands</a>
+    </button>
+    <br><br>
+    <h3>Production</h3>
+    <button class="ui button">
         <a href="{% url 'materialoverview' %}" class="item">Materials</a>
+    </button>
+    <button class="ui button">
+        <a href="{% url 'moduleoverview' %}" class="item">Modules</a>
     </button>
     <button class="ui button">
         <a href="{% url 'producttypeoverview' %}" class="item">Product Types</a>
@@ -22,10 +32,9 @@
     <button class="ui button">
         <a href="{% url 'functionoverview' %}" class="item">Functions</a>
     </button>
+    <br><br>
+    <h3>Progress</h3>
     <button class="ui button">
-        <a href="{% url 'balancingtables' %}" class="item">Balancing Tables</a>
-    </button>
-    <button class="ui button">
-        <a href="{% url 'commands' %}" class="item">Commands</a>
+        <a href="{% url 'researchoverview' %}" class="item">Research</a>
     </button>
 {% endblock %}

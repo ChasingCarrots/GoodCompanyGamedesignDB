@@ -18,6 +18,10 @@ def functionOverview(request):
     samples = []
     productTypes = []
 
+    commands = []
+    for command in CommandBase.__subclasses__():
+        commands.append(command.__name__)
+
     for function in ProductFunction.objects.all().order_by("Name"):
 
         functions.append({
@@ -47,7 +51,8 @@ def functionOverview(request):
     return render(request, "helpers/functionoverview.html", {
         "functions": functions,
         "samples": samples,
-        "productTypes": productTypes
+        "productTypes": productTypes,
+        "commands": commands,
     })
 
 def productTypeOverview(request):
