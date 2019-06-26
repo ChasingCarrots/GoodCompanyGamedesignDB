@@ -296,11 +296,15 @@ class ProductFeature(models.Model):
     HelperEmoji = models.CharField(max_length=4)
 
     def getJsonObject(self):
+        complimentaries = [compFeat.id for compFeat in self.ComplementaryFeature.all()]
+        mainFeatures = [mainFeat.id for mainFeat in self.MainFeature.all()]
+
         return {
             "Name": self.Name,
             "Description": self.Description,
             "Type": self.Type,
-            "Complementary": self.ComplementaryFeature,
+            "Complementary": complimentaries,
+            "MainFeatures": mainFeatures,
             "SymbolAssetID": self.SymbolAssetID,
         }
 

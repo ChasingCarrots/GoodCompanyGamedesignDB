@@ -23,9 +23,8 @@ class SampleProduct(models.Model):
 
     def getPriceMultiplier(self):
         rating = self.getFullRating()
-        value = (rating+1)**self.ProductFunction.BaseMarketCurvePotential
-        value /= 2.0**self.ProductFunction.BaseMarketCurvePotential
-        value *= self.ProductFunction.BaseMarketMaxPriceFactor
+        value = (rating)**self.ProductFunction.BaseMarketCurvePotential
+        value *= (self.ProductFunction.BaseMarketMaxPriceFactor - 1)
         value += 1
         return value
 
