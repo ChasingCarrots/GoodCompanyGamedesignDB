@@ -300,6 +300,8 @@ def isValidProduct(requirements, usedRessources, features):
                 return False
 
     for key, value in usedRessources.items():
+        if value <= 0:
+            return True
         if key not in features:
             return False
         else:
