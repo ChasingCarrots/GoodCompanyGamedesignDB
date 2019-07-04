@@ -76,8 +76,13 @@ class ProductFunctionOptionalFeaturesAdmin(SuperInlineModelAdmin, admin.TabularI
     model = ProductFunctionOptionalFeatures
     extra = 0
 
+class ProductFunctionDrawbacksAdmin(SuperInlineModelAdmin, admin.TabularInline):
+    model = ProductFunctionDrawbacks
+    extra = 0
+
 class ProductFunctionAdmin(SuperModelAdmin):
     inlines = (ProductFunctionFeatureRequirementAdmin,
                ProductFunctionOptionalFeaturesAdmin,
+               ProductFunctionDrawbacksAdmin,
                )
 admin.site.register(ProductFunction, ProductFunctionAdmin)

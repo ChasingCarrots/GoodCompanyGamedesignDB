@@ -291,20 +291,26 @@ class ProductFeature(models.Model):
     Name = models.CharField(max_length=255)
     Description = models.TextField(blank=True)
     Type = models.IntegerField(choices=common.FeatureTypeChoices, default=common.BINARY)
-    ComplementaryFeature = models.ManyToManyField("self", related_name="MainFeature", symmetrical=False, blank=True)
+    ComplementaryFeature = models.ForeignKey("self", related_name="MainFeature", blank=True, null=True)
     SymbolAssetID = models.CharField(max_length=255)
     HelperEmoji = models.CharField(max_length=4)
 
     def getJsonObject(self):
-        complimentaries = [compFeat.id for compFeat in self.ComplementaryFeature.all()]
-        mainFeatures = [mainFeat.id for mainFeat in self.MainFeature.all()]
+
+        complementary = 0
+        if self.ComplementaryFeature:
+            complementary = self.ComplementaryFeature.id
+
+        mainfeature = 0
+        if self.MainFeature.all():
+            mainfeature = self.MainFeature.all()[0].id
 
         return {
             "Name": self.Name,
             "Description": self.Description,
             "Type": self.Type,
-            "Complementary": complimentaries,
-            "MainFeatures": mainFeatures,
+            "Complementary": complementary,
+            "MainFeature": mainfeature,
             "SymbolAssetID": self.SymbolAssetID,
         }
 
@@ -320,19 +326,19 @@ class ProductFunctionFeatureRequirement(models.Model):
     history = HistoricalRecords()
     Function = models.ForeignKey("ProductFunction", related_name="FeatureRequirements")
     Feature = models.ForeignKey(ProductFeature, related_name="ProductFunctions")
-    FeatureValue = models.IntegerField()
-    FeatureValueMax = models.IntegerField(default = 10)
+    MinValue = models.IntegerField(default=1)
+    MaxValue = models.IntegerField(default=10)
 
     def getJsonObject(self):
         return {
             "FeatureID":self.Feature.id,
-            "FeatureValue":self.FeatureValue,
-            "FeatureValueMax":self.FeatureValueMax,
+            "MinValue":self.MinValue,
+            "MaxValue":self.MaxValue,
         }
 
     class Meta:
-        verbose_name = 'Feature Requirement'
-        verbose_name_plural = 'Feature Requirements'
+        verbose_name = 'Mandatory Feature'
+        verbose_name_plural = 'Mandatory Features'
 
     def getRatingValue(self, value):
         if self.FeatureValue < self.FeatureValueMax and self.Feature.Type == common.ADDITIVE:
@@ -351,21 +357,50 @@ class ProductFunctionOptionalFeatures(models.Model):
     history = HistoricalRecords()
     Function = models.ForeignKey("ProductFunction", related_name="OptionalFeatures")
     Feature = models.ForeignKey(ProductFeature)
-    IsNegative = models.BooleanField(default = False)
-    MinValue = models.IntegerField(default = 0)
-    MaxValue = models.IntegerField(default = 10)
+    MinValue = models.IntegerField(default=0)
+    MaxValue = models.IntegerField(default=10)
 
     def getJsonObject(self):
         return {
             "FeatureID":self.Feature.id,
-            "IsNegative":self.IsNegative,
-            "FeatureMin":self.MinValue,
-            "FeatureMax":self.MaxValue,
+            "MinValue":self.MinValue,
+            "MaxValue":self.MaxValue,
         }
 
     class Meta:
         verbose_name = 'Optional Feature'
         verbose_name_plural = 'Optional Features'
+
+    def __unicode__(self):
+        return u"%d - %d x %s" %(self.MinValue, self.MaxValue, unicode(self.Feature))
+
+    def getRatingValue(self, value):
+        if self.MinValue <= self.MaxValue:
+            n = float(value - (self.MinValue - 1)) / float(self.MaxValue - (self.MinValue - 1))
+            if n > 1:
+                n = 1
+            elif n < 0:
+                n = 0
+            return n
+        return 0
+
+class ProductFunctionDrawbacks(models.Model):
+    history = HistoricalRecords()
+    Function = models.ForeignKey("ProductFunction", related_name="Drawbacks")
+    Feature = models.ForeignKey(ProductFeature)
+    MinValue = models.IntegerField(default=0)
+    MaxValue = models.IntegerField(default=10)
+
+    def getJsonObject(self):
+        return {
+            "FeatureID":self.Feature.id,
+            "MinValue":self.MinValue,
+            "MaxValue":self.MaxValue,
+        }
+
+    class Meta:
+        verbose_name = 'Drawback'
+        verbose_name_plural = 'Drawbacks'
 
     def __unicode__(self):
         return u"%d - %d x %s" %(self.MinValue, self.MaxValue, unicode(self.Feature))
@@ -400,6 +435,9 @@ class ProductFunction(models.Model):
         optionalFeatures = []
         for optional in self.OptionalFeatures.all():
             optionalFeatures.append(optional.getJsonObject())
+        drawbacks = []
+        for drawback in self.Drawbacks.all():
+            drawbacks.append(drawback.getJsonObject())
         productTypes = []
         for product in self.ViableProductTypes.all():
             productTypes.append(product.id)
@@ -407,13 +445,14 @@ class ProductFunction(models.Model):
             "Name":self.Name,
             "IconAssetID":self.IconAssetID,
             "ViableProductTypes":productTypes,
-            "FeatureRequirements":featureRequirements,
-            "OptionalFeatures":optionalFeatures,
             "BaseMarketPrice":self.BaseMarketPrice,
             "BaseMarketMaxPriceFactor":self.BaseMarketMaxPriceFactor,
             "BaseMarketCurvePotential":self.BaseMarketCurvePotential,
             "BaseMarketCapacity":self.BaseMarketCapacity,
-            "MarketRecoveryFactor":self.MarketRecoveryFactor
+            "MarketRecoveryFactor":self.MarketRecoveryFactor,
+            "MandatoryFeatures":featureRequirements,
+            "OptionalFeatures":optionalFeatures,
+            "Drawbacks":drawbacks
         }
 
     def getRequirementDict(self, getMax = False):
