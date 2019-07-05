@@ -341,8 +341,8 @@ class ProductFunctionFeatureRequirement(models.Model):
         verbose_name_plural = 'Mandatory Features'
 
     def getRatingValue(self, value):
-        if self.FeatureValue < self.FeatureValueMax and self.Feature.Type == common.ADDITIVE:
-            n = float(value - self.FeatureValue) / float(self.FeatureValueMax - self.FeatureValue)
+        if self.MinValue < self.MaxValue and self.Feature.Type == common.ADDITIVE:
+            n = float(value - self.MinValue) / float(self.MaxValue - self.MinValue)
             if n > 1:
                 n = 1
             elif n < 0:
@@ -351,7 +351,7 @@ class ProductFunctionFeatureRequirement(models.Model):
         return 0
 
     def __unicode__(self):
-        return u"%d/%d x %s" %(self.FeatureValue, self.FeatureValueMax, unicode(self.Feature))
+        return u"%d/%d x %s" %(self.MinValue, self.MaxValue, unicode(self.Feature))
 
 class ProductFunctionOptionalFeatures(models.Model):
     history = HistoricalRecords()
