@@ -8,13 +8,13 @@ class ResearchDataType(models.Model):
     history = HistoricalRecords()
     Name = models.CharField(max_length=255)
     IconAssetID = models.CharField(max_length=255)
-    Value = models.IntegerField(default=100)
+    NetWorth = models.IntegerField(default=100)
 
     def getJsonObject(self):
         return {
             "Name": self.Name,
             "IconAssetID": self.IconAssetID,
-            "Value": self.Value,
+            "NetWorth": self.NetWorth,
         }
 
     class Meta:
