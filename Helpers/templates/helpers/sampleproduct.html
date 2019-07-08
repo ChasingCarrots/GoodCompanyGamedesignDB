@@ -49,24 +49,24 @@
                                     {{feature.Feature.HelperEmoji}} |
                                         {% for i in range %}
                                             {% if i <= value %}
-                                                {% if i < feature.FeatureValue %}
+                                                {% if i < feature.MinValue %}
                                                     <img height="10" src="/goodcompany/static/img/feature_filled_0.png">
-                                                {% elif i <= feature.FeatureValueMax %}
+                                                {% elif i <= feature.MaxValue %}
                                                     <img height="10" src="/goodcompany/static/img/feature_filled_1.png">
                                                 {% else %}
                                                     <img height="10" src="/goodcompany/static/img/feature_filled_0.png">
                                                 {% endif %}
                                             {% else %}
-                                                {% if i < feature.FeatureValue %}
+                                                {% if i < feature.MinValue %}
                                                     <img height="10" src="/goodcompany/static/img/feature_empty_0.png">
-                                                {% elif i <= feature.FeatureValueMax %}
+                                                {% elif i <= feature.MaxValue %}
                                                     <img height="10" src="/goodcompany/static/img/feature_empty_1.png">
                                                 {% else %}
                                                     <img height="10" src="/goodcompany/static/img/feature_empty_0.png">
                                                 {% endif %}
                                             {% endif %}
                                         {% endfor %}
-                                    | &nbsp;{{value}}&nbsp; <sup>({{feature.FeatureValue}} - {{feature.FeatureValueMax}})</sup>
+                                    | &nbsp;{{value}}&nbsp; <sup>({{feature.MinValue}} - {{feature.MaxValue}})</sup>
                                 {% else %}
                                     {{feature.Feature.HelperEmoji}}
                                         {% if value == 1 %}<span style="color: #000099"> | {{feature.Feature.Name}} | ✔ </span>

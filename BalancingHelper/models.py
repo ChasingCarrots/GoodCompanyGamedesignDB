@@ -39,12 +39,15 @@ class SampleProduct(models.Model):
                     featureList.append(feature.ProductFeature)
 
         if onlyOthers:
-            for req in self.ProductFunction.FeatureRequirements.all():
-                if req.Feature in featureList:
-                    featureList.remove(req.Feature)
+            for mandatory in self.ProductFunction.MandatoryFeatures.all():
+                if mandatory.Feature in featureList:
+                    featureList.remove(mandatory.Feature)
             for optional in self.ProductFunction.OptionalFeatures.all():
                 if optional.Feature in featureList:
                     featureList.remove(optional.Feature)
+            for drawbacks in self.ProductFunction.Drawbacks.all():
+                if drawbacks.Feature in featureList:
+                    featureList.remove(drawbacks.Feature)
         return featureList
 
 
@@ -57,12 +60,15 @@ class SampleProduct(models.Model):
                 else:
                     featureValues[feature.ProductFeature.Name] = feature.FeatureValue
         if getAll:
-            for req in self.ProductFunction.FeatureRequirements.all():
+            for req in self.ProductFunction.MandatoryFeatures.all():
                 if req.Feature.Name not in featureValues:
                     featureValues[req.Feature.Name] = 0
             for feat in self.ProductFunction.OptionalFeatures.all():
                 if feat.Feature.Name not in featureValues:
                     featureValues[feat.Feature.Name] = 0
+            for dbs in self.ProductFunction.Drawbacks.all():
+                if dbs.Feature.Name not in featureValues:
+                    featureValues[dbs.Feature.Name] = 0
         return featureValues
 
     def getSortedFeatureValues(self):
@@ -85,10 +91,10 @@ class SampleProduct(models.Model):
         i = 0.0
         n = 0.0
         featureValues = self.getFeatureValues()
-        for requirement in self.ProductFunction.FeatureRequirements.all():
-            if requirement.Feature.Name in featureValues:
+        for mandatory in self.ProductFunction.MandatoryFeatures.all():
+            if mandatory.Feature.Name in featureValues:
                 i += 1
-                n += requirement.getRatingValue(featureValues[requirement.Feature.Name])
+                n += mandatory.getRatingValue(featureValues[mandatory.Feature.Name])
         return 0.5 if i <= 0 else n / i
 
 
@@ -96,7 +102,7 @@ class SampleProduct(models.Model):
         i = 0.0
         n = 0.0
         featureValues = self.getFeatureValues()
-        for feature in self.ProductFunction.OptionalFeatures.all().filter(IsNegative=False):
+        for feature in self.ProductFunction.OptionalFeatures.all():
             if feature.Feature.Name in featureValues:
                 i += 1
                 n += feature.getRatingValue(featureValues[feature.Feature.Name])
@@ -106,7 +112,7 @@ class SampleProduct(models.Model):
         i = 0.0
         n = 0.0
         featureValues = self.getFeatureValues()
-        for feature in self.ProductFunction.OptionalFeatures.all().filter(IsNegative=True):
+        for feature in self.ProductFunction.Drawbacks.all():
             if feature.Feature.Name in featureValues:
                 i += 1
                 n += feature.getRatingValue(featureValues[feature.Feature.Name])

@@ -324,7 +324,7 @@ class ProductFeature(models.Model):
 
 class ProductFunctionFeatureRequirement(models.Model):
     history = HistoricalRecords()
-    Function = models.ForeignKey("ProductFunction", related_name="FeatureRequirements")
+    Function = models.ForeignKey("ProductFunction", related_name="MandatoryFeatures")
     Feature = models.ForeignKey(ProductFeature, related_name="ProductFunctions")
     MinValue = models.IntegerField(default=1)
     MaxValue = models.IntegerField(default=10)
@@ -430,7 +430,7 @@ class ProductFunction(models.Model):
 
     def getJsonObject(self):
         featureRequirements = []
-        for req in self.FeatureRequirements.all():
+        for req in self.MandatoryFeatures.all():
             featureRequirements.append(req.getJsonObject())
         optionalFeatures = []
         for optional in self.OptionalFeatures.all():
@@ -457,19 +457,19 @@ class ProductFunction(models.Model):
 
     def getRequirementDict(self, getMax = False):
         dictionary = {}
-        for req in self.FeatureRequirements.all():
-            dictionary[req.Feature.Name] = req.FeatureValue if not getMax else req.FeatureValueMax
+        for req in self.MandatoryFeatures.all():
+            dictionary[req.Feature.Name] = req.MinValue if not getMax else req.MaxValue
         return dictionary
 
     def getOptionalsDict(self, getMax = False):
         dictionary = {}
-        for feature in self.OptionalFeatures.all().filter(IsNegative=False):
+        for feature in self.OptionalFeatures.all():
             dictionary[feature.Feature.Name] = feature.MinValue if not getMax else feature.MaxValue
         return dictionary
 
     def getDrawbacksDict(self, getMax = False):
         dictionary = {}
-        for feature in self.OptionalFeatures.all().filter(IsNegative=True):
+        for feature in self.Drawbacks.all():
             dictionary[feature.Feature.Name] = feature.MinValue if not getMax else feature.MaxValue
         return dictionary
 

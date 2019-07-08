@@ -53,7 +53,7 @@ class GenerateProductByFunction(CommandBase):
 def generateProductByType(productType, function):
 
     requirementList = []
-    for requirement in function.FeatureRequirements.all():
+    for requirement in function.MandatoryFeatures.all():
         requirementList.append(requirement)
 
     moduleLists = {}
@@ -211,7 +211,7 @@ def moduleRequirementAmount(module, requirements):
     if module is not None:
         for req in requirements:
             for feature in module.Features.all():
-                if feature.ProductFeature == req.Feature and req.FeatureValue <= feature.FeatureValue:
+                if feature.ProductFeature == req.Feature and req.MinValue <= feature.FeatureValue:
                     count += 1
     return count
 
@@ -296,7 +296,7 @@ def isValidProduct(requirements, usedRessources, features):
         if req.Feature.Name not in features:
             return False
         else:
-            if req.FeatureValue > features[req.Feature.Name]:
+            if req.MinValue > features[req.Feature.Name]:
                 return False
 
     for key, value in usedRessources.items():
