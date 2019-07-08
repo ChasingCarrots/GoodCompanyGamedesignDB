@@ -220,8 +220,8 @@ class Module(models.Model):
             if moduleMatQuery.exists():
                 inputModMaterials = moduleMatQuery.all()[0].collectMaterials()
                 for inputModMaterialID, inputModMaterial in inputModMaterials.items():
-                    inputModMaterial["amount"] *= inputMat.Amount
-                    inputModMaterial["totalcost"] *= inputMat.Amount
+                    inputModMaterial["amount"] *= inputMat.Amount / float(self.OutputAmount)
+                    inputModMaterial["totalcost"] *= inputMat.Amount / float(self.OutputAmount)
                     if inputModMaterialID in localMaterials:
                         localMaterials[inputModMaterialID]["amount"] += inputModMaterial["amount"]
                         localMaterials[inputModMaterialID]["totalcost"] += inputModMaterial["totalcost"]
@@ -230,8 +230,8 @@ class Module(models.Model):
             else:
                 inputModMaterialID = inputMat.Material.id
                 if inputModMaterialID in localMaterials:
-                    localMaterials[inputModMaterialID]["amount"] += inputMat.Amount
-                    localMaterials[inputModMaterialID]["totalcost"] += inputMat.Amount * inputMat.Material.getPricePerUnit()
+                    localMaterials[inputModMaterialID]["amount"] += inputMat.Amount / float(self.OutputAmount)
+                    localMaterials[inputModMaterialID]["totalcost"] += inputMat.Amount * inputMat.Material.getPricePerUnit() / float(self.OutputAmount)
                 else:
                     localMaterials[inputModMaterialID] = {
                         "name": inputMat.Material.Name,

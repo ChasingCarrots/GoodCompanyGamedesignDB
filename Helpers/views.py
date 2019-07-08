@@ -270,10 +270,10 @@ def moduleDetail(request, moduleID):
         moduleInputMaterials.append({
             "name": moduleInputMat.Material.Name,
             "icon": moduleInputMat.Material.IconAssetID,
-            "amount": moduleInputMat.Amount,
+            "amount": moduleInputMat.Amount / float(module.OutputAmount),
             "moduleID": moduleInputMatModuleID,
             "materialID": moduleInputMatMaterialID,
-            "totalcost": cost * moduleInputMat.Amount,
+            "totalcost": cost * moduleInputMat.Amount / float(module.OutputAmount),
         })
 
     usedInModules = []
