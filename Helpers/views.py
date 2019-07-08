@@ -290,16 +290,21 @@ def moduleDetail(request, moduleID):
             usedInProduct.append(product)
             usedInProductCount += 1
 
+    features = []
+    for feature in module.Features.all():
+        features.append(feature)
 
     return render(request, "helpers/moduledetail.html", {
         "module": {
             "name": module.Name,
             "inputMaterials": moduleInputMaterials,
+            "features": features,
             "icon": module.IconAssetID,
             "id": module.id,
             "materialId": module.Material.id,
             "complexity": getComponentComplexity(module),
             "costs": totalCostPerComponent(module, 0),
+            "materialcosts": module.rawMaterialCost(),
             "profit": totalProfitPerComponent(module, 0),
             "income": module.BaseMarketPrice,
             "profitability": getComponentProfitability(module, 0),

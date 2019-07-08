@@ -13,10 +13,10 @@
     <table class="ui celled table" style="text-align:center;">
         <thead>
             <tr>
+                <th width="10%">Materials</th>
                 <th width="10%">Costs</th>
                 <th width="10%">SellPrice</th>
                 <th width="10%">Profit</th>
-                <th width="10%">Profitability</th>
                 <th width="10%">CraftTime</th>
                 <th width="10%">OutputAmount</th>
                 <th width="10%">CraftPerMinute</th>
@@ -25,10 +25,10 @@
         </thead>
         <tbody>
             <tr>
+                <td>{{module.materialcosts|floatformat:0 }}</td>
                 <td>{{module.costs|floatformat:0 }}</td>
                 <td>{{module.income|floatformat:0 }}</td>
                 <td>{{module.profit|floatformat:0 }}</td>
-                <td>{{module.profitability|floatformat:0 }}</td>
                 <td>{{module.craftingTime|floatformat:0 }}</td>
                 <td>{{module.outputAmount|floatformat:0 }}</td>
                 <td>{{module.perMinuteRate|floatformat:0 }}</td>
@@ -36,6 +36,29 @@
             </tr>
         </tbody>
     </table>
+
+    {% if module.features.count > 0 %}
+    <h2 class="ui header">Features</h2>
+    <table class="ui celled table" style="text-align:center; width:50%;">
+        <thead>
+            <tr>
+                <th width="10%"></th>
+                <th width="70%">Feature</th>
+                <th width="20%">Value</th>
+            </tr>
+        </thead>
+        <tbody>
+                {% for feature in module.features %}
+            <tr>
+                <td><a href="/goodcompany/admin/Production/productfeature/{{feature.ProductFeature.id}}/">{{ feature.ProductFeature.HelperEmoji }}</a></td>
+                <td><a href="/goodcompany/admin/Production/productfeature/{{feature.ProductFeature.id}}/">{{ feature.ProductFeature.Name }}</a></td>
+                <td>{{ feature.FeatureValue }}</td>
+            </tr>
+                {% endfor %}
+        </tbody>
+    </table>
+{% endif %}
+
 
 
     <h2 class="ui header">Used In</h2>
