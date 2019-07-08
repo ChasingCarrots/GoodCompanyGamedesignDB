@@ -1,0 +1,75 @@
+{% extends 'helpers/base.html' %}
+
+{% block title %}{{ module.name }} Details{% endblock %}
+
+{% block content %}
+
+<h1 class="ui header" id="modname"><a href="/goodcompany/admin/ObjectTypes/objecttype/{{object.id}}/">{{ object.Name | title}}</a></h1>
+
+{% if possibleModules.count > 0 %}
+    <h2 class="ui header">Possible Modules</h2>
+    <table class="ui celled table" style="text-align:center;">
+        <thead>
+            <tr>
+                <th width="10%">Icon</th>
+                <th width="12%">Name</th>
+                <th width="10%">Duration</th>
+                <th width="14%">Employee Cost</th>
+                <th width="14%">Material Cost</th>
+                <th width="37%">Recipe</th>
+            </tr>
+        </thead>
+        <tbody>
+                {% for module in possibleModules %}
+            <tr>
+                <td>
+                    <a href="{% url 'moduledetail' module.id %}">
+                        <img style="z-index: -2;" height="40" src="/goodcompany/static/img/{{module.icon}}.png" onerror="this.src='/goodcompany/static/img/unknown.png';">
+                    </a>
+                        <p style="z-index: 3; height: 20px; width: 20px; font-size: 20px; font-weight: bolder; color: #222; text-align: right; text-shadow: 1px 1px white, -1px 1px white, 1px -1px white, -1px -1px white; margin-left: 47px; margin-top: -25px;">
+                            {{ module.outputAmount }}
+                        </p>
+                </td>
+                <td>
+                    <a href="{% url 'moduledetail' module.id %}">
+                        {{module.name}}
+                    </a>
+                </td>
+                <td>
+                    {{module.duration|floatformat:1 }}
+                </td>
+                <td>
+                    {{module.employeeCosts|floatformat:1 }}
+                </td>
+                <td>
+                    {{module.materialCosts|floatformat:1 }}
+                </td>
+                <td>
+                    {% for material in module.materials %}
+                    {% if not material.Module %}
+                        <a class='tooltip' href="{% url 'materialdetail' material.Material.id %}">
+                    {% else %}
+                        <a class='tooltip' href="{% url 'moduledetail' material.Module.id %}">
+                    {% endif %}
+                            <img style="z-index: -2;" height="40" src="/goodcompany/static/img/{{material.Material.IconAssetID}}.png" onerror="this.src='/goodcompany/static/img/unknown.png';">
+                            <span class='tooltiptext'>{{material.Material.Name}}</span>
+                    </a>
+                    <span style="z-index: 3; height: 20px; width: 20px; font-size: 20px; font-weight: bolder; color: #222; text-align: right; text-shadow: 1px 1px white, -1px 1px white, 1px -1px white, -1px -1px white; margin-left: -10px; margin-right:5px; margin-top: -25px;">
+                        {{ material.Amount }}
+                    </span>
+                    {% endfor %}
+                </td>
+            </tr>
+                {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+ - Can't craft anything or no recipies added! -
+{% endif %}
+
+<br>
+<br>
+<br>
+<br>
+
+{% endblock %}

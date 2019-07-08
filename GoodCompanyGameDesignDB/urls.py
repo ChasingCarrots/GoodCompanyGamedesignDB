@@ -41,4 +41,6 @@ urlpatterns = [
     url(r'^goodcompany/helper/researchoverview', researchOverview, name="researchoverview"),
     url(r'^goodcompany/helper/researchdetail/(\d+)', researchDetail, name="researchdetail"),
     url(r'^goodcompany/helper/functionoverview', functionOverview, name="functionoverview"),
+    url(r'^goodcompany/helper/objectoverview', ObjectOverview, name="objectoverview"),
+    url(r'^goodcompany/helper/objectdetailview/(\d+)', ObjectDetails, name="objectdetailview"),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

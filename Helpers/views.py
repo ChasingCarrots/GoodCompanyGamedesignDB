@@ -638,3 +638,70 @@ def researchDetail(request, projectID):
         "productTypes": productTypes,
     }
     return render(request, "helpers/researchdetail.html", detailInformation)
+
+
+def ObjectOverview(request):
+
+    crafterList = []
+    for object in ObjectType.objects.all().filter(BuildableProperty__isnull=True).filter(CrafterProperty__isnull=False).order_by("Name"):
+
+        crafterList.append({
+            "id": object.id,
+            "name": object.Name,
+            "modulecount": len(object.CrafterProperty.PossibleModules.all()),
+        })
+
+    inventoryList = []
+    for object in ObjectType.objects.all().filter(BuildableProperty__isnull=True).filter(InventoryProperty__isnull=False).order_by("Name"):
+        if "DECO_" not in object.Name:
+            inventoryList.append({
+                "id": object.id,
+                "name": object.Name,
+                "slotcount": object.InventoryProperty.NumberOfSlots,
+            })
+
+    decoList = []
+    for object in ObjectType.objects.all().filter(BuildableProperty__isnull=True).order_by("Name"):
+        if "DECO_" in object.Name:
+            decoList.append({
+                "id": object.id,
+                "name": object.Name,
+            })
+
+
+    return render(request, "helpers/objectoverview.html", {
+        "crafterList": crafterList,
+        "inventoryList": inventoryList,
+        "decoList": decoList,
+    })
+
+
+def ObjectDetails(request, objectID):
+    object = get_object_or_404(ObjectType, pk=objectID)
+
+    employeeCostsPerSecond = float(TuningValue.objects.all().filter(Name="EmployeeWage")[0].Value) / float(TuningValue.objects.all().filter(Name="SecondsPerDay")[0].Value)
+
+    possibleModules = []
+    try:
+        crafter = object.CrafterProperty
+    except:
+        possibleModules = None
+    else:
+        for module in crafter.PossibleModules.all():
+            possibleModules.append({
+                "id": module.Module.id,
+                "name": module.Module.Name,
+                "duration": module.Duration,
+                "icon": module.Module.IconAssetID,
+                "materials": module.Module.InputMaterials.all(),
+                "outputAmount": module.Module.OutputAmount,
+                "materialCosts": module.Module.rawMaterialCost(),
+                "employeeCosts": employeeCostsPerSecond * module.Duration,
+            })
+
+
+    return render(request, "helpers/objectdetailview.html", {
+        "object": object,
+        "employeeCostsPerSecond": employeeCostsPerSecond,
+        "possibleModules": possibleModules,
+    })

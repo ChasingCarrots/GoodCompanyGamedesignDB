@@ -1,0 +1,105 @@
+{% extends 'helpers/base.html' %}
+
+{% block title %}Object Overview{% endblock %}
+
+{% block content %}
+
+
+    <h2 class="ui header">Crafters</h2>
+    <table class="ui celled table" style="text-align:center;">
+        <thead>
+            <tr>
+                <th width="10%">ID</th>
+                <th width="25%">Name</th>
+                <th width="25%">Possible Modules</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for object in crafterList %}
+            <tr>
+                <td>
+                    <a href="/goodcompany/admin/ObjectTypes/objecttype/{{object.id}}/">
+                        {{object.id}}
+                    </a>
+                </td>
+                <td>
+                    <a href="{% url 'objectdetailview' object.id %}">
+                        {{ object.name }}
+                    </a>
+                </td>
+                <td>
+                    <!--<a href="{% url 'moduledetail' object.id %}">  </a>-->
+                        {{ object.modulecount }}
+
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <br>
+    <h2 class="ui header">Inventories</h2>
+    <table class="ui celled table" style="text-align:center;">
+        <thead>
+            <tr>
+                <th width="10%">ID</th>
+                <th width="25%">Name</th>
+                <th width="25%">Slots</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for object in inventoryList %}
+            <tr>
+                <td>
+                    <a href="/goodcompany/admin/ObjectTypes/objecttype/{{object.id}}/">
+                        {{object.id}}
+                    </a>
+                </td>
+                <td>
+                    <a href="{% url 'objectdetailview' object.id %}">
+                        {{ object.name }}
+                    </a>
+                </td>
+                <td>
+                    <!--<a href="{% url 'moduledetail' object.id %}">  </a>-->
+                        {{ object.slotcount }}
+
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <br>
+    <h2 class="ui header">Decorations</h2>
+    <table class="ui celled table" style="text-align:center;">
+        <thead>
+            <tr>
+                <th width="10%">ID</th>
+                <th width="25%">Name</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for object in decoList %}
+            <tr>
+                <td>
+                    <a href="/goodcompany/admin/ObjectTypes/objecttype/{{object.id}}/">
+                        {{object.id}}
+                    </a>
+                </td>
+                <td>
+                    <a href="{% url 'objectdetailview' object.id %}">
+                        {{ object.name }}
+                    </a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+
+
+<br><br><br>
+
+
+{% endblock %}

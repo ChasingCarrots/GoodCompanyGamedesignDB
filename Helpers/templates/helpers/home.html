@@ -5,7 +5,7 @@
 {% block content %}
     <h1 class="ui header">Good Company Balancing DB</h1>
     <button class="ui button">
-        <a href="{% url "admin:index" %}">Django Admin</a>
+        <a href="{% url 'admin:index' %}">Django Admin</a>
     </button>
     <br><br>
     <h3>Utilities</h3>
@@ -25,6 +25,9 @@
     </button>
     <button class="ui button">
         <a href="{% url 'moduleoverview' %}" class="item">Modules</a>
+    </button>
+    <button class="ui button">
+        <a href="{% url 'objectoverview' %}" class="item">Tables</a>
     </button>
     <button class="ui button">
         <a href="{% url 'producttypeoverview' %}" class="item">Product Types</a>
