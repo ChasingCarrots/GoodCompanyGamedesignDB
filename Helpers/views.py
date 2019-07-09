@@ -306,8 +306,8 @@ def moduleDetail(request, moduleID):
             if possibleModule.Module == module:
 
                 productionCost = employeeCostPerSecond() * possibleModule.Duration / module.OutputAmount
-                totalSlow = (productionCost + handlingCost + employeeCostSlow + module.rawMaterialCost()) / module.OutputAmount
-                totalQuick = (productionCost + handlingCost + employeeCostFast + module.rawMaterialCost()) / module.OutputAmount
+                totalSlow = (productionCost + handlingCost + employeeCostSlow + module.rawMaterialCost())
+                totalQuick = (productionCost + handlingCost + employeeCostFast + module.rawMaterialCost())
                 tableList.append({
                     "id": object.id,
                     "name": object.Name,
