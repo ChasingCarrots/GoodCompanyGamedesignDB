@@ -169,7 +169,7 @@ def sampleProduct(request, productId):
             "profit": totalProfitPerComponent(module, 0),
             "income": module.BaseMarketPrice,
             "profitability": getComponentProfitability(module, 0),
-            "craftingTime": getComponentCraftingTime(module, 0, False),
+            "craftingTime": getComponentCraftingTime(module, 0, 0, False, False),
             "perMinuteRate": componentsPerSecond(module, 0) * 60,
             "perMinuteProfit": componentProfitPerSecond(module, 0) * 60,
             "outputAmount": module.OutputAmount,
@@ -294,6 +294,37 @@ def moduleDetail(request, moduleID):
     for feature in module.Features.all():
         features.append(feature)
 
+    tableList = []
+    _baseHandlingtime = 3.0
+    _handlingtimePerMaterial = 0.5
+    handlingCost = employeeCostPerSecond() * (len(module.InputMaterials.all()) * _handlingtimePerMaterial + _baseHandlingtime) / module.OutputAmount
+    employeeCostSlow = employeeCostPerSecond() * getComponentCraftingTime(module, _baseHandlingtime, _handlingtimePerMaterial, True, False, False) / module.OutputAmount
+    employeeCostFast = employeeCostPerSecond() * getComponentCraftingTime(module, _baseHandlingtime, _handlingtimePerMaterial, True, True, False) / module.OutputAmount
+
+    for object in ObjectType.objects.all().filter(BuildableProperty__isnull=True).filter(CrafterProperty__isnull=False).order_by("Name"):
+        for possibleModule in object.CrafterProperty.PossibleModules.all():
+            if possibleModule.Module == module:
+
+                productionCost = employeeCostPerSecond() * possibleModule.Duration / module.OutputAmount
+                totalSlow = (productionCost + handlingCost + employeeCostSlow + module.rawMaterialCost()) / module.OutputAmount
+                totalQuick = (productionCost + handlingCost + employeeCostFast + module.rawMaterialCost()) / module.OutputAmount
+                tableList.append({
+                    "id": object.id,
+                    "name": object.Name,
+                    "productionTime": possibleModule.Duration / module.OutputAmount,
+                    "productionCost": productionCost,
+                    "productionRateSlow": 100 * productionCost / totalSlow,
+                    "productionRateQuick": 100 * productionCost / totalQuick,
+                    "handlingRateSlow": 100 * handlingCost / totalSlow,
+                    "handlingRateQuick": 100 * handlingCost / totalQuick,
+                    "preStepRateSlow": 100 * employeeCostSlow / totalSlow,
+                    "preStepRateQuick": 100 * employeeCostFast / totalQuick,
+                    "materialRateSlow": 100 * module.rawMaterialCost() / totalSlow,
+                    "materialRateQuick": 100 * module.rawMaterialCost() / totalQuick,
+                    "totalCostSlow": totalSlow,
+                    "totalCostQuick": totalQuick,
+                })
+
     return render(request, "helpers/moduledetail.html", {
         "module": {
             "name": module.Name,
@@ -308,13 +339,17 @@ def moduleDetail(request, moduleID):
             "profit": totalProfitPerComponent(module, 0),
             "income": module.BaseMarketPrice,
             "profitability": getComponentProfitability(module, 0),
-            "craftingTime": getComponentCraftingTime(module, 0, False),
+            "craftingTime": getComponentCraftingTime(module, 0, 0, False, False),
             "perMinuteRate": componentsPerSecond(module, 0) * 60,
             "perMinuteProfit": componentProfitPerSecond(module, 0) * 60,
             "outputAmount": module.OutputAmount,
             "usedinmodulescount": usedInModCount,
             "usedinproductcount": usedInProductCount,
+            "handlingCost": handlingCost / module.OutputAmount,
+            "employeeCostSlow": employeeCostSlow / module.OutputAmount,
+            "employeeCostQuick": employeeCostFast / module.OutputAmount,
         },
+        "tableList": tableList,
         "materials": moduleBaseMaterials,
         "usedinmodules": usedInModules,
         "usedinproducts": usedInProduct,

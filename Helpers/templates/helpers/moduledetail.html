@@ -13,27 +13,94 @@
     <table class="ui celled table" style="text-align:center;">
         <thead>
             <tr>
-                <th width="10%">Materials</th>
-                <th width="10%">Costs</th>
-                <th width="10%">SellPrice</th>
-                <th width="10%">Profit</th>
-                <th width="10%">CraftTime</th>
                 <th width="10%">OutputAmount</th>
-                <th width="10%">CraftPerMinute</th>
-                <th width="10%">ProfitPerMinute</th>
+                <th width="10%">Complexity</th>
+                <th width="10%">Sell Price</th>
+                <th width="10%">Handling Cost</th>
+                <th width="10%">Material Cost</th>
+                <th width="10%">Slow PreStep-Cost</th>
+                <th width="10%">Quick PreStep-Cost</th>
             </tr>
         </thead>
         <tbody>
             <tr>
-                <td>{{module.materialcosts|floatformat:0 }}</td>
-                <td>{{module.costs|floatformat:0 }}</td>
-                <td>{{module.income|floatformat:0 }}</td>
-                <td>{{module.profit|floatformat:0 }}</td>
-                <td>{{module.craftingTime|floatformat:0 }}</td>
-                <td>{{module.outputAmount|floatformat:0 }}</td>
-                <td>{{module.perMinuteRate|floatformat:0 }}</td>
-                <td>{{module.perMinuteProfit|floatformat:0 }}</td>
+                <td>{{module.outputAmount|floatformat:0}}</td>
+                <td>[{{module.complexity|floatformat:2}}]</td>
+                <td>{{module.income|floatformat:2}} G</td>
+                <td>{{module.handlingCost|floatformat:2}} G</td>
+                <td>{{module.materialcosts|floatformat:2}} G</td>
+                <td>{{module.employeeCostSlow|floatformat:2}} G</td>
+                <td>{{module.employeeCostQuick|floatformat:2}} G</td>
             </tr>
+        </tbody>
+    </table><br>
+
+    <h2 class="ui header">Production Tables</h2>
+    <table class="ui celled table" style="text-align:center;">
+        <thead>
+            <tr>
+                <th width="10%"></th>
+                <th width="20%">Table</th>
+                <th width="10%">Time</th>
+                <th width="10%">Production</th>
+                <th width="10%">Handling</th>
+                <th width="10%">Pre-Steps</th>
+                <th width="10%">Material</th>
+                <th width="10%">Total Cost</th>
+            </tr>
+        </thead>
+        <tbody>
+                {% for table in tableList %}
+            <tr>
+                <td>
+                    Slow
+                </td>
+                <td  rowspan="2">
+                    <a href="{% url 'objectdetailview' table.id %}">
+                        {{table.name}}
+                    </a>
+                </td>
+                <td  rowspan="2">
+                    {{table.productionTime|floatformat:2}}s<br>{{table.productionCost|floatformat:2}} G
+                </td>
+
+                <td>
+                    {{table.productionRateSlow|floatformat:2}}%
+                </td>
+                <td>
+                    {{table.handlingRateSlow|floatformat:2}}%
+                </td>
+                <td>
+                    {{table.preStepRateSlow|floatformat:2}}%
+                </td>
+                <td>
+                    {{table.materialRateSlow|floatformat:2}}%
+                </td>
+                <td>
+                    {{table.totalCostSlow|floatformat:2}} G
+                </td>
+            </tr><tr>
+                <td>
+                    Quick
+                </td>
+
+                <td>
+                    {{table.productionRateQuick|floatformat:2}}%
+                </td>
+                <td>
+                    {{table.handlingRateQuick|floatformat:2}}%
+                </td>
+                <td>
+                    {{table.preStepRateQuick|floatformat:2}}%
+                </td>
+                <td>
+                    {{table.materialRateQuick|floatformat:2}}%
+                </td>
+                <td>
+                    {{table.totalCostQuick|floatformat:2}} G
+                </td>
+            </tr>
+                {% endfor %}
         </tbody>
     </table><br>
 
@@ -133,7 +200,7 @@
             <td><a href="{% url 'moduledetail' material.moduleID %}">{{ material.name | title}}</a></td>
             {% endif %}
             <td>{{ material.amount|floatformat:2 }}</td>
-            <td>{{ material.totalcost|floatformat:2 }}</td>
+            <td>{{ material.totalcost|floatformat:2 }} G</td>
         </tr>
     {% endfor %}
         </tbody>
@@ -157,7 +224,7 @@
             </td>
             <td><a href="{% url 'materialdetail' materialID %}">{{ material.name | title}}</a></td>
             <td>{{ material.amount|floatformat:2 }}</td>
-            <td>{{ material.totalcost|floatformat:2 }}</td>
+            <td>{{ material.totalcost|floatformat:2 }} G</td>
         </tr>
     {% endfor %}
         </tbody>
@@ -165,8 +232,8 @@
             <tr>
                 <th></th>
                 <th>Total</th>
-                <th>{{ total.amount|floatformat:2  }}</th>
-                <th>{{ total.totalcost|floatformat:2  }}</th>
+                <th>{{ total.amount|floatformat:2 }}</th>
+                <th>{{ total.totalcost|floatformat:2}} G</th>
             </tr>
         </tfoot>
     </table><br>

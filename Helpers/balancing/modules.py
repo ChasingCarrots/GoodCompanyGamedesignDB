@@ -4,6 +4,7 @@ from Research.models import *
 from ObjectTypes.models import *
 from Tuning.models import *
 
+
 class ComponentBalancing(BalancingTableBase):
     def __init__(self, limitFrom, limitTo, displayMode = 0, logisticTime = 0, option = None):
 
@@ -176,6 +177,9 @@ class DataYieldRateDetails(BalancingTableBase):
         self.AddColumn(ModuleDataYieldPerMinute(displayMode, logisticTime, "heavy machinery"))
 
 
+_defaultLogisticTime = 3.0
+_handlingTimePerMaterial = 0.5
+
 def formatCellText(text):
     return "<span style='font-family: courier; font-size: small; font-weight:bold;'>" + text.replace(" ", "&nbsp;") + "</span>"
 
@@ -308,7 +312,7 @@ class ComponentBatches(ColumnBase):
 
 #region Finances
 def employeeCostPerComponent(module, handlingtime):
-    return employeeCostPerSecond() * getComponentCraftingTime(module, handlingtime, True)
+    return employeeCostPerSecond() * getComponentCraftingTime(module, handlingtime, _handlingTimePerMaterial, True)
 
 def totalCostPerComponent(module, handlingtime):
     return employeeCostPerComponent(module, handlingtime) + module.rawMaterialCost()
@@ -442,26 +446,43 @@ class ComponentProfitability(ColumnBase):
 #endregion
 
 #region Time Based Data
-def getComponentCraftingTime(module, handlingtime = 0, fullProductionLine = True):
+def getComponentCraftingTime(module, handlingtime=0, timePerMaterial=0, fullProductionLine=True, quickestProduction=False, checkSelf=True):
     totalTime = 0
     if fullProductionLine:
         for inputMat in module.InputMaterials.all():
             moduleMatQuery = Module.objects.filter(Material=inputMat.Material)
             if moduleMatQuery.exists():
-                totalTime += getComponentCraftingTime(moduleMatQuery.all()[0], handlingtime) * inputMat.Amount
-    craftingDuration = CrafterPropertyModuleDuration.objects.filter(Module=module).order_by("id")
+                totalTime += getComponentCraftingTime(moduleMatQuery.all()[0], handlingtime, timePerMaterial, fullProductionLine, quickestProduction) * inputMat.Amount
+
+    if quickestProduction:
+        craftingDuration = CrafterPropertyModuleDuration.objects.filter(Module=module).order_by("Duration")
+    else:
+        craftingDuration = CrafterPropertyModuleDuration.objects.filter(Module=module).order_by("-Duration")
+
     if craftingDuration.exists():
-        totalTime += (craftingDuration.all()[0].Duration + handlingtime) / module.OutputAmount
+        if checkSelf:
+            totalTime += (craftingDuration.all()[0].Duration + handlingtime + timePerMaterial * len(module.InputMaterials.all())) / module.OutputAmount
         return totalTime
     else:
         return 0
+
+def getComponentHandlingTime(module, handlingtime = _defaultLogisticTime, timePerMaterial = _handlingTimePerMaterial, fullProductionLine = True):
+    totalTime = 0
+    if fullProductionLine:
+        for inputMat in module.InputMaterials.all():
+            moduleMatQuery = Module.objects.filter(Material=inputMat.Material)
+            if moduleMatQuery.exists():
+                totalTime += getComponentHandlingTime(moduleMatQuery.all()[0], handlingtime, timePerMaterial) * inputMat.Amount + timePerMaterial
+
+    totalTime += handlingtime / module.OutputAmount + timePerMaterial
+    return totalTime
 
 #region Time Based Values
 def daysPerSecond():
     return 1.0 / float(TuningValue.objects.get(Name="SecondsPerDay").Value)
 
 def componentsPerSecond(module, handlingtime):
-    craftingtime = getComponentCraftingTime(module, handlingtime, False)
+    craftingtime = getComponentCraftingTime(module, handlingtime, _handlingTimePerMaterial, False)
     if (craftingtime > 0):
         return (1.0 / craftingtime)
     else:
@@ -471,21 +492,21 @@ def employeeCostPerSecond():
     return daysPerSecond() * float(TuningValue.objects.get(Name="EmployeeWage").Value)
 
 def componentCostsPerSecond(module, handlingtime = 0):
-    craftingtime = getComponentCraftingTime(module, handlingtime, False)
+    craftingtime = getComponentCraftingTime(module, handlingtime, _handlingTimePerMaterial, False)
     if (craftingtime > 0):
         return totalCostPerComponent(module, handlingtime) / craftingtime
     else:
         return 0
 
 def componentIncomePerSecond(module, handlingtime = 0):
-    craftingtime = getComponentCraftingTime(module, handlingtime, False)
+    craftingtime = getComponentCraftingTime(module, handlingtime, _handlingTimePerMaterial, False)
     if (craftingtime > 0):
         return module.BaseMarketPrice / craftingtime
     else:
         return 0
 
 def componentProfitPerSecond(module, handlingtime = 0):
-    craftingtime = getComponentCraftingTime(module, handlingtime, False)
+    craftingtime = getComponentCraftingTime(module, handlingtime, _handlingTimePerMaterial, False)
     if (craftingtime > 0):
         return totalProfitPerComponent(module, handlingtime) / craftingtime
     else:
@@ -499,7 +520,7 @@ class ComponentCraftingTime(ColumnBase):
     def GetRowStrings(self, query):
         rows = []
         for module in query.all():
-            craftingDuration = getComponentCraftingTime(module, self.logisticsTime)
+            craftingDuration = getComponentCraftingTime(module, self.logisticsTime, _handlingTimePerMaterial)
             if (self.displayMode == 2 and module.OutputAmount > 1) or self.displayMode == 3:
                 rows.append(getBatchString(module, True) + formatCellText(str("%5.0f" %(craftingDuration))+"  ") + "<br>" +
                     getBatchString(module, False) + formatCellText(str("%7.1f" %(craftingDuration / module.OutputAmount))))
@@ -576,7 +597,7 @@ class ComponentsPerMinute(ColumnBase):
     def GetRowStrings(self, query):
         rows = []
         for module in query.all():
-            craftingtime = getComponentCraftingTime(module, self.logisticsTime, False)
+            craftingtime = getComponentCraftingTime(module, self.logisticsTime, _handlingTimePerMaterial, False)
             if (craftingtime > 0):
                 rows.append(formatCellText(str("%7.1f" %((1.0 / craftingtime) * 60))))
             else:
@@ -590,7 +611,7 @@ class ComponentsPerHour(ColumnBase):
     def GetRowStrings(self, query):
         rows = []
         for module in query.all():
-            craftingtime = getComponentCraftingTime(module, self.logisticsTime, False)
+            craftingtime = getComponentCraftingTime(module, self.logisticsTime, _handlingTimePerMaterial, False)
             if (craftingtime > 0):
                 rows.append(formatCellText(str("%7.1f" %((1.0 / craftingtime) * 3600))))
             else:
