@@ -261,6 +261,19 @@ class ModuleInputMaterialAmount(models.Model):
     def __unicode__(self):
         return u"%d x %s" %(self.Amount, unicode(self.Material))
 
+class ProductTypeSlotUIPosition(models.Model):
+    productType = models.ForeignKey("ProductType", related_name="SlotUIPositions")
+    slotType = models.ForeignKey(ModuleSlotType)
+    x = models.IntegerField()
+    y = models.IntegerField()
+
+    class Meta:
+        verbose_name = 'ProductType Slot UI Position'
+        verbose_name_plural = 'ProductType Slot UI Positions'
+
+    def __unicode__(self):
+        return u"%s %s Slot Position" %(unicode(self.productType), unicode(self.slotType))
+
 class ProductType(models.Model):
     history = HistoricalRecords()
     Name = models.CharField(max_length=255)
@@ -271,7 +284,21 @@ class ProductType(models.Model):
     def getJsonObject(self):
         slots = []
         for slot in self.Slots.all():
-            slots.append(slot.id)
+            posX = 0
+            posY = 0
+            slotUIQuery = ProductTypeSlotUIPosition.objects.filter(productType=self, slotType=slot)
+            if slotUIQuery.exists():
+                uiPos = slotUIQuery[0]
+                posX = uiPos.x
+                posY = uiPos.y
+            slots.append({
+                "SlotID": slot.id,
+                "UIPos": {
+                    "x": posX,
+                    "y": posY
+                }
+            })
+
         return {
             "Name":self.Name,
             "IconAssetID":self.IconAssetID,

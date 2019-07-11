@@ -59,8 +59,13 @@ class ModuleAdmin(SuperModelAdmin):
                ModuleResearchDataYieldAdmin)
 admin.site.register(Module, ModuleAdmin)
 
+class ProductTypeSlotUIPositionAdmin(SuperInlineModelAdmin, admin.StackedInline):
+    model = ProductTypeSlotUIPosition
+    extra = 0
+
 class ProductTypeAdmin(SuperModelAdmin):
     list_display = ("id", "__unicode__", )
+    inlines = (ProductTypeSlotUIPositionAdmin,)
 admin.site.register(ProductType, ProductTypeAdmin)
 
 class ProductFeatureAdmin(SuperModelAdmin):
