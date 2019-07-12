@@ -186,6 +186,8 @@ def totalProfitPerProduct(product, handlingtime):
 
 def getProductProfitability(product, handlingtime):
     totalCosts = totalCostPerProduct(product, handlingtime)
+    if totalCosts == 0:
+        return 0
     return ((product.ProductFunction.BaseMarketPrice - totalCosts) / totalCosts) * 100
 
 def getProductModuleValue(product):

@@ -147,7 +147,6 @@ class SampleProduct(models.Model):
                         }
         return localMaterials
 
-
 def sortProductFeatures(featureName):
     feature = ProductFeature.objects.all().filter(Name=featureName)[0]
     if feature is not None:
@@ -158,3 +157,158 @@ def sortProductFeatures(featureName):
         else:
             return feature.Type * 5 + 2
     return 999
+
+
+class ProgressionValues(models.Model):
+    history = HistoricalRecords()
+    Name = models.CharField(max_length=255)
+    Value = models.FloatField()
+
+    class Meta:
+        verbose_name = 'Progression Values'
+        verbose_name_plural = "Progression Values"
+
+    def __unicode__(self):
+        return unicode(self.Name)
+
+def getModuleProgressionSellPriceFactor():
+    startPrice = ProgressionValues.objects.all().filter(Name="ModuleBasePriceStart")[0].Value
+    if not startPrice:
+        startPrice = 0
+
+    endPrice = ProgressionValues.objects.all().filter(Name="ModuleBasePriceEnd")[0].Value
+    if not endPrice:
+        endPrice = 0
+
+    progressionEnd = ProgressionValues.objects.all().filter(Name="PogressionEnd")[0].Value
+    if not progressionEnd:
+        progressionEnd = 0
+
+    return pow(endPrice/startPrice, 1/progressionEnd)
+
+def getModuleProgressionMinCostFactor():
+    startCost = ProgressionValues.objects.all().filter(Name="ModuleMinCostStart")[0].Value
+    if not startCost:
+        startCost = 0
+
+    endCost = ProgressionValues.objects.all().filter(Name="ModuleMinCostEnd")[0].Value
+    if not endCost:
+        endCost = 0
+
+    progressionEnd = ProgressionValues.objects.all().filter(Name="PogressionEnd")[0].Value
+    if not progressionEnd:
+        progressionEnd = 0
+
+    return pow(endCost/startCost, 1/progressionEnd)
+
+class ModulePathObject(models.Model):
+    history = HistoricalRecords()
+    Module = models.ForeignKey(Module)
+    Path = models.ForeignKey("CriticalModulePath", related_name="Modules")
+    PathPosition = models.FloatField(default=1)
+
+    def getProgressionPoint(self):
+        return ((self.Path.ProgressionEnd/(self.Path.PathSteps - 1)) * (self.PathPosition-1))+self.Path.ProgressionStart
+
+    def getExpectedPathPosition(self):
+        position = 0
+        temp = ModuleFeature.objects.all().filter(Module=self.Module, ProductFeature=self.Path.MainFeature)
+        if temp:
+            position += temp[0].FeatureValue * self.Path.MainFeatureValue
+        for feature in self.Path.PositiveFeatures.all():
+            temp = ModuleFeature.objects.all().filter(Module=self.Module, ProductFeature=feature)
+            if temp:
+                position += temp[0].FeatureValue * self.Path.PositiveFeatureValue / len(self.Path.PositiveFeatures.all())
+        for feature in self.Path.NegativeFeatures.all():
+            temp = ModuleFeature.objects.all().filter(Module=self.Module, ProductFeature=feature)
+            if temp:
+                position += temp[0].FeatureValue * self.Path.NegativeFeatureValue / len(self.Path.NegativeFeatures.all())
+        return position
+
+
+    def getExpectedInitialCosts(self):
+        return pow(self.Path.getInitialCostFactor(), self.PathPosition-1) * self.Path.InitialCostStart
+
+    def getExpectedMinimumCosts(self):
+        return pow(self.Path.getMinimumCostFactor(), self.PathPosition-1) * self.Path.getMinimumCostStart()
+
+    def getExpectedSellPrice(self):
+        return pow(self.Path.getSellPriceFactor(), self.PathPosition-1) * self.Path.getSellPriceStart()
+
+    class Meta:
+        verbose_name = 'Module Path Object'
+        verbose_name_plural = 'Module Path Objects'
+
+    def __unicode__(self):
+        return u"%s" % self.Module
+
+class CriticalModulePath(models.Model):
+    history = HistoricalRecords()
+    Name = models.CharField(max_length=255)
+    Slot = models.ForeignKey(ModuleSlotType, null=True, blank=True)
+    MainFeature = models.ForeignKey(ProductFeature, null=True, blank=True)
+    PositiveFeatures = models.ManyToManyField(ProductFeature, related_name="PositiveOnPath", blank=True)
+    NegativeFeatures = models.ManyToManyField(ProductFeature, related_name="NegativeOnPath", blank=True)
+    MainFeatureValue = models.FloatField(default=1)
+    PositiveFeatureValue = models.FloatField(default=0.2)
+    NegativeFeatureValue = models.FloatField(default=0.2)
+    PathSteps = models.FloatField(default=10)
+    ProgressionStart = models.FloatField(default=0)
+    ProgressionEnd = models.FloatField(default=100)
+    InitialCostStart = models.FloatField(default=50)
+    InitialCostEnd = models.FloatField(default=400000)
+
+    def getProgressionPoint(self, step):
+        return ((self.ProgressionEnd/(self.PathSteps - 1)) * (step-1))+self.ProgressionStart
+
+    def getExpectedInitialCosts(self, step):
+        return pow(self.getInitialCostFactor(), step-1) * self.InitialCostStart
+
+    def getExpectedMinimumCosts(self, step):
+        return pow(self.getMinimumCostFactor(), step-1) * self.getMinimumCostStart()
+
+    def getExpectedSellPrice(self, step):
+        return pow(self.getSellPriceFactor(), step-1) * self.getSellPriceStart()
+
+    def getInitialCostFactor(self):
+        if self.InitialCostStart == 0:
+            return 0
+        if self.PathSteps == 1:
+            return 1
+        return pow(self.InitialCostEnd/self.InitialCostStart, 1/(self.PathSteps-1))
+
+    def getMinimumCostStart(self):
+        return pow(getModuleProgressionMinCostFactor(), self.ProgressionStart) * ProgressionValues.objects.all().filter(Name="ModuleMinCostStart")[0].Value
+
+    def getMinimumCostEnd(self):
+        return pow(getModuleProgressionMinCostFactor(), self.ProgressionEnd) * ProgressionValues.objects.all().filter(Name="ModuleMinCostStart")[0].Value
+
+    def getMinimumCostFactor(self):
+        start = self.getMinimumCostStart()
+        if start == 0:
+            return 0
+        if self.PathSteps == 1:
+            return 1
+        return pow(self.getMinimumCostEnd()/start, 1/(self.PathSteps-1))
+
+    def getSellPriceStart(self):
+        return pow(getModuleProgressionSellPriceFactor(), self.ProgressionStart) * ProgressionValues.objects.all().filter(Name="ModuleBasePriceStart")[0].Value
+
+    def getSellPriceEnd(self):
+        return pow(getModuleProgressionSellPriceFactor(), self.ProgressionEnd) * ProgressionValues.objects.all().filter(Name="ModuleBasePriceStart")[0].Value
+
+    def getSellPriceFactor(self):
+        start = self.getSellPriceStart()
+        if start == 0:
+            return 0
+        if self.PathSteps == 1:
+            return 1
+        return pow(self.getSellPriceEnd()/start, 1/(self.PathSteps-1))
+
+    class Meta:
+        verbose_name = 'Critical Module Path'
+        verbose_name_plural = 'Critical Module Paths'
+        ordering = ['id']
+
+    def __unicode__(self):
+        return self.Name

@@ -1,0 +1,114 @@
+{% extends 'helpers/base.html' %}
+
+{% block title %}Module Path Details{% endblock %}
+
+{% block content %}
+
+<h1 class="ui header" id="modname">{{ path.Name | title}}</h1>
+<a href="/goodcompany/admin/BalancingHelper/criticalmodulepath/{{path.id}}/">Edit Module Path Details</a><br>
+
+
+        <br>
+        <h2 class="ui header">Path Details</h2>
+        <table class="ui celled table" style="text-align:center;">
+            <thead>
+                <tr>
+                    <th width="20%">Module Slot</th>
+                    <th width="15%">Main Feature <small>(+{{path.MainFeatureValue}})</small></th>
+                    <th width="25%">Positive Features <small>(+{{posValue}})</small></th>
+                    <th width="25%">Negative Features <small>({{negValue}})</small></th>
+                    <th width="15%">Modules</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    {% if path.Slot %}
+                    <td><a href="/goodcompany/admin/Production/moduleslottype/{{path.Slot.id}}/">{{path.Slot.Name}}</a></td>
+                    {% else %}
+                    <td>No Slot</td>
+                    {% endif %}
+                    <td>
+                        <a class='tooltip' href="/goodcompany/admin/Production/productfeature/{{path.MainFeature.id}}/">{{ path.MainFeature.HelperEmoji }}
+                        <span class='tooltiptext'>{{path.MainFeature.Name}}</span></a>
+                    </td>
+                    <td>
+                        {% for feature in posFeatures %}
+                        <a class='tooltip' href="/goodcompany/admin/Production/productfeature/{{feature.id}}/">{{ feature.HelperEmoji }}
+                        <span class='tooltiptext'>{{feature.Name}}</span></a>
+                        {% endfor %}
+                    </td>
+                    <td>
+                        {% for feature in negFeatures %}
+                        <a class='tooltip' href="/goodcompany/admin/Production/productfeature/{{feature.id}}/">{{ feature.HelperEmoji }}
+                        <span class='tooltiptext'>{{feature.Name}}</span></a>
+                        {% endfor %}
+                    </td>
+                    <td>{{moduleCount}}</td>
+                </tr>
+            </tbody>
+        </table><br><br>
+
+
+        <h2 class="ui header">Module Overview</h2>
+        <table class="ui celled table" style="text-align:center;">
+            <thead>
+                <tr>
+                    <th width="30%" colspan="2">Module</th>
+                    <th width="15%" colspan="2">Path Position<br>Current / Suggestion</th>
+                    <th width="10%">Progression</th>
+                    <th width="15%">Init. Costs</th>
+                    <th width="15%">Min. Costs</th>
+                    <th width="15%">Sell Price</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for module in modules %}
+                <tr>
+                    <td>
+                    <a class='tooltip' href="{% url 'moduledetail' module.Module.id %}">
+                        <img height="40" src="/goodcompany/static/img/{{module.Module.IconAssetID}}.png" onerror="this.src='/goodcompany/static/img/unknown.png';">
+                        <span class='tooltiptext'>{{module.Module.Name}}</span>
+                    </a>
+                    </td>
+
+                    <td>
+                        <a class='tooltip' href="{% url 'moduledetail' module.Module.id %}">{{module.Module.Name}}</a>
+                    </td>
+
+                    <td>{{module.position|floatformat:1}}</td>
+                    <td>{{module.expectedPosition|floatformat:1}}</td>
+                    <td>{{module.progression|floatformat:1}}</td>
+                    <td>{{module.initialCosts|floatformat:1}}</td>
+                    <td>{{module.minimumCosts|floatformat:1}}</td>
+                    <td>{{module.sellPrice|floatformat:1}}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table><br><br>
+
+        <h2 class="ui header">Financial Overview</h2>
+        <table class="ui celled table" style="text-align:center;">
+            <thead>
+                <tr>
+                    <th width="10%">Position</th>
+                    <th width="15%">Progression</th>
+                    <th width="25%">Initial Costs</th>
+                    <th width="25%">Minimum Costs</th>
+                    <th width="25%">Sell Price</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for data in positionData %}
+                <tr>
+                    <td>{{data.position|floatformat:0}}</td>
+                    <td>{{data.progression|floatformat:1}}</td>
+                    <td>{{data.initialCosts|floatformat:0}}</td>
+                    <td>{{data.minimumCosts|floatformat:0}}</td>
+                    <td>{{data.sellPrice|floatformat:0}}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table><br><br>
+
+<br><br><br>
+{% endblock %}

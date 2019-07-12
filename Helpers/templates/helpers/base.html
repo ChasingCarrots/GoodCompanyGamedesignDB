@@ -26,6 +26,14 @@
         .tooltip {
         }
 
+        code {
+           border-style: solid;
+           border-width: 1px;
+           border-color: #e3e3e3;
+           background-color: #f6f6f6;
+           padding: 6px;
+        }
+
         .tooltip .tooltiptext {
           visibility: hidden;
           background-color: black;
@@ -33,7 +41,8 @@
           text-align: center;
           border-radius: 6px;
           padding: 5px;
-
+          margin-top: 35px;
+          margin-left: -15px;
           /* Position the tooltip */
           position: absolute;
           z-index: 5;
@@ -59,6 +68,9 @@
         </div>
         <div class="ui container">
             <a href="{% url 'moduleoverview' %}" class="item">Modules</a>
+        </div>
+        <div class="ui container">
+            <a href="{% url 'modulepathoverview' %}" class="item">Module Paths</a>
         </div>
         <div class="ui container">
             <a href="{% url 'objectoverview' %}" class="item">Tables</a>

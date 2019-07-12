@@ -27,6 +27,8 @@ urlpatterns = [
     url(r'^goodcompany/gamedataManifest/', getManifestJson),
     url(r'^goodcompany/helper/materialoverview/', materialOverview, name="materialoverview"),
     url(r'^goodcompany/helper/materialdetail/(\d+)', materialDetail, name="materialdetail"),
+    url(r'^goodcompany/helper/modulepathoverview/', modulePathOverview, name="modulepathoverview"),
+    url(r'^goodcompany/helper/modulepathdetails/(\d+)', modulePathDetails, name="modulepathdetails"),
     url(r'^goodcompany/helper/moduleoverview/', moduleOverview, name="moduleoverview"),
     url(r'^goodcompany/helper/moduledetail/(\d+)', moduleDetail, name="moduledetail"),
     url(r'^goodcompany/helper/producttypeoverview/', productTypeOverview, name="producttypeoverview"),

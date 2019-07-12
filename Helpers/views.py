@@ -158,7 +158,12 @@ def sampleProduct(request, productId):
     modules = []
     moduleCount = 0
 
+    moduleListString = "{"
     for module in product.Modules.all().order_by("Name"):
+        if moduleCount != 0:
+            moduleListString += ","
+        moduleListString += str(module.id)
+        moduleCount += 1
         modules.append({
             "name": module.Name,
             "icon": module.IconAssetID,
@@ -174,16 +179,19 @@ def sampleProduct(request, productId):
             "perMinuteProfit": componentProfitPerSecond(module, 0) * 60,
             "outputAmount": module.OutputAmount,
         })
+    moduleListString += "}"
 
     commands = []
     for command in CommandBase.__subclasses__():
         commands.append(command.__name__)
+
 
     return render(request, "helpers/sampleproduct.html", {
         "product": {
             "id": product.id,
             "name": product.Name,
             "function": product.ProductFunction.id,
+            "type": product.ProductType.id,
             "icon": product.ProductFunction.IconAssetID,
             "costsMaterial": materialCostPerProduct(product),
             "costsEmployees": employeeCostPerProduct(product, 0),
@@ -212,12 +220,70 @@ def sampleProduct(request, productId):
             "drawbacks": product.ProductFunction.Drawbacks.all(),
         },
         "materials": moduleBaseMaterials,
+        "moduleListString": moduleListString,
         "total": {
             "amount": totalAmount,
             "totalcost": totalCost,
         },
         "commands": commands,
         "range": range(1, 11),
+    })
+
+def modulePathOverview(request):
+
+    paths = []
+    for path in CriticalModulePath.objects.all().order_by("ProgressionStart", "ProgressionEnd"):
+        modules = []
+        for module in path.Modules.all():
+            modules.append(module.Module)
+        paths.append({
+            "id": path.id,
+            "name": path.Name,
+            "slot": path.Slot,
+            "modules": modules,
+            "mainFeature": path.MainFeature,
+            "progressionStart": path.ProgressionStart,
+            "progressionEnd": path.ProgressionEnd,
+        })
+
+    return render(request, "helpers/modulepathoverview.html", {"paths": paths})
+
+def modulePathDetails(request, pathID):
+    path = get_object_or_404(CriticalModulePath, pk=pathID)
+
+    modules = []
+    for module in path.Modules.all():
+        modules.append({
+            "Module": module.Module,
+            "id": module.id,
+            "position": module.PathPosition,
+            "expectedPosition": module.getExpectedPathPosition(),
+            "progression": module.getProgressionPoint(),
+            "initialCosts": module.getExpectedInitialCosts(),
+            "minimumCosts": module.getExpectedMinimumCosts(),
+            "sellPrice": module.getExpectedSellPrice(),
+        })
+
+    positionData = []
+    for i in range(0, 11):
+        positionData.append({
+            "position": i,
+            "progression": path.getProgressionPoint(i),
+            "initialCosts": path.getExpectedInitialCosts(i),
+            "minimumCosts": path.getExpectedMinimumCosts(i),
+            "sellPrice": path.getExpectedSellPrice(i),
+        })
+
+
+    return render(request, "helpers/modulepathdetails.html", {
+        "path": path,
+        "moduleCount": len(path.Modules.all()),
+        "posValue": path.PositiveFeatureValue / len(path.PositiveFeatures.all()),
+        "negValue": path.NegativeFeatureValue / len(path.NegativeFeatures.all()),
+        "posFeatures": path.PositiveFeatures.all(),
+        "negFeatures": path.NegativeFeatures.all(),
+        "modules": modules,
+        "positionData": positionData,
     })
 
 def moduleOverview(request):
@@ -325,6 +391,23 @@ def moduleDetail(request, moduleID):
                     "totalCostQuick": totalQuick,
                 })
 
+    criticalModule = ModulePathObject.objects.all().filter(Module=module)
+    criticalPath = {}
+    if criticalModule:
+        criticalPath["position"] = criticalModule[0].PathPosition
+        criticalPath["expectedPosition"] = criticalModule[0].getExpectedPathPosition()
+        criticalPath["id"] = criticalModule[0].Path.id
+        criticalPath["name"] = criticalModule[0].Path.Name
+        criticalPath["slot"] = criticalModule[0].Path.Slot
+        criticalPath["progression"] = criticalModule[0].getProgressionPoint()
+        criticalPath["mainFeature"] = criticalModule[0].Path.MainFeature
+        criticalPath["positiveFeatures"] = criticalModule[0].Path.PositiveFeatures.all()
+        criticalPath["negativeFeatures"] = criticalModule[0].Path.NegativeFeatures.all()
+        criticalPath["initialCosts"] = criticalModule[0].getExpectedInitialCosts()
+        criticalPath["minimumCosts"] = criticalModule[0].getExpectedMinimumCosts()
+        criticalPath["sellPrice"] = criticalModule[0].getExpectedSellPrice()
+
+
     return render(request, "helpers/moduledetail.html", {
         "module": {
             "name": module.Name,
@@ -350,6 +433,7 @@ def moduleDetail(request, moduleID):
             "employeeCostQuick": employeeCostFast / module.OutputAmount,
         },
         "tableList": tableList,
+        "criticalPath": criticalPath,
         "materials": moduleBaseMaterials,
         "usedinmodules": usedInModules,
         "usedinproducts": usedInProduct,
