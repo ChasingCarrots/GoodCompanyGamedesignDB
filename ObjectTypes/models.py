@@ -9,10 +9,12 @@ from simple_history.models import HistoricalRecords
 class ObjectType(models.Model):
     history = HistoricalRecords()
     Name = models.CharField(max_length=255)
+    Description = models.CharField(max_length=255, blank=True)
 
     def getJsonObject(self):
         return {
             "Name": self.Name,
+            "Description": self.Description
         }
 
     def __unicode__(self):

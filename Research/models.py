@@ -47,6 +47,7 @@ class DevelopmentProjectRequiredData(models.Model):
 class DevelopmentProject(models.Model):
     history = HistoricalRecords()
     Name = models.CharField(max_length=255)
+    Description = models.CharField(max_length=255, blank=True)
     IconAssetID = models.CharField(max_length=255)
     RequiredProjects = models.ManyToManyField("self", blank=True, symmetrical=False, related_name="RequiredForProjects")
     UnlocksModules = models.ManyToManyField("Production.Module", blank=True, related_name="UnlockedByResearch")
@@ -64,6 +65,7 @@ class DevelopmentProject(models.Model):
 
         return {
             "Name": self.Name,
+            "Description": self.Description,
             "IconAssetID": self.IconAssetID,
             "RequiredProjects": requiredProjects,
             "RequiredData": requiredData,

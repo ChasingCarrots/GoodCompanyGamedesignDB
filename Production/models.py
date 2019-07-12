@@ -9,6 +9,7 @@ from simple_history.models import HistoricalRecords
 class Material(models.Model):
     history = HistoricalRecords()
     Name = models.CharField(max_length=255)
+    Description = models.CharField(max_length=255, blank=True)
     IconAssetID = models.CharField(max_length=255, help_text="The asset id of the icon of this material.")
     ModelAssetID = models.CharField(max_length=255, help_text="The asset id of the model for this material.", blank=True)
     TextSpriteAssetID = models.CharField(max_length=255, help_text="The asset id of the TMP spritesheet that contains the text-sprite for this material.", blank=True)
@@ -20,6 +21,7 @@ class Material(models.Model):
     def getJsonObject(self):
         return {
             "Name": self.Name,
+            "Description": self.Description,
             "IconAssetID": self.IconAssetID,
             "ModelAssetID": self.ModelAssetID,
             "TextSpriteAssetID": self.TextSpriteAssetID,
@@ -80,11 +82,13 @@ class Material(models.Model):
 class ModuleSlotType(models.Model):
     history = HistoricalRecords()
     Name = models.CharField(max_length=255)
+    Description = models.CharField(max_length=255, blank=True)
     IsOptional = models.BooleanField()
 
     def getJsonObject(self):
         return {
             "Name":self.Name,
+            "Description":self.Description,
             "IsOptional":self.IsOptional,
         }
     
@@ -158,6 +162,7 @@ class ModuleResearchDataYield(models.Model):
 class Module(models.Model):
     history = HistoricalRecords()
     Name = models.CharField(max_length=255)
+    Description = models.CharField(max_length=255, blank=True)
     IconAssetID = models.CharField(max_length=255)
     FitsIntoSlot = models.ForeignKey(ModuleSlotType, related_name="FittingModule", null=True, blank=True)
     Material = models.ForeignKey(Material)
@@ -178,6 +183,7 @@ class Module(models.Model):
 
         return {
             "Name":self.Name,
+            "Description": self.Description,
             "IconAssetID":self.IconAssetID,
             "MaterialID":self.Material.id,
             "FitsIntoSlot":fitsIntoSlot,
@@ -277,6 +283,7 @@ class ProductTypeSlotUIPosition(models.Model):
 class ProductType(models.Model):
     history = HistoricalRecords()
     Name = models.CharField(max_length=255)
+    Description = models.CharField(max_length=255, blank=True)
     IconAssetID = models.CharField(max_length=255)
     BigImageAssetID = models.CharField(max_length=255)
     Slots = models.ManyToManyField(ModuleSlotType, related_name="UsedInProductType")
@@ -301,6 +308,7 @@ class ProductType(models.Model):
 
         return {
             "Name":self.Name,
+            "Description":self.Description,
             "IconAssetID":self.IconAssetID,
             "BigImageAssetID":self.BigImageAssetID,
             "SlotTypes":slots,
