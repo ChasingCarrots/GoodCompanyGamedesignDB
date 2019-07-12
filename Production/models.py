@@ -453,6 +453,7 @@ class ProductFunctionDrawbacks(models.Model):
 class ProductFunction(models.Model):
     history = HistoricalRecords()
     Name = models.CharField(max_length=255)
+    Description = models.CharField(max_length=255, blank=True)
     IconAssetID = models.CharField(max_length=255)
     ViableProductTypes = models.ManyToManyField(ProductType, related_name="PossibleFunctions")
     BaseMarketPrice = models.IntegerField(default=100)
@@ -478,6 +479,7 @@ class ProductFunction(models.Model):
             productTypes.append(product.id)
         return {
             "Name":self.Name,
+            "Description":self.Description,
             "IconAssetID":self.IconAssetID,
             "ViableProductTypes":productTypes,
             "BaseMarketPrice":self.BaseMarketPrice,
