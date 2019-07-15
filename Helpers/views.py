@@ -274,12 +274,21 @@ def modulePathDetails(request, pathID):
             "sellPrice": path.getExpectedSellPrice(i),
         })
 
+    if len(path.NegativeFeatures.all()) > 0:
+        negValue = path.NegativeFeatureValue / len(path.NegativeFeatures.all())
+    else:
+        negValue = 0
+
+    if len(path.PositiveFeatures.all()) > 0:
+        posValue = path.PositiveFeatureValue / len(path.PositiveFeatures.all())
+    else:
+        posValue = 0
 
     return render(request, "helpers/modulepathdetails.html", {
         "path": path,
         "moduleCount": len(path.Modules.all()),
-        "posValue": path.PositiveFeatureValue / len(path.PositiveFeatures.all()),
-        "negValue": path.NegativeFeatureValue / len(path.NegativeFeatures.all()),
+        "posValue": posValue,
+        "negValue": negValue,
         "posFeatures": path.PositiveFeatures.all(),
         "negFeatures": path.NegativeFeatures.all(),
         "modules": modules,
