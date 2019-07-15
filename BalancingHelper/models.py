@@ -208,7 +208,7 @@ class ModulePathObject(models.Model):
     PathPosition = models.FloatField(default=1)
 
     def getProgressionPoint(self):
-        return ((self.Path.ProgressionEnd/(self.Path.PathSteps - 1)) * (self.PathPosition-1))+self.Path.ProgressionStart
+        return (((self.Path.ProgressionEnd--self.Path.ProgressionStart)/(self.Path.PathSteps - 1)) * (self.PathPosition-1))+self.Path.ProgressionStart
 
     def getExpectedPathPosition(self):
         position = 0
@@ -259,7 +259,7 @@ class CriticalModulePath(models.Model):
     InitialCostEnd = models.FloatField(default=400000)
 
     def getProgressionPoint(self, step):
-        return ((self.ProgressionEnd/(self.PathSteps - 1)) * (step-1))+self.ProgressionStart
+        return (((self.ProgressionEnd-self.ProgressionStart)/(self.PathSteps - 1)) * (step-1))+self.ProgressionStart
 
     def getExpectedInitialCosts(self, step):
         return pow(self.getInitialCostFactor(), step-1) * self.InitialCostStart
