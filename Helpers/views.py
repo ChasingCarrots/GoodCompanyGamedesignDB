@@ -833,3 +833,212 @@ def ObjectDetails(request, objectID):
         "employeeCostsPerSecond": employeeCostsPerSecond,
         "possibleModules": possibleModules,
     })
+
+def viewAll(request):
+    materialList = []
+    for material in Material.objects.all().filter(StackBuyPrice__gt=0):
+        materialList.append({
+            "id": material.id,
+            "name": material.Name,
+            "icon": material.IconAssetID,
+            "price": material.StackBuyPrice,
+            "stacksize": material.StackSize
+        })
+
+    slotList = []
+    for slot in ModuleSlotType.objects.all():
+        moduleList = []
+        for module in slot.FittingModule.all():
+            tables = []
+            for crafterModule in CrafterPropertyModuleDuration.objects.all().filter(Module=module):
+                tables.append({
+                    "id": crafterModule.CrafterProperty.ObjectType.id,
+                    "name": crafterModule.CrafterProperty.ObjectType.Name
+                })
+
+            researches = []
+            for research in module.UnlockedByResearch.all():
+                researches.append({
+                    "id": research.id,
+                    "name": research.Name
+                })
+
+            moduleList.append({
+                "id": module.id,
+                "name": module.Name,
+                "icon": module.IconAssetID,
+                "researches": researches,
+                "tables": tables
+            })
+
+        typeList = []
+        for type in slot.UsedInProductType.all():
+            typeList.append({
+                "id": type.id,
+                "name": type.Name
+            })
+
+        slotList.append({
+            "id": slot.id,
+            "name": slot.Name,
+            "modules": moduleList,
+            "types": typeList
+        })
+
+    componentList = []
+    for module in Module.objects.all().filter(FitsIntoSlot__isnull=True):
+        tables = []
+        for crafterModule in CrafterPropertyModuleDuration.objects.all().filter(Module=module):
+            tables.append({
+                "id": crafterModule.CrafterProperty.ObjectType.id,
+                "name": crafterModule.CrafterProperty.ObjectType.Name
+            })
+
+        researches = []
+        for research in module.UnlockedByResearch.all():
+            researches.append({
+                "id": research.id,
+                "name": research.Name
+            })
+
+        componentList.append({
+            "id": module.id,
+            "name": module.Name,
+            "icon": module.IconAssetID,
+            "researches": researches,
+            "tables": tables
+        })
+
+    tableList = []
+    for object in ObjectType.objects.all().filter(BuildableProperty__isnull=False).order_by("Name"):
+
+        researches = []
+        for research in object.UnlockedByResearch.all():
+            researches.append({
+                "id": research.id,
+                "name": research.Name
+            })
+
+        print(object.BuildableProperty.BuildsObjectConnection)
+
+        tableList.append({
+            "id": object.id,
+            "tableid": object.BuildableProperty.BuildsObjectConnection.BuildsObject.id,
+            "name": object.BuildableProperty.BuildsObjectConnection.BuildsObject.Name,
+            "researches": researches
+        })
+
+    productTypeList = []
+    for type in ProductType.objects.all():
+
+        researches = []
+        for research in type.UnlockedByResearch.all():
+            researches.append({
+                "id": research.id,
+                "name": research.Name
+            })
+
+        slots = []
+        for slot in type.Slots.all():
+            slots.append({
+                "id": slot.id,
+                "name": slot.Name
+            })
+
+        functions = []
+        for function in type.PossibleFunctions.all():
+            functions.append({
+                "id": function.id,
+                "name": function.Name
+            })
+
+        productTypeList.append({
+            "id": type.id,
+            "name": type.Name,
+            "icon": type.IconAssetID,
+            "slots": slots,
+            "functions": functions,
+            "researches": researches
+        })
+
+    functionList = []
+    for function in ProductFunction.objects.all():
+        types = []
+        for type in function.ViableProductTypes.all():
+            types.append({
+                "id": type.id,
+                "name": type.Name
+            })
+
+        researches = []
+        for research in function.UnlockedByResearch.all():
+            researches.append({
+                "id": research.id,
+                "name": research.Name
+            })
+
+        functionList.append({
+            "id": function.id,
+            "name": function.Name,
+            "icon": function.IconAssetID,
+            "types": types,
+            "researches": researches
+        })
+
+    projectList = []
+    for project in DevelopmentProject.objects.all():
+
+        researches = []
+        for research in project.RequiredForProjects.all():
+            researches.append({
+                "id": research.id,
+                "name": research.Name
+            })
+
+        modules = []
+        for module in project.UnlocksModules.all():
+            modules.append({
+                "id": module.id,
+                "name": module.Name
+            })
+
+        buildables = []
+        for buildable in project.UnlocksBuildables.all():
+            buildables.append({
+                "id": buildable.id,
+                "name": buildable.Name
+            })
+
+        types = []
+        for type in project.UnlocksProductTypes.all():
+            types.append({
+                "id": type.id,
+                "name": type.Name
+            })
+
+        functions = []
+        for function in project.UnlocksProductFunctions.all():
+            functions.append({
+                "id": function.id,
+                "name": function.Name
+            })
+
+        projectList.append({
+            "id": project.id,
+            "name": project.Name,
+            "researches": researches,
+            "functions": functions,
+            "types": types,
+            "buildables": buildables,
+            "modules": modules,
+        })
+
+    return render(request, "helpers/viewall.html", {
+        "materialList": materialList,
+        "componentList": componentList,
+        "slotList": slotList,
+        "tableList": tableList,
+        "productTypeList": productTypeList,
+        "functionList": functionList,
+        "projectList": projectList
+    })

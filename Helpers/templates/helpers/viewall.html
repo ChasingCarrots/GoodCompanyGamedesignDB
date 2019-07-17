@@ -1,0 +1,435 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://semantic-ui.com/dist/semantic.min.css">
+
+    <style type="text/css">
+        body {
+            background-color: #FFFFFF;
+        }
+        .ui.menu .item img.logo {
+            margin-right: 1.5em;
+        }
+        .main.container {
+            margin-top: 7em;
+        }
+        .wireframe {
+            margin-top: 2em;
+        }
+        .ui.footer.segment {
+            margin: 5em 0em 0em;
+            padding: 5em 0em;
+        }
+
+        .tooltip {
+        }
+
+        code {
+           border-style: solid;
+           border-width: 1px;
+           border-color: #e3e3e3;
+           background-color: #f6f6f6;
+           padding: 6px;
+        }
+
+        .tooltip .tooltiptext {
+          visibility: hidden;
+          background-color: black;
+          color: #fff;
+          text-align: center;
+          border-radius: 6px;
+          padding: 5px;
+          margin-top: 35px;
+          margin-left: -15px;
+          /* Position the tooltip */
+          position: absolute;
+          z-index: 5;
+        }
+
+        .tooltip:hover .tooltiptext {
+          visibility: visible;
+        }
+
+        {% block customcss %}{% endblock %}
+    </style>
+
+
+    <title>{% block title %} {% endblock %}</title>
+</head>
+<body>
+    <div class="ui fixed inverted menu">
+        <div class="ui container">
+            <a href="#materials" class="item">Materials</a>
+        </div>
+        <div class="ui container">
+            <a href="#components" class="item">Components</a>
+        </div>
+        <div class="ui container">
+            <a href="#modules" class="item">Modules</a>
+        </div>
+        <div class="ui container">
+            <a href="#tables" class="item">Tables</a>
+        </div>
+        <div class="ui container">
+            <a href="#slots" class="item">Slots</a>
+        </div>
+        <div class="ui container">
+            <a href="#producttypes" class="item">Product Types</a>
+        </div>
+        <div class="ui container">
+            <a href="#functions" class="item">Product Functions</a>
+        </div>
+        <div class="ui container">
+            <a href="#projects" class="item">Research Projects</a>
+        </div>
+    </div>
+
+
+    <div class="ui main container">
+        {% block content %}
+
+        <h2 id="materials" class="ui header">Material List</h2>
+        <table class="ui celled table" style="text-align:center;">
+            <thead>
+                <tr>
+                    <th width="10%">Icon</th>
+                    <th width="10%">ID</th>
+                    <th width="50%">Name</th>
+                    <th width="15%">Price</th>
+                    <th width="15%">Stack Size</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for material in materialList %}
+            <tr>
+                <td>
+                    <a href="#material_{{material.id}}"><img height="40" src="/goodcompany/static/img/{{material.icon}}.png" onerror="this.src='/goodcompany/static/img/unknown.png';"></a>
+                </td>
+                <td>
+                    {{material.id}}
+                </td>
+                <td>
+                    {{material.name}}
+                </td>
+                <td>
+                    {{material.price}}
+                </td>
+                <td>
+                    {{material.stacksize}}
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <br><br>
+
+        <h2 id="components" class="ui header">Component List</h2>
+        <table class="ui celled table" style="text-align:center;">
+            <thead>
+                <tr>
+                    <th width="10%">Icon</th>
+                    <th width="10%">ID</th>
+                    <th width="30%">Name</th>
+                    <th width="25%">Unlocked By</th>
+                    <th width="25%">Crafted At</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for item in componentList %}
+            <tr>
+                <td>
+                    <a href="#component_{{item.id}}"><img height="40" src="/goodcompany/static/img/{{item.icon}}.png" onerror="this.src='/goodcompany/static/img/unknown.png';"></a>
+                </td>
+                <td>
+                    {{item.id}}
+                </td>
+                <td>
+                    {{item.name}}
+                </td>
+                <td>
+                    {% for subitem in item.researches %}
+                        {{subitem.name}} ({{subitem.id}})<br>
+                    {% endfor %}
+                </td>
+                <td>
+                    {% for subitem in item.tables %}
+                        {{subitem.name}} ({{subitem.id}})<br>
+                    {% endfor %}
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <br><br>
+
+        <h2 id="modules" class="ui header">Module List</h2>
+        <table class="ui celled table" style="text-align:center;">
+            <thead>
+                <tr>
+                    <th width="10%">Icon</th>
+                    <th width="10%">ID</th>
+                    <th width="20%">Name</th>
+                    <th width="20%">Slot</th>
+                    <th width="20%">Unlocked By</th>
+                    <th width="20%">Crafted At</th>
+                </tr>
+            </thead>
+            <tbody>
+
+            {% for item in slotList %}
+            <a id="slot_{{item.id}}"></a>
+            {% for subitem in item.modules %}
+            <tr>
+                <td>
+                    <a href="#module_{{subitem.id}}"><img height="40" src="/goodcompany/static/img/{{subitem.icon}}.png" onerror="this.src='/goodcompany/static/img/unknown.png';"></a>
+                </td>
+                <td>
+                    {{subitem.id}}
+                </td>
+                <td>
+                    {{subitem.name}}
+                </td>
+                <td>
+                    {{item.name}}
+                </td>
+                <td>
+                    {% for subsubitem in subitem.researches %}
+                        {{subsubitem.name}} ({{subsubitem.id}})<br>
+                    {% endfor %}
+                </td>
+                <td>
+                    {% for subsubitem in subitem.tables %}
+                        {{subsubitem.name}} ({{subsubitem.id}})<br>
+                    {% endfor %}
+                </td>
+            </tr>
+            {% endfor %}
+            {% endfor %}
+            </tbody>
+        </table>
+        <br><br>
+
+        <h2 id="tables" class="ui header">Table List</h2>
+        <table class="ui celled table" style="text-align:center;">
+            <thead>
+                <tr>
+                    <th width="10%">Build ID</th>
+                    <th width="10%">Table ID</th>
+                    <th width="30%">Name</th>
+                    <th width="30%">Unlocked By</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for item in tableList %}
+            <tr>
+                <td>
+                    {{item.id}}
+                </td>
+                <td>
+                    {{item.tableid}}
+                </td>
+                <td>
+                    {{item.name}}
+                </td>
+                <td>
+                    {% for subitem in item.researches %}
+                        {{subitem.name}} ({{subitem.id}})<br>
+                    {% endfor %}
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <br><br>
+
+
+        <h2 id="slots" class="ui header">Slot List</h2>
+        <table class="ui celled table" style="text-align:center;">
+            <thead>
+                <tr>
+                    <th width="10%">ID</th>
+                    <th width="20%">Name</th>
+                    <th width="50%">Modules</th>
+                    <th width="20%">Available in</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for item in slotList %}
+            <tr>
+                <td>
+                    {{item.id}}
+                </td>
+                <td>
+                    <a href="#slot_{{item.id}}">{{item.name}}</a>
+                </td>
+                <td>
+                    {% for subitem in item.modules %}
+                        <a class="tooltip" href="#module_{{subitem.id}}"><img height="40" src="/goodcompany/static/img/{{subitem.icon}}.png" onerror="this.src='/goodcompany/static/img/unknown.png';">
+                            <span class="tooltiptext">{{subitem.name}} ({{subitem.id}})</span>
+                        </a> &nbsp;
+                    {% endfor %}
+                </td>
+                <td>
+                    {% for subitem in item.types %}
+                        {{subitem.name}} ({{subitem.id}})<br>
+                    {% endfor %}
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <br><br>
+
+
+        <h2 id="producttypes" class="ui header">Product Type List</h2>
+        <table class="ui celled table" style="text-align:center;">
+            <thead>
+                <tr>
+                    <th width="8%">Icon</th>
+                    <th width="7%">ID</th>
+                    <th width="15%">Name</th>
+                    <th width="25%">Slots</th>
+                    <th width="20%">Functions</th>
+                    <th width="25%">Unlocked By</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for item in productTypeList %}
+            <tr>
+                <td>
+                    <a href="#producttype_{{item.id}}"><img height="40" src="/goodcompany/static/img/{{item.icon}}.png" onerror="this.src='/goodcompany/static/img/unknown.png';"></a>
+                </td>
+                <td>
+                    {{item.id}}
+                </td>
+                <td>
+                    {{item.name}}
+                </td>
+                <td>
+                    {% for subitem in item.slots %}
+                        {{subitem.name}} ({{subitem.id}})<br>
+                    {% endfor %}
+                </td>
+                <td>
+                    {% for subitem in item.functions %}
+                        {{subitem.name}} ({{subitem.id}})<br>
+                    {% endfor %}
+                </td>
+                <td>
+                    {% for subitem in item.researches %}
+                        {{subitem.name}} ({{subitem.id}})<br>
+                    {% endfor %}
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <br><br>
+
+
+        <h2 id="functions" class="ui header">Function List</h2>
+        <table class="ui celled table" style="text-align:center;">
+            <thead>
+                <tr>
+                    <th width="8%">Icon</th>
+                    <th width="7%">ID</th>
+                    <th width="15%">Name</th>
+                    <th width="25%">Product Types</th>
+                    <th width="25%">Unlocked By</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for item in functionList %}
+            <tr>
+                <td>
+                    <a href="#function_{{item.id}}"><img height="40" src="/goodcompany/static/img/{{item.icon}}.png" onerror="this.src='/goodcompany/static/img/unknown.png';"></a>
+                </td>
+                <td>
+                    {{item.id}}
+                </td>
+                <td>
+                    {{item.name}}
+                </td>
+                <td>
+                    {% for subitem in item.types %}
+                        {{subitem.name}} ({{subitem.id}})<br>
+                    {% endfor %}
+                </td>
+                <td>
+                    {% for subitem in item.researches %}
+                        {{subitem.name}} ({{subitem.id}})<br>
+                    {% endfor %}
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <br><br>
+
+
+        <h2 id="projects" class="ui header">Research List</h2>
+        <table class="ui celled table" style="text-align:center;">
+            <thead>
+                <tr>
+                    <th width="8%">ID</th>
+                    <th width="12%">Name</th>
+                    <th width="16%">Modules</th>
+                    <th width="16%">Tables</th>
+                    <th width="16%">Types</th>
+                    <th width="16%">Functions</th>
+                    <th width="16%">Unlocked By</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for item in projectList %}
+            <tr>
+                <td>
+                    {{item.id}}
+                </td>
+                <td>
+                    {{item.name}}
+                </td>
+                <td>
+                    {% for subitem in item.modules %}
+                        {{subitem.name}} ({{subitem.id}})<br>
+                    {% endfor %}
+                </td>
+                <td>
+                    {% for subitem in item.buildables %}
+                        {{subitem.name}} ({{subitem.id}})<br>
+                    {% endfor %}
+                </td>
+                <td>
+                    {% for subitem in item.types %}
+                        {{subitem.name}} ({{subitem.id}})<br>
+                    {% endfor %}
+                </td>
+                <td>
+                    {% for subitem in item.functions %}
+                        {{subitem.name}} ({{subitem.id}})<br>
+                    {% endfor %}
+                </td>
+                <td>
+                    {% for subitem in item.researches %}
+                        {{subitem.name}} ({{subitem.id}})<br>
+                    {% endfor %}
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <br><br>
+
+
+        {% endblock %}
+    </div>
+
+
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script>
+    {% block customjavascript %}{% endblock %}
+</body>
+</html>

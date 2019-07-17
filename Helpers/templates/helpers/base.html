@@ -59,6 +59,7 @@
     <title>{% block title %} {% endblock %}</title>
 </head>
 <body>
+
     <div class="ui fixed inverted menu">
         <div class="ui container">
             <a href="{% url "admin:index" %}" class="item">Django Admin</a>
@@ -94,9 +95,11 @@
             <a href="{% url 'revertchanges' %}" class="item">Revert Changes</a>
         </div>
     </div>
-
     <div class="ui main container">
         {% block content %}
+
+
+
 
         {% endblock %}
     </div>
