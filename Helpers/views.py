@@ -835,6 +835,8 @@ def ObjectDetails(request, objectID):
     })
 
 def viewAll(request):
+    url = "https://www.chasing-carrots.com/download/goodcompany/viewall.htm"
+
     materialList = []
     for material in Material.objects.all().filter(StackBuyPrice__gt=0):
         materialList.append({
@@ -1034,6 +1036,7 @@ def viewAll(request):
         })
 
     return render(request, "helpers/viewall.html", {
+        "url": url,
         "materialList": materialList,
         "componentList": componentList,
         "slotList": slotList,

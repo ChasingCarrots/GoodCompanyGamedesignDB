@@ -61,28 +61,28 @@
 <body>
     <div class="ui fixed inverted menu">
         <div class="ui container">
-            <a href="#materials" class="item">Materials</a>
+            <a href="{{url}}#materials" class="item">Materials</a>
         </div>
         <div class="ui container">
-            <a href="#components" class="item">Components</a>
+            <a href="{{url}}#components" class="item">Components</a>
         </div>
         <div class="ui container">
-            <a href="#modules" class="item">Modules</a>
+            <a href="{{url}}#modules" class="item">Modules</a>
         </div>
         <div class="ui container">
-            <a href="#tables" class="item">Tables</a>
+            <a href="{{url}}#tables" class="item">Tables</a>
         </div>
         <div class="ui container">
-            <a href="#slots" class="item">Slots</a>
+            <a href="{{url}}#slots" class="item">Slots</a>
         </div>
         <div class="ui container">
-            <a href="#producttypes" class="item">Product Types</a>
+            <a href="{{url}}#producttypes" class="item">Product Types</a>
         </div>
         <div class="ui container">
-            <a href="#functions" class="item">Product Functions</a>
+            <a href="{{url}}#functions" class="item">Product Functions</a>
         </div>
         <div class="ui container">
-            <a href="#projects" class="item">Research Projects</a>
+            <a href="{{url}}#projects" class="item">Research Projects</a>
         </div>
     </div>
 
@@ -105,7 +105,7 @@
             {% for material in materialList %}
             <tr>
                 <td>
-                    <a href="#material_{{material.id}}"><img height="40" src="/goodcompany/static/img/{{material.icon}}.png" onerror="this.src='/goodcompany/static/img/unknown.png';"></a>
+                    <a href="{{url}}#material_{{material.id}}"><img height="40" src="/goodcompany/static/img/{{material.icon}}.png" onerror="this.src='/goodcompany/static/img/unknown.png';"></a>
                 </td>
                 <td>
                     {{material.id}}
@@ -140,7 +140,7 @@
             {% for item in componentList %}
             <tr>
                 <td>
-                    <a href="#component_{{item.id}}"><img height="40" src="/goodcompany/static/img/{{item.icon}}.png" onerror="this.src='/goodcompany/static/img/unknown.png';"></a>
+                    <a href="{{url}}#component_{{item.id}}"><img height="40" src="/goodcompany/static/img/{{item.icon}}.png" onerror="this.src='/goodcompany/static/img/unknown.png';"></a>
                 </td>
                 <td>
                     {{item.id}}
@@ -183,7 +183,7 @@
             {% for subitem in item.modules %}
             <tr>
                 <td>
-                    <a href="#module_{{subitem.id}}"><img height="40" src="/goodcompany/static/img/{{subitem.icon}}.png" onerror="this.src='/goodcompany/static/img/unknown.png';"></a>
+                    <a href="{{url}}#module_{{subitem.id}}"><img height="40" src="/goodcompany/static/img/{{subitem.icon}}.png" onerror="this.src='/goodcompany/static/img/unknown.png';"></a>
                 </td>
                 <td>
                     {{subitem.id}}
@@ -262,11 +262,11 @@
                     {{item.id}}
                 </td>
                 <td>
-                    <a href="#slot_{{item.id}}">{{item.name}}</a>
+                    <a href="{{url}}#slot_{{item.id}}">{{item.name}}</a>
                 </td>
                 <td>
                     {% for subitem in item.modules %}
-                        <a class="tooltip" href="#module_{{subitem.id}}"><img height="40" src="/goodcompany/static/img/{{subitem.icon}}.png" onerror="this.src='/goodcompany/static/img/unknown.png';">
+                        <a class="tooltip" href="{{url}}#module_{{subitem.id}}"><img height="40" src="/goodcompany/static/img/{{subitem.icon}}.png" onerror="this.src='/goodcompany/static/img/unknown.png';">
                             <span class="tooltiptext">{{subitem.name}} ({{subitem.id}})</span>
                         </a> &nbsp;
                     {% endfor %}
@@ -299,7 +299,7 @@
             {% for item in productTypeList %}
             <tr>
                 <td>
-                    <a href="#producttype_{{item.id}}"><img height="40" src="/goodcompany/static/img/{{item.icon}}.png" onerror="this.src='/goodcompany/static/img/unknown.png';"></a>
+                    <a href="{{url}}#producttype_{{item.id}}"><img height="40" src="/goodcompany/static/img/{{item.icon}}.png" onerror="this.src='/goodcompany/static/img/unknown.png';"></a>
                 </td>
                 <td>
                     {{item.id}}
@@ -344,7 +344,7 @@
             {% for item in functionList %}
             <tr>
                 <td>
-                    <a href="#function_{{item.id}}"><img height="40" src="/goodcompany/static/img/{{item.icon}}.png" onerror="this.src='/goodcompany/static/img/unknown.png';"></a>
+                    <a href="{{url}}#function_{{item.id}}"><img height="40" src="/goodcompany/static/img/{{item.icon}}.png" onerror="this.src='/goodcompany/static/img/unknown.png';"></a>
                 </td>
                 <td>
                     {{item.id}}
