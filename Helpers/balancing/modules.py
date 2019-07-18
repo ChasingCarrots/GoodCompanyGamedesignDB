@@ -22,6 +22,7 @@ class ComponentBalancing(BalancingTableBase):
         self.AddColumn(ComponentProfit(displayMode, logisticTime))
         self.AddColumn(ComponentProfitability(displayMode, logisticTime))
         self.AddColumn(ModuleDataYield(displayMode, logisticTime))
+        self.AddColumn(ModuleDataValue(displayMode, logisticTime))
 
 class ComponentFinances(BalancingTableBase):
     def __init__(self, limitFrom, limitTo, displayMode = 0, logisticTime = 0, option = None):
@@ -112,6 +113,7 @@ class DataYieldOverview(BalancingTableBase):
             BalancingTableBase.__init__(self, Module.objects.all().order_by("FitsIntoSlot", "BaseMarketPrice")[limitFrom:limitTo])
 
         self.AddColumn(ModuleDataYield(displayMode, logisticTime))
+        self.AddColumn(ModuleDataValue(displayMode, logisticTime))
         self.AddColumn(ComponentsPerMinute(displayMode, logisticTime))
         self.AddColumn(ModuleDataYieldPerMinute(displayMode, logisticTime))
         self.AddColumn(ComponentCosts(displayMode, logisticTime))
@@ -128,13 +130,8 @@ class DataYieldBalanceDetails(BalancingTableBase):
         except:
             BalancingTableBase.__init__(self, Module.objects.all().order_by("FitsIntoSlot", "BaseMarketPrice")[limitFrom:limitTo])
 
-        self.AddColumn(ModuleDataYield(displayMode, logisticTime, "basic research"))
-        self.AddColumn(ModuleDataYield(displayMode, logisticTime, "mechanics"))
-        self.AddColumn(ModuleDataYield(displayMode, logisticTime, "electronics"))
-        self.AddColumn(ModuleDataYield(displayMode, logisticTime, "power"))
-        self.AddColumn(ModuleDataYield(displayMode, logisticTime, "hydraulics"))
-        self.AddColumn(ModuleDataYield(displayMode, logisticTime, "precision mechanics"))
-        self.AddColumn(ModuleDataYield(displayMode, logisticTime, "heavy machinery"))
+        for DataType in ResearchDataType.objects.all():
+            self.AddColumn(ModuleDataYield(displayMode, logisticTime, DataType.Name))
 
 class DataYieldCostDetails(BalancingTableBase):
     def __init__(self, limitFrom, limitTo, displayMode = 0, logisticTime = 0, option = None):
@@ -148,13 +145,9 @@ class DataYieldCostDetails(BalancingTableBase):
             BalancingTableBase.__init__(self, Module.objects.all().order_by("FitsIntoSlot", "BaseMarketPrice")[limitFrom:limitTo])
 
         self.AddColumn(ComponentCosts(displayMode, logisticTime))
-        self.AddColumn(ModuleDataYieldCost(displayMode, logisticTime, "basic research"))
-        self.AddColumn(ModuleDataYieldCost(displayMode, logisticTime, "mechanics"))
-        self.AddColumn(ModuleDataYieldCost(displayMode, logisticTime, "electronics"))
-        self.AddColumn(ModuleDataYieldCost(displayMode, logisticTime, "power"))
-        self.AddColumn(ModuleDataYieldCost(displayMode, logisticTime, "hydraulics"))
-        self.AddColumn(ModuleDataYieldCost(displayMode, logisticTime, "precision mechanics"))
-        self.AddColumn(ModuleDataYieldCost(displayMode, logisticTime, "heavy machinery"))
+
+        for DataType in ResearchDataType.objects.all():
+            self.AddColumn(ModuleDataYieldCost(displayMode, logisticTime, DataType.Name))
 
 class DataYieldRateDetails(BalancingTableBase):
     def __init__(self, limitFrom, limitTo, displayMode = 0, logisticTime = 0, option = None):
@@ -168,13 +161,9 @@ class DataYieldRateDetails(BalancingTableBase):
             BalancingTableBase.__init__(self, Module.objects.all().order_by("FitsIntoSlot", "BaseMarketPrice")[limitFrom:limitTo])
             
         self.AddColumn(ComponentsPerMinute(displayMode, logisticTime))
-        self.AddColumn(ModuleDataYieldPerMinute(displayMode, logisticTime, "basic research"))
-        self.AddColumn(ModuleDataYieldPerMinute(displayMode, logisticTime, "mechanics"))
-        self.AddColumn(ModuleDataYieldPerMinute(displayMode, logisticTime, "electronics"))
-        self.AddColumn(ModuleDataYieldPerMinute(displayMode, logisticTime, "power"))
-        self.AddColumn(ModuleDataYieldPerMinute(displayMode, logisticTime, "hydraulics"))
-        self.AddColumn(ModuleDataYieldPerMinute(displayMode, logisticTime, "precision mechanics"))
-        self.AddColumn(ModuleDataYieldPerMinute(displayMode, logisticTime, "heavy machinery"))
+
+        for DataType in ResearchDataType.objects.all():
+            self.AddColumn(ModuleDataYieldPerMinute(displayMode, logisticTime, DataType.Name))
 
 
 _defaultLogisticTime = 3.0
@@ -631,6 +620,23 @@ def getComponentDataYield(module, datatype):
             return 0
     else:
         return 0
+
+def getComponentDataValue(module):
+    value = 0
+    for datayield in ModuleResearchDataYield.objects.all().filter(Module=module):
+        value += datayield.Amount * datayield.ResearchDataType.NetWorth
+    return value
+
+class ModuleDataValue(ColumnBase):
+    def GetHeader(self):
+        return "Data Networth"
+
+    def GetRowStrings(self, query):
+        rows = []
+        for module in query.all():
+            rows.append(formatCellText(str("%4.0f" % (getComponentDataValue(module)))))
+        return rows
+
 
 class ModuleDataYield(ColumnBase):
     def GetHeader(self):
