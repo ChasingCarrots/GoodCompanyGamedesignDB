@@ -80,7 +80,6 @@ def productTypeOverview(request):
         })
     return render(request, "helpers/producttypeoverview.html", {"productTypes": productTypes})
 
-
 def productTypeDetail(request, typeID):
 
     productType = get_object_or_404(ProductType, pk=typeID)
@@ -142,7 +141,6 @@ def productTypeDetail(request, typeID):
             "samples": samples
         }
     })
-
 
 def sampleProduct(request, productId):
     product = get_object_or_404(SampleProduct, pk=productId)
@@ -252,7 +250,13 @@ def modulePathDetails(request, pathID):
     path = get_object_or_404(CriticalModulePath, pk=pathID)
 
     modules = []
-    for module in path.Modules.all():
+    _baseHandlingtime = 3.0
+    _handlingtimePerMaterial = 0.5
+    for module in path.Modules.all().order_by("PathPosition"):
+        employeeCostSlow = employeeCostPerSecond() * getComponentCraftingTime(module.Module, _baseHandlingtime,_handlingtimePerMaterial, True, False, True) / module.Module.OutputAmount
+        employeeCostFast = employeeCostPerSecond() * getComponentCraftingTime(module.Module, _baseHandlingtime,_handlingtimePerMaterial, True, True, True) / module.Module.OutputAmount
+        totalSlow = (employeeCostSlow + module.Module.rawMaterialCost())
+        totalQuick = (employeeCostFast + module.Module.rawMaterialCost())
         modules.append({
             "Module": module.Module,
             "id": module.id,
@@ -262,7 +266,11 @@ def modulePathDetails(request, pathID):
             "initialCosts": module.getExpectedInitialCosts(),
             "minimumCosts": module.getExpectedMinimumCosts(),
             "sellPrice": module.getExpectedSellPrice(),
+            "actualMaxCost": totalSlow,
+            "actualMinCost": totalQuick,
+            "actualSellPrice": module.Module.BaseMarketPrice,
         })
+
 
     positionData = []
     for i in range(0, 11):

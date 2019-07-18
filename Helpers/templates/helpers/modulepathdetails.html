@@ -78,9 +78,9 @@
                     <td>{{module.position|floatformat:1}}</td>
                     <td>{{module.expectedPosition|floatformat:1}}</td>
                     <td>{{module.progression|floatformat:1}}</td>
-                    <td>{{module.initialCosts|floatformat:1}}</td>
-                    <td>{{module.minimumCosts|floatformat:1}}</td>
-                    <td>{{module.sellPrice|floatformat:1}}</td>
+                    <td>{{module.initialCosts|floatformat:1}}<br><small>({{module.actualMinCost|floatformat:1}})</small></td>
+                    <td>{{module.minimumCosts|floatformat:1}}<br><small>({{module.actualMaxCost|floatformat:1}})</small></td>
+                    <td>{{module.sellPrice|floatformat:1}}<br><small>({{module.actualSellPrice|floatformat:1}})</small></td>
                 </tr>
             {% endfor %}
             </tbody>

@@ -7,6 +7,15 @@
     <button class="ui button">
         <a href="{% url 'admin:index' %}">Django Admin</a>
     </button>
+    <button class="ui button">
+        <a href="{% url 'gamedata' %}" class="item">GameData Json</a>
+    </button>
+    <button class="ui button">
+        <a href="{% url 'viewall' '' %}" class="item">View All</a>
+    </button>
+    <button class="ui button">
+        <a href="{% url 'viewall' 'csv' %}" class="item">View All CSV</a>
+    </button>
     <br><br>
     <h3>Utilities</h3>
     <button class="ui button">
