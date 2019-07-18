@@ -25,7 +25,7 @@ urlpatterns = [
     url(r'^goodcompany/$', TemplateView.as_view(template_name="helpers/home.html")),
     url(r'^goodcompany/admin/', include(admin.site.urls)),
     url(r'^goodcompany/gamedataManifest/', getManifestJson),
-    url(r'^goodcompany/viewall/', viewAll),
+    url(r'^goodcompany/viewall/(\w*)', viewAll),
     url(r'^goodcompany/helper/materialoverview/', materialOverview, name="materialoverview"),
     url(r'^goodcompany/helper/materialdetail/(\d+)', materialDetail, name="materialdetail"),
     url(r'^goodcompany/helper/modulepathoverview/', modulePathOverview, name="modulepathoverview"),

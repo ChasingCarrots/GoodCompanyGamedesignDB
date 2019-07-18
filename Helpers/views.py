@@ -834,7 +834,7 @@ def ObjectDetails(request, objectID):
         "possibleModules": possibleModules,
     })
 
-def viewAll(request):
+def viewAll(request, displaymode):
     url = "https://www.chasing-carrots.com/download/goodcompany/viewall.htm"
 
     materialList = []
@@ -903,10 +903,45 @@ def viewAll(request):
                 "name": research.Name
             })
 
+        isActive = "/"
+        if ModulePathObject.objects.all().filter(Module=module):
+            isActive = "Active"
+
         componentList.append({
             "id": module.id,
             "name": module.Name,
             "icon": module.IconAssetID,
+            "isActive": isActive,
+            "researches": researches,
+            "tables": tables
+        })
+
+    moduleList = []
+    for module in Module.objects.all().filter(FitsIntoSlot__isnull=False):
+        tables = []
+        for crafterModule in CrafterPropertyModuleDuration.objects.all().filter(Module=module):
+            tables.append({
+                "id": crafterModule.CrafterProperty.ObjectType.id,
+                "name": crafterModule.CrafterProperty.ObjectType.Name
+            })
+
+        researches = []
+        for research in module.UnlockedByResearch.all():
+            researches.append({
+                "id": research.id,
+                "name": research.Name
+            })
+
+        isActive = "/"
+        if ModulePathObject.objects.all().filter(Module=module):
+            isActive = "Active"
+
+        moduleList.append({
+            "id": module.id,
+            "name": module.Name,
+            "slot": module.FitsIntoSlot.id,
+            "icon": module.IconAssetID,
+            "isActive": isActive,
             "researches": researches,
             "tables": tables
         })
@@ -1028,6 +1063,7 @@ def viewAll(request):
         projectList.append({
             "id": project.id,
             "name": project.Name,
+            "icon": project.IconAssetID,
             "researches": researches,
             "functions": functions,
             "types": types,
@@ -1035,10 +1071,16 @@ def viewAll(request):
             "modules": modules,
         })
 
-    return render(request, "helpers/viewall.html", {
+    htmlsite = "helpers/viewall.html"
+    if displaymode == "csv":
+        htmlsite = "helpers/viewallcsv.html"
+
+
+    return render(request, htmlsite, {
         "url": url,
         "materialList": materialList,
         "componentList": componentList,
+        "moduleList": moduleList,
         "slotList": slotList,
         "tableList": tableList,
         "productTypeList": productTypeList,

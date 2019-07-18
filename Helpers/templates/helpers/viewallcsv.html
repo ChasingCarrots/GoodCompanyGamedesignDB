@@ -1,0 +1,103 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>{% block title %} {% endblock %}</title>
+</head>
+<body>
+        {% block content %}
+
+        <h2>Materials</h2>
+        <table width="80%">
+        {% for item in materialList %}
+            <tr>
+                <td width="35%">{{item.icon}}</td>
+                <td width="15%">{{item.id}}</td>
+                <td width="35%">{{item.name}}</td>
+                <td width="15%"></td>
+            </tr>
+        {% endfor %}
+        </table>
+        <br><br>
+
+        <h2>Components</h2>
+        <table width="80%">
+        {% for item in componentList %}
+            <tr>
+                <td width="35%">{{item.icon}}</td>
+                <td width="15%">{{item.id}}</td>
+                <td width="35%">{{item.name}}</td>
+                <td width="15%">{{item.isActive}}</td>
+            </tr>
+        {% endfor %}
+        </table>
+        <br><br>
+
+        <h2>Modules</h2>
+        <table width="80%">
+        {% for item in moduleList %}
+            <tr>
+                <td width="35%">{{item.icon}}</td>
+                <td width="15%">{{item.id}}</td>
+                <td width="35%">{{item.name}}</td>
+                <td width="15%">{{item.isActive}}</td>
+            </tr>
+        {% endfor %}
+        </table>
+        <br><br>
+
+
+        <h2>Tables</h2>
+        <table width="80%">
+        {% for item in tableList %}
+            <tr>
+                <td width="15%">{{item.id}}</td>
+                <td width="35%">{{item.name}}</td>
+                <td width="50%"></td>
+            </tr>
+        {% endfor %}
+        </table>
+        <br><br>
+
+        <h2>Form Factors</h2>
+        <table width="80%">
+        {% for item in productTypeList %}
+            <tr>
+                <td width="35%">{{item.icon}}</td>
+                <td width="15%">{{item.id}}</td>
+                <td width="35%">{{item.name}}</td>
+                <td width="15%"></td>
+            </tr>
+        {% endfor %}
+        </table>
+        <br><br>
+
+        <h2>Product Functions</h2>
+        <table width="80%">
+        {% for item in functionList %}
+            <tr>
+                <td width="35%">{{item.icon}}</td>
+                <td width="15%">{{item.id}}</td>
+                <td width="35%">{{item.name}}</td>
+                <td width="15%"></td>
+            </tr>
+        {% endfor %}
+        </table>
+        <br><br>
+
+        <h2>Development Projects</h2>
+        <table width="80%">
+        {% for item in projectList %}
+            <tr>
+                <td width="35%">{{item.icon}}</td>
+                <td width="15%">{{item.id}}</td>
+                <td width="35%">{{item.name}}</td>
+                <td width="15%"></td>
+            </tr>
+        {% endfor %}
+        </table>
+        <br><br>
+
+        {% endblock %}
+</body>
+</html>
