@@ -709,9 +709,74 @@ def runCommand(request, commandname, arguments):
 def researchOverview(request):
     devProjects = []
     for devProj in DevelopmentProject.objects.all():
+        modules = []
+        buildables = []
+        productTypes = []
+        functions = []
+        data = []
+        projectNetworth = 0
+        projects = []
+
+        for p in devProj.RequiredForProjects.all():
+            projects.append({
+                "id": p.id,
+                "name": p.Name,
+                "icon": p.IconAssetID,
+            })
+
+        for m in devProj.UnlocksModules.all():
+            modules.append({
+                "id": m.id,
+                "name": m.Name,
+                "icon": m.IconAssetID,
+            })
+
+        for b in devProj.UnlocksBuildables.all():
+            icon = ""
+            for i in IconProperty.objects.all().filter(ObjectType=b):
+                icon = b.IconProperty.IconAssetID
+            buildables.append({
+                "id": b.id,
+                "name": b.Name,
+                "icon": icon,
+            })
+
+        for p in devProj.UnlocksProductTypes.all():
+            productTypes.append({
+                "id": p.id,
+                "name": p.Name,
+                "icon": p.IconAssetID
+            })
+
+        for f in devProj.UnlocksProductFunctions.all():
+            functions.append({
+                "id": f.id,
+                "name": f.Name,
+                "icon": f.IconAssetID
+            })
+
+        for requiredData in devProj.RequiredData.all():
+            data.append({
+                "id": requiredData.DataType.id,
+                "name": requiredData.DataType.Name,
+                "icon": requiredData.DataType.IconAssetID,
+                "amount": requiredData.Amount,
+                "value": requiredData.DataType.NetWorth,
+                "networth": requiredData.Amount * requiredData.DataType.NetWorth,
+            })
+            projectNetworth += requiredData.Amount * requiredData.DataType.NetWorth
+
         devProjects.append({
             "id": devProj.id,
             "name": devProj.Name,
+            "icon": devProj.IconAssetID,
+            "networth": projectNetworth,
+            "modules": modules,
+            "buildables": buildables,
+            "productTypes": productTypes,
+            "functions": functions,
+            "data": data,
+            "projects": projects,
         })
     return render(request, "helpers/researchoverview.html", { "devProjects": devProjects })
 
@@ -722,6 +787,9 @@ def researchDetail(request, projectID):
     modules = []
     buildables = []
     productTypes = []
+    functions = []
+    data = []
+    projectNetworth = 0
 
     allProjects = DevelopmentProject.objects.all()
     for proj in allProjects:
@@ -730,12 +798,14 @@ def researchDetail(request, projectID):
             prerequisites.append({
                 "id": proj.id,
                 "name": proj.Name,
+                "icon": proj.IconAssetID,
             })
         required = proj.RequiredProjects.all()
         if project in required:
             leadsTo.append({
                 "id": proj.id,
-                "name": proj.Name
+                "name": proj.Name,
+                "icon": proj.IconAssetID,
             })
 
     allModules = Module.objects.all()
@@ -744,14 +814,19 @@ def researchDetail(request, projectID):
             modules.append({
                 "id": m.id,
                 "name": m.Name,
+                "icon": m.IconAssetID,
             })
 
     allBuildables = ObjectType.objects.all()
     for b in allBuildables:
         if b in project.UnlocksBuildables.all():
+            icon = ""
+            for i in IconProperty.objects.all().filter(ObjectType=b):
+                icon = b.IconProperty.IconAssetID
             buildables.append({
                 "id": b.id,
                 "name": b.Name,
+                "icon": icon,
             })
 
     allProductTypes = ProductType.objects.all()
@@ -759,19 +834,45 @@ def researchDetail(request, projectID):
         if p in project.UnlocksProductTypes.all():
             productTypes.append({
                 "id": p.id,
-                "name": p.Name
+                "name": p.Name,
+                "icon": p.IconAssetID
             })
+
+    allFunctions = ProductFunction.objects.all()
+    for f in allFunctions:
+        if f in project.UnlocksProductFunctions.all():
+            functions.append({
+                "id": f.id,
+                "name": f.Name,
+                "icon": f.IconAssetID
+            })
+
+    for requiredData in project.RequiredData.all():
+        data.append({
+            "id": requiredData.DataType.id,
+            "name": requiredData.DataType.Name,
+            "icon": requiredData.DataType.IconAssetID,
+            "amount": requiredData.Amount,
+            "value": requiredData.DataType.NetWorth,
+            "networth": requiredData.Amount * requiredData.DataType.NetWorth,
+        })
+        projectNetworth += requiredData.Amount * requiredData.DataType.NetWorth
 
     detailInformation = {
         "project": {
             "name": project.Name,
             "id": project.id,
+            "icon": project.IconAssetID,
+            "networth": projectNetworth,
         },
         "prerequisites": prerequisites,
         "leadsTo": leadsTo,
         "modules": modules,
         "buildables": buildables,
         "productTypes": productTypes,
+        "functions": functions,
+        "data": data,
+        "datacount": len(data),
     }
     return render(request, "helpers/researchdetail.html", detailInformation)
 

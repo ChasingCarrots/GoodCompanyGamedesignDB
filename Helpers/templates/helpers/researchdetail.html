@@ -3,44 +3,114 @@
 {% block title %}{{ project.name | title }} Details{% endblock %}
 
 {% block content %}
-<table class="ui celled table">
+
+<h1 class="ui header" id="modname">[{{project.id}}] &nbsp; {{ project.name | title}} &nbsp; | &nbsp; Networth: {{project.networth}} <img style="height: 28px; width: 28px; margin-bottom: 12px;" src="/goodcompany/static/img/G.png"></h1>
+<table width="40%" border="0" style="font-size: 20px; line-height: 1.4;">
+    <tbody>
+        <tr>
+            <td width="33%">
+                <a href="/goodcompany/admin/Research/developmentproject/{{project.id}}/">
+                    <img height="100" src="/goodcompany/static/img/{{project.icon}}.png" onerror="this.src='/goodcompany/static/img/unknown.png';">
+                </a>
+            </td>
+            <td width="33%">
+                {% for item in data %}
+                <a class='tooltip' href="/goodcompany/admin/Research/developmentproject/{{item.id}}/">
+                    <img height="20" style="margin-bottom: -3px;" src="/goodcompany/static/img/{{item.icon}}.png" onerror="this.src='/goodcompany/static/img/unknown.png';">
+                    &nbsp; {{item.amount}}
+                    <span class='tooltiptext' style="font-size: 12px;">{{item.name}}</span></a>
+                </a>
+                <br>
+                {% endfor %}
+            </td>
+            <td width="33%">
+                {% for item in data %}
+                <span class='tooltip'>
+                    {{item.networth}}&nbsp;
+                    <img height="20" style="margin-bottom: -3px;" src="/goodcompany/static/img/G.png">
+                    <span class='tooltiptext' style="font-size: 12px;">{{item.value}} <img height="10" src="/goodcompany/static/img/G.png" style="margin-bottom:-1px;"> &nbsp; per data point</span>
+                </span>
+                </a>
+                <br>
+                {% endfor %}
+            </td>
+        </tr>
+    </tbody>
+</table>
+<br><br>
+
+<table class="ui celled table" style="width:100%;">
 <thead>
     <tr>
-        <th>requires</th>
-        <th>{{ project.name }}</th>
-        <th>leads to</th>
+        <th width="50%">Requires</th>
+        <th width="50%">Leads to</th>
     </tr>
 </thead>
 <tbody>
     <tr>
         <td>
-            {% for proj in prerequisites %}
-            <a href="{% url 'researchdetail' proj.id %}">{{ proj.name }}</a><br>
+            {% for item in prerequisites %}
+            <a class='tooltip' href="{% url 'researchdetail' item.id %}">
+                <img height="100" src="/goodcompany/static/img/{{item.icon}}.png">
+                <span class='tooltiptext' style="font-size: 12px;">[{{item.id}}] &nbsp; {{item.name}}</span>
+            </a>
             {% endfor %}
         </td>
         <td>
-            <b>modules</b>
-            <ul>
-                {% for module in modules %}
-                <li><a href="{% url 'moduledetail' module.id %}">{{ module.name }}</a></li>
-                {% endfor %}
-            </ul>
-            <b>buildbables</b>
-            <ul>
-                {% for b in buildables %}
-                <li>{{ b.name }}</li>
-                {% endfor %}
-            </ul>
-            <b>product types</b>
-            <ul>
-                {% for p in productTypes %}
-                <li>{{ p.name }}</li>
-                {% endfor %}
-            </ul>
+            {% for item in leadsTo %}
+            <a class='tooltip' href="{% url 'researchdetail' item.id %}">
+                <img height="100" src="/goodcompany/static/img/{{item.icon}}.png">
+                <span class='tooltiptext' style="font-size: 12px;">[{{item.id}}] &nbsp; {{item.name}}</span>
+            </a>
+            {% endfor %}
+        </td>
+    </tr>
+</tbody>
+</table>
+<br><br>
+
+
+<table class="ui celled table">
+<thead>
+    <tr>
+        <th width="25%">Modules</th>
+        <th width="25%">Buildables</th>
+        <th width="25%">Functions</th>
+        <th width="25%">Product Types</th>
+    </tr>
+</thead>
+<tbody>
+    <tr>
+        <td>
+            {% for item in modules %}
+            <a class='tooltip' href="{% url 'moduledetail' item.id %}">
+                <img height="40" src="/goodcompany/static/img/{{item.icon}}.png" onerror="this.src='/goodcompany/static/img/unknown.png';">
+                <span class='tooltiptext' style="font-size: 12px;">[{{item.id}}] &nbsp; {{item.name}}</span>
+            </a>
+            {% endfor %}
         </td>
         <td>
-            {% for proj in leadsTo %}
-            <a href="{% url 'researchdetail' proj.id %}">{{ proj.name }}</a><br>
+            {% for item in buildables %}
+            <a class='tooltip' href="{% url 'objectdetailview' item.id %}">
+                <img height="40" src="/goodcompany/static/img/{{item.icon}}.png" onerror="this.src='/goodcompany/static/img/unknown.png';">
+                <span class='tooltiptext' style="font-size: 12px;">[{{item.id}}] &nbsp; {{item.name}}</span>
+            </a>
+            {% endfor %}
+        </td>
+        <td>
+            {% for item in functions %}
+            <a class='tooltip' href="{% url 'functionoverview' %}">
+                <img height="40" src="/goodcompany/static/img/{{item.icon}}.png" onerror="this.src='/goodcompany/static/img/unknown.png';">
+                <span class='tooltiptext' style="font-size: 12px;">[{{item.id}}] &nbsp; {{item.name}}</span>
+            </a>
+            {% endfor %}
+        </td>
+        <td>
+            {% for item in productTypes %}
+            <a class='tooltip' href="{% url 'producttypedetail' item.id %}">
+                <img height="40" src="/goodcompany/static/img/{{item.icon}}.png" onerror="this.src='/goodcompany/static/img/unknown.png';">
+                <span class='tooltiptext' style="font-size: 12px;">[{{item.id}}] &nbsp; {{item.name}}</span>
+            </a>
             {% endfor %}
         </td>
     </tr>

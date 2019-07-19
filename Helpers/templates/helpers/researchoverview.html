@@ -3,16 +3,81 @@
 {% block title %}Research Overview{% endblock %}
 
 {% block content %}
-<table class="ui celled table">
+<table class="ui celled table" style="text-align: center;">
     <thead>
         <tr>
-            <th>Project</th>
+            <th width="15%">Asset</th>
+            <th width="30%">Project</th>
+            <th width="25%">Data</th>
+            <th width="30%">Unlocks</th>
         </tr>
     </thead>
-    <tbody>
-{% for project in devProjects %}
+    <tbody style="line-height: 1.8;">
+{% for item in devProjects %}
     <tr>
-        <td><a href="{% url 'researchdetail' project.id %}">{{ project.name | title }}</a></td>
+        <td>
+            <a class='tooltip' href="{% url 'researchdetail' item.id %}">
+                <img height="100" src="/goodcompany/static/img/{{item.icon}}.png">
+                <span class='tooltiptext' style="font-size: 12px;">[{{item.id}}] &nbsp; {{item.name}}</span>
+            </a>
+        </td>
+        <td>
+            <span style="font-weight: bold;">[{{item.id}}] &nbsp; {{item.name}} </span><br>
+            Networth: {{item.networth}} <img height="15" style="margin-bottom: -3px;" src="/goodcompany/static/img/G.png"><br>
+            <a href="{% url 'researchdetail' item.id %}">[view details]</a><br>
+            <a href="/goodcompany/admin/Research/developmentproject/{{item.id}}">[edit project]</a>
+        </td>
+        <td>
+            {% for subitem in item.data %}
+            <a class='tooltip' href="/goodcompany/admin/Research/developmentproject/{{subitem.id}}/">
+                <img height="20" style="margin-bottom: -3px;" src="/goodcompany/static/img/{{subitem.icon}}.png" onerror="this.src='/goodcompany/static/img/unknown.png';">
+                &nbsp; {{subitem.amount}}
+                <span class='tooltiptext' style="font-size: 12px;">{{subitem.name}}</span>
+            </a> &nbsp;&nbsp;
+            <span class='tooltip' style="font-size:12px;">
+                ({{subitem.networth}}
+                <img height="12" style="margin-bottom: -2px;" src="/goodcompany/static/img/G.png">)
+                <span class='tooltiptext' style="font-size:12px;">
+                    {{subitem.value}}
+                    <img height="10" src="/goodcompany/static/img/G.png" style="margin-bottom:-1px;">
+                    &nbsp; per data point
+                </span>
+            </span>
+            <br>
+            {% endfor %}
+        </td>
+        <td>
+            {% for subitem in item.projects %}
+            <a class='tooltip' href="{% url 'functionoverview' %}">
+                <img height="46" src="/goodcompany/static/img/{{subitem.icon}}.png" onerror="this.src='/goodcompany/static/img/unknown.png';">
+                <span class='tooltiptext' style="font-size: 12px;">[{{subitem.id}}] &nbsp; {{subitem.name}}</span>
+            </a> &nbsp;
+            {% endfor %}
+            {% for subitem in item.modules %}
+            <a class='tooltip' href="{% url 'moduledetail' subitem.id %}">
+                <img height="46" src="/goodcompany/static/img/{{subitem.icon}}.png" onerror="this.src='/goodcompany/static/img/unknown.png';">
+                <span class='tooltiptext' style="font-size: 12px;">[{{subitem.id}}] &nbsp; {{subitem.name}}</span>
+            </a> &nbsp;
+            {% endfor %}
+            {% for subitem in item.buildables %}
+            <a class='tooltip' href="{% url 'objectdetailview' subitem.id %}">
+                <img height="46" src="/goodcompany/static/img/{{subitem.icon}}.png" onerror="this.src='/goodcompany/static/img/unknown.png';">
+                <span class='tooltiptext' style="font-size: 12px;">[{{subitem.id}}] &nbsp; {{subitem.name}}</span>
+            </a> &nbsp;
+            {% endfor %}
+            {% for subitem in item.functions %}
+            <a class='tooltip' href="{% url 'functionoverview' %}">
+                <img height="46" src="/goodcompany/static/img/{{subitem.icon}}.png" onerror="this.src='/goodcompany/static/img/unknown.png';">
+                <span class='tooltiptext' style="font-size: 12px;">[{{subitem.id}}] &nbsp; {{subitem.name}}</span>
+            </a> &nbsp;
+            {% endfor %}
+            {% for subitem in item.productTypes %}
+            <a class='tooltip' href="{% url 'producttypedetail' subitem.id %}">
+                <img height="46" src="/goodcompany/static/img/{{subitem.icon}}.png" onerror="this.src='/goodcompany/static/img/unknown.png';">
+                <span class='tooltiptext' style="font-size: 12px;">[{{subitem.id}}] &nbsp; {{subitem.name}}</span>
+            </a> &nbsp;
+            {% endfor %}
+        </td>
     </tr>
 {% endfor %}
     </tbody>
