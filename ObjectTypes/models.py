@@ -177,10 +177,29 @@ class BuildsObjectConnection(models.Model):
     BuildsObject = models.ForeignKey(ObjectType, related_name="BuildsObjectConnection", blank=False)
     BuiltBy = models.OneToOneField("BuildableProperty", related_name="BuildsObjectConnection", blank=False)
 
+class BuildabelCategory(models.Model):
+    Name = models.CharField(max_length=255)
+    Icon = models.CharField(max_length=255)
+
+    def getJsonObject(self):
+        return {
+            "Name": self.Name,
+            "Icon": self.Icon
+        }
+
+    class Meta:
+        verbose_name = 'Buildable Category'
+        verbose_name_plural = 'Buildable Categories'
+
+    def __unicode__(self):
+        return self.Name
+
 class BuildableProperty(models.Model):
     history = HistoricalRecords()
     ObjectType = models.OneToOneField(ObjectType, related_name="BuildableProperty", blank=False)
     BuildDuration = models.FloatField(blank=False)
+    Category = models.ForeignKey(BuildabelCategory, blank=True, null=True)
+
 
     def getJsonObject(self):
         neededmats = []
@@ -189,11 +208,15 @@ class BuildableProperty(models.Model):
         canBuildInWorkplaces = []
         for wp in self.CanBuildInWorkplaces.all():
             canBuildInWorkplaces.append(wp.WorkplaceType)
+        category = 1
+        if self.Category:
+            category = self.Category.id
         return {
             "NeededMaterials": neededmats,
             "BuildDuration": self.BuildDuration,
             "BuildsObjectID": self.BuildsObjectConnection.BuildsObject.id,
             "CanBuildInWorkplaces": canBuildInWorkplaces,
+            "Category": category
         }
 
     class Meta:

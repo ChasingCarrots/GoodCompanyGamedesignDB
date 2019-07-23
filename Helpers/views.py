@@ -554,6 +554,10 @@ def getManifestJson(request):
     for storage in StorageProperty.objects.all():
         storageProperties[str(storage.ObjectType.id)] = storage.getJsonObject()
 
+    buildableCategories = {}
+    for category in BuildabelCategory.objects.all():
+        buildableCategories[str(category.id)] = category.getJsonObject()
+
     buildableProperties = {}
     for buildable in BuildableProperty.objects.all():
         buildableProperties[str(buildable.ObjectType.id)] = buildable.getJsonObject()
@@ -631,6 +635,7 @@ def getManifestJson(request):
         "IconProperties": iconProperties,
         "InventoryProperties": inventoryProperties,
         "StorageProperties": storageProperties,
+        "BuildableCategories": buildableCategories,
         "BuildableProperties": buildableProperties,
         "RecurringCostProperties": recurringCostProperties,
         "CrafterProperties": crafterProperties,

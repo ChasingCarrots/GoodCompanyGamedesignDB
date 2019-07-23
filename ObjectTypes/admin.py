@@ -6,6 +6,7 @@ from super_inlines.admin import SuperInlineModelAdmin, SuperModelAdmin
 
 from ObjectTypes.models import *
 
+admin.site.register(BuildabelCategory)
 
 class MovablePropertyInlineAdmin(SuperInlineModelAdmin, admin.StackedInline):
     model = MovableProperty
