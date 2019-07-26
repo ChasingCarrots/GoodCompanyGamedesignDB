@@ -381,8 +381,8 @@ def moduleDetail(request, moduleID):
     _baseHandlingtime = 3.0
     _handlingtimePerMaterial = 0.5
     handlingCost = employeeCostPerSecond() * (len(module.InputMaterials.all()) * _handlingtimePerMaterial + _baseHandlingtime) / module.OutputAmount
-    employeeCostSlow = employeeCostPerSecond() * getComponentCraftingTime(module, _baseHandlingtime, _handlingtimePerMaterial, True, False, False) / module.OutputAmount
-    employeeCostFast = employeeCostPerSecond() * getComponentCraftingTime(module, _baseHandlingtime, _handlingtimePerMaterial, True, True, False) / module.OutputAmount
+    employeeCostSlow = employeeCostPerSecond() * getComponentCraftingTime(module, _baseHandlingtime, _handlingtimePerMaterial, True, False, False)
+    employeeCostFast = employeeCostPerSecond() * getComponentCraftingTime(module, _baseHandlingtime, _handlingtimePerMaterial, True, True, False)
 
     for object in ObjectType.objects.all().filter(BuildableProperty__isnull=True).filter(CrafterProperty__isnull=False).order_by("Name"):
         for possibleModule in object.CrafterProperty.PossibleModules.all():
@@ -445,9 +445,9 @@ def moduleDetail(request, moduleID):
             "outputAmount": module.OutputAmount,
             "usedinmodulescount": usedInModCount,
             "usedinproductcount": usedInProductCount,
-            "handlingCost": handlingCost / module.OutputAmount,
-            "employeeCostSlow": employeeCostSlow / module.OutputAmount,
-            "employeeCostQuick": employeeCostFast / module.OutputAmount,
+            "handlingCost": handlingCost,
+            "employeeCostSlow": employeeCostSlow,
+            "employeeCostQuick": employeeCostFast,
         },
         "tableList": tableList,
         "criticalPath": criticalPath,
@@ -938,7 +938,7 @@ def ObjectDetails(request, objectID):
                 "materials": module.Module.InputMaterials.all(),
                 "outputAmount": module.Module.OutputAmount,
                 "materialCosts": module.Module.rawMaterialCost(),
-                "employeeCosts": employeeCostsPerSecond * module.Duration,
+                "employeeCosts": employeeCostsPerSecond * module.Duration / module.Module.OutputAmount,
             })
 
 

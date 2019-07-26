@@ -450,8 +450,8 @@ def getComponentCraftingTime(module, handlingtime=0, timePerMaterial=0, fullProd
 
     if craftingDuration.exists():
         if checkSelf:
-            totalTime += (craftingDuration.all()[0].Duration + handlingtime + timePerMaterial * len(module.InputMaterials.all())) / module.OutputAmount
-        return totalTime
+            totalTime += (craftingDuration.all()[0].Duration + handlingtime + timePerMaterial * len(module.InputMaterials.all()))
+        return totalTime / module.OutputAmount
     else:
         return 0
 
