@@ -47,6 +47,7 @@ class DevelopmentProjectRequiredData(models.Model):
 class DevelopmentProject(models.Model):
     history = HistoricalRecords()
     Name = models.CharField(max_length=255)
+    IsHidden = models.BooleanField(default=True)
     Description = models.CharField(max_length=255, blank=True)
     IconAssetID = models.CharField(max_length=255)
     RequiredProjects = models.ManyToManyField("self", blank=True, symmetrical=False, related_name="RequiredForProjects")
@@ -65,6 +66,7 @@ class DevelopmentProject(models.Model):
 
         return {
             "Name": self.Name,
+            "IsHidden": self.IsHidden,
             "Description": self.Description,
             "IconAssetID": self.IconAssetID,
             "RequiredProjects": requiredProjects,

@@ -773,6 +773,7 @@ def researchOverview(request):
 
         devProjects.append({
             "id": devProj.id,
+            "hidden": devProj.IsHidden,
             "name": devProj.Name,
             "icon": devProj.IconAssetID,
             "networth": projectNetworth,
@@ -869,6 +870,7 @@ def researchDetail(request, projectID):
             "id": project.id,
             "icon": project.IconAssetID,
             "networth": projectNetworth,
+            "hidden": project.IsHidden,
         },
         "prerequisites": prerequisites,
         "leadsTo": leadsTo,

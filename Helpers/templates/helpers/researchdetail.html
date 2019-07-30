@@ -4,13 +4,15 @@
 
 {% block content %}
 
-<h1 class="ui header" id="modname">[{{project.id}}] &nbsp; {{ project.name | title}} &nbsp; | &nbsp; Networth: {{project.networth}} <img style="height: 28px; width: 28px; margin-bottom: 12px;" src="/goodcompany/static/img/G.png"></h1>
+<h1 class="ui header" id="modname">[{{project.id}}] &nbsp; {{ project.name | title}}
+    {% if project.hidden %} <span class='tooltip'>👁‍🗨<span class='tooltiptext'>Is Hidden</span></span> {% endif %}
+    &nbsp; | &nbsp; Networth: {{project.networth}} <img style="height: 28px; width: 28px; margin-bottom: 12px;" src="/goodcompany/static/img/G.png"></h1>
 <table width="40%" border="0" style="font-size: 20px; line-height: 1.4;">
     <tbody>
         <tr>
             <td width="33%">
                 <a href="/goodcompany/admin/Research/developmentproject/{{project.id}}/">
-                    <img height="100" src="/goodcompany/static/img/{{project.icon}}.png" onerror="this.src='/goodcompany/static/img/unknown.png';">
+                    <img height="100" src="/goodcompany/static/img/{{project.icon}}.png" onerror="this.src='/goodcompany/static/img/techimages/unknown.png';">
                 </a>
             </td>
             <td width="33%">
@@ -51,7 +53,7 @@
         <td>
             {% for item in prerequisites %}
             <a class='tooltip' href="{% url 'researchdetail' item.id %}">
-                <img height="100" src="/goodcompany/static/img/{{item.icon}}.png">
+                <img height="100" src="/goodcompany/static/img/{{item.icon}}.png" onerror="this.src='/goodcompany/static/img/techimages/unknown.png';">
                 <span class='tooltiptext' style="font-size: 12px;">[{{item.id}}] &nbsp; {{item.name}}</span>
             </a>
             {% endfor %}
@@ -59,7 +61,7 @@
         <td>
             {% for item in leadsTo %}
             <a class='tooltip' href="{% url 'researchdetail' item.id %}">
-                <img height="100" src="/goodcompany/static/img/{{item.icon}}.png">
+                <img height="100" src="/goodcompany/static/img/{{item.icon}}.png" onerror="this.src='/goodcompany/static/img/techimages/unknown.png';">
                 <span class='tooltiptext' style="font-size: 12px;">[{{item.id}}] &nbsp; {{item.name}}</span>
             </a>
             {% endfor %}
