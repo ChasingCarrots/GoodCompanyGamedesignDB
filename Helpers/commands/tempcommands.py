@@ -41,12 +41,47 @@ class GenerateComponent(CommandBase):
             return "Could not generate Material!"
 
 
+class SetMaterialIcons(CommandBase):
+    def RunCommand(self, commandline):
+        for material in Material.objects.all():
+            if not Module.objects.all().filter(Material=material):
+                material.IconAssetID = commandline+"/"+material.Name
+                material.save()
+        return "Materials Done"
+
+class SetComponentIcons(CommandBase):
+    def RunCommand(self, commandline):
+        for module in Module.objects.all().filter(FitsIntoSlot__isnull=True):
+            module.IconAssetID = commandline + "/" + module.Name
+            module.save()
+            material = module.Material
+            material.IconAssetID = commandline+"/"+module.Name
+            material.save()
+        return "Components Done"
+
+class SetModuleIcons(CommandBase):
+    def RunCommand(self, commandline):
+        for module in Module.objects.all().filter(FitsIntoSlot__isnull=False):
+            module.IconAssetID = commandline+"/"+module.Name
+            module.save()
+            material = module.Material
+            material.IconAssetID = commandline+"/"+module.Name
+            material.save()
+        return "Modules Done"
+
+class SetProjectIcons(CommandBase):
+    def RunCommand(self, commandline):
+        for project in DevelopmentProject.objects.all():
+            project.IconAssetID = commandline+"/"+project.Name
+            project.save()
+        return "Projects Done"
+
 def generateMaterial(materialName):
-    material = Material.objects.create(Name="ITM_"+materialName, IconAssetID="icons_modules/"+materialName.lower(), ModelAssetID="modules/"+materialName.lower(), TextSpriteAssetID="icons_modules", TextSpriteEntry=materialName.lower(), SizeType=common.NORMALSLOT, StackSize=10, StackBuyPrice=0)
+    material = Material.objects.create(Name="ITM_"+materialName, IconAssetID="icons_modules/ITM_"+materialName, ModelAssetID="modules/ITM_"+materialName, TextSpriteAssetID="icons_modules", TextSpriteEntry="ITM_"+materialName, SizeType=common.NORMALSLOT, StackSize=10, StackBuyPrice=0)
     return material
 
 def generateModule(material, moduleName):
-    module = Module.objects.create(Name="ITM_"+moduleName, IconAssetID="icons_modules/"+moduleName.lower(), Material=material)
+    module = Module.objects.create(Name="ITM_"+moduleName, IconAssetID="icons_modules/ITM_"+moduleName, Material=material)
     return module
 
 def getTreeNode(module, parent, count, materials, parents, amount, amounts, position, positions, depth, depths, maxDepth):
