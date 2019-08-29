@@ -46,6 +46,8 @@ class SetMaterialIcons(CommandBase):
         for material in Material.objects.all():
             if not Module.objects.all().filter(Material=material):
                 material.IconAssetID = commandline+"/"+material.Name
+                material.TextSpriteAssetID = commandline
+                material.TextSpriteEntry = material.Name
                 material.save()
         return "Materials Done"
 
@@ -56,6 +58,8 @@ class SetComponentIcons(CommandBase):
             module.save()
             material = module.Material
             material.IconAssetID = commandline+"/"+module.Name
+            material.TextSpriteAssetID = commandline
+            material.TextSpriteEntry = material.Name
             material.save()
         return "Components Done"
 
@@ -66,6 +70,8 @@ class SetModuleIcons(CommandBase):
             module.save()
             material = module.Material
             material.IconAssetID = commandline+"/"+module.Name
+            material.TextSpriteAssetID = commandline
+            material.TextSpriteEntry = material.Name
             material.save()
         return "Modules Done"
 
