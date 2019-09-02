@@ -486,11 +486,13 @@ class ResearchAndDevelopmentProperty(models.Model):
     ObjectType = models.OneToOneField(ObjectType, related_name="ResearchAndDevelopmentProperty", blank=False)
     CanDoResearch = models.BooleanField(default=False, blank=False)
     CanDoDevelopment = models.BooleanField(default=False, blank=False)
+    Speed = models.FloatField(default=1)
 
     def getJsonObject(self):
         return {
             "CanDoResearch": self.CanDoResearch,
             "CanDoDevelopment": self.CanDoDevelopment,
+            "Speed": self.Speed
         }
 
     class Meta:
