@@ -294,6 +294,9 @@ class ProductType(models.Model):
     BaseMarketPrice = models.IntegerField(default=100)
     BaseMarketMaxPriceFactor = models.FloatField(default=5)
     BaseMarketCurvePotential = models.FloatField(default=2)
+    RequiredDiscoveryPoints = models.IntegerField(default=10)
+    MarketTier = models.IntegerField(default=1)
+
 
     def getJsonObject(self):
         slots = []
