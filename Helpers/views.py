@@ -526,10 +526,6 @@ def getManifestJson(request):
     for productFeature in ProductFeature.objects.all():
         productFeatures[str(productFeature.id)] = productFeature.getJsonObject()
 
-    productFunctions = {}
-    for prodFunc in ProductFunction.objects.all():
-        productFunctions[str(prodFunc.id)] = prodFunc.getJsonObject()
-
     objectTypes = {}
     for objectType in ObjectType.objects.all():
         objectTypes[str(objectType.id)] = objectType.getJsonObject()
@@ -628,7 +624,6 @@ def getManifestJson(request):
         "SlotTypes": slotTypes,
         "ProductTypes": productTypes,
         "ProductFeatures": productFeatures,
-        "ProductFunctions": productFunctions,
         "ObjectTypes": objectTypes,
         "MovableProperties": movableProperties,
         "ObjectLookProperties": objectLookProperties,

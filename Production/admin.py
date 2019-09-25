@@ -63,31 +63,27 @@ class ProductTypeSlotUIPositionAdmin(SuperInlineModelAdmin, admin.StackedInline)
     model = ProductTypeSlotUIPosition
     extra = 0
 
+class ProductTypeFeatureRequirementAdmin(SuperInlineModelAdmin, admin.TabularInline):
+    model = ProductTypeFeatureRequirement
+    extra = 0
+
+class ProductTypeOptionalFeaturesAdmin(SuperInlineModelAdmin, admin.TabularInline):
+    model = ProductTypeOptionalFeatures
+    extra = 0
+
+class ProductTypeDrawbacksAdmin(SuperInlineModelAdmin, admin.TabularInline):
+    model = ProductTypeDrawbacks
+    extra = 0
+
 class ProductTypeAdmin(SuperModelAdmin):
     list_display = ("id", "__unicode__", )
-    inlines = (ProductTypeSlotUIPositionAdmin,)
+    inlines = (ProductTypeSlotUIPositionAdmin,
+               ProductTypeFeatureRequirementAdmin,
+              ProductTypeOptionalFeaturesAdmin,
+              ProductTypeDrawbacksAdmin)
 admin.site.register(ProductType, ProductTypeAdmin)
 
 class ProductFeatureAdmin(SuperModelAdmin):
     list_display = ("id", "__unicode__", "Type",)
     list_filter = ("Type",)
 admin.site.register(ProductFeature, ProductFeatureAdmin)
-
-class ProductFunctionFeatureRequirementAdmin(SuperInlineModelAdmin, admin.TabularInline):
-    model = ProductFunctionFeatureRequirement
-    extra = 0
-
-class ProductFunctionOptionalFeaturesAdmin(SuperInlineModelAdmin, admin.TabularInline):
-    model = ProductFunctionOptionalFeatures
-    extra = 0
-
-class ProductFunctionDrawbacksAdmin(SuperInlineModelAdmin, admin.TabularInline):
-    model = ProductFunctionDrawbacks
-    extra = 0
-
-class ProductFunctionAdmin(SuperModelAdmin):
-    inlines = (ProductFunctionFeatureRequirementAdmin,
-               ProductFunctionOptionalFeaturesAdmin,
-               ProductFunctionDrawbacksAdmin,
-               )
-admin.site.register(ProductFunction, ProductFunctionAdmin)
