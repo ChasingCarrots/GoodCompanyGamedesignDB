@@ -8,55 +8,18 @@ from django.views.decorators.csrf import csrf_exempt
 
 from helpers import *
 from balancing.modules import *
-from balancing.products import *
+#from balancing.products import *
 from commands.sanitychecks import *
-from commands.productgenerator import *
 from commands.tempcommands import *
 
-def functionOverview(request):
-    functions = []
-    samples = []
+
+def productTypeOverview(request):
     productTypes = []
 
     commands = []
     for command in CommandBase.__subclasses__():
         commands.append(command.__name__)
 
-    for function in ProductFunction.objects.all().order_by("Name"):
-
-        functions.append({
-            "id": function.id,
-            "name": function.Name,
-            "value": function.BaseMarketPrice,
-            "icon": function.IconAssetID,
-        })
-
-        for sample in SampleProduct.objects.filter(ProductFunction=function):
-            samples.append({
-                "function": function.id,
-                "id": sample.id,
-                "name": sample.Name
-            })
-
-        for productType in ProductType.objects.all():
-            query = ProductFunction.objects.filter(ViableProductTypes=productType, id=function.id)
-            if query.exists():
-                productTypes.append({
-                    "function": function.id,
-                    "id": productType.id,
-                    "name": productType.Name,
-                    "icon": productType.IconAssetID
-                })
-
-    return render(request, "helpers/functionoverview.html", {
-        "functions": functions,
-        "samples": samples,
-        "productTypes": productTypes,
-        "commands": commands,
-    })
-
-def productTypeOverview(request):
-    productTypes = []
     for productType in ProductType.objects.all().order_by("Name"):
 
         moduleCount = 0
@@ -65,28 +28,24 @@ def productTypeOverview(request):
             if moduleQuery.exists():
                 moduleCount += len(moduleQuery)
 
-        functionCount = 0
-        functionQuery = ProductFunction.objects.filter(ViableProductTypes=productType)
-        if functionQuery.exists():
-            functionCount += len(functionQuery)
-
         productTypes.append({
             "id": productType.id,
             "name": productType.Name,
-            "slotCount": productType.Slots.count(),
+            "value": productType.BaseMarketPrice,
             "icon": productType.IconAssetID,
-            "functions": functionCount,
+            "slotCount": productType.Slots.count(),
             "relevantModules": moduleCount
         })
-    return render(request, "helpers/producttypeoverview.html", {"productTypes": productTypes})
+
+    return render(request, "helpers/producttypeoverview.html", {
+        "productTypes": productTypes,
+    })
 
 def productTypeDetail(request, typeID):
 
     productType = get_object_or_404(ProductType, pk=typeID)
     productSlots = []
     modules = []
-    functions = []
-    samples = []
 
     moduleCount = 0
     functionCount = 0
@@ -107,25 +66,6 @@ def productTypeDetail(request, typeID):
                 "icon": module.IconAssetID,
             })
 
-    functionQuery = ProductFunction.objects.filter(ViableProductTypes=productType)
-    for function in functionQuery.all().order_by("Name"):
-        functionCount += 1
-        functions.append({
-            "id": function.id,
-            "name": function.Name,
-            "icon": function.IconAssetID,
-            "price": function.BaseMarketPrice
-        })
-        sampleQuery = SampleProduct.objects.filter(ProductFunction=function, ProductType=productType)
-        for sample in sampleQuery.all().order_by("Name"):
-            samples.append({
-                "function": function.id,
-                "id": sample.id,
-                "name": sample.Name
-            })
-
-
-
 
     return render(request, "helpers/producttypedetail.html", {
         "productType": {
@@ -137,94 +77,7 @@ def productTypeDetail(request, typeID):
             "moduleCount": moduleCount,
             "slots": productSlots,
             "modules": modules,
-            "functions": functions,
-            "samples": samples
         }
-    })
-
-def sampleProduct(request, productId):
-    product = get_object_or_404(SampleProduct, pk=productId)
-
-    totalAmount = 0
-    totalCost = 0
-    moduleBaseMaterials = product.collectMaterials()
-
-    for _, mat in moduleBaseMaterials.items():
-        totalAmount += mat["amount"]
-        totalCost += mat["totalcost"]
-
-    modules = []
-    moduleCount = 0
-
-    moduleListString = "{"
-    for module in product.Modules.all().order_by("Name"):
-        if moduleCount != 0:
-            moduleListString += ","
-        moduleListString += str(module.id)
-        moduleCount += 1
-        modules.append({
-            "name": module.Name,
-            "icon": module.IconAssetID,
-            "id": module.id,
-            "materialId": module.Material.id,
-            "complexity": getComponentComplexity(module),
-            "costs": totalCostPerComponent(module, 0),
-            "profit": totalProfitPerComponent(module, 0),
-            "income": module.BaseMarketPrice,
-            "profitability": getComponentProfitability(module, 0),
-            "craftingTime": getComponentCraftingTime(module, 0, 0, False, False),
-            "perMinuteRate": componentsPerSecond(module, 0) * 60,
-            "perMinuteProfit": componentProfitPerSecond(module, 0) * 60,
-            "outputAmount": module.OutputAmount,
-        })
-    moduleListString += "}"
-
-    commands = []
-    for command in CommandBase.__subclasses__():
-        commands.append(command.__name__)
-
-
-    return render(request, "helpers/sampleproduct.html", {
-        "product": {
-            "id": product.id,
-            "name": product.Name,
-            "function": product.ProductFunction.id,
-            "type": product.ProductType.id,
-            "icon": product.ProductFunction.IconAssetID,
-            "costsMaterial": materialCostPerProduct(product),
-            "costsEmployees": employeeCostPerProduct(product, 0),
-            "costs": totalCostPerProduct(product, 0),
-            "profit": totalProfitPerProduct(product, 0),
-            "profitability": getProductProfitability(product, 0),
-            "pricemultiplier": product.getPriceMultiplier(),
-            "optimalprice": product.getOptimalPrice(),
-            "baseprice": product.ProductFunction.BaseMarketPrice,
-            "moduleValue": getProductModuleValue(product),
-            "moduleValueDifference": product.ProductFunction.BaseMarketPrice - getProductModuleValue(product),
-            "craftingTime": getProductCraftingTime(product,6,False),
-            "perMinuteRate": (1.0 / getProductCraftingTime(product, 6, False)) * 60,
-            "perMinuteProfit": productProfitPerSecond(product, 6) * 60,
-            "complexity": getProductComplexity(product, True),
-            "moduleCount": moduleCount,
-            "modules": modules,
-            "productRating": product.getFullRating(),
-            "mandatoryRating": product.getMandatoryRating(),
-            "optionalRating": product.getOptionalRating(),
-            "drawbackRating": product.getDrawbackRating(),
-            "features": product.getSortedFeatureValues(),
-            "otherFeatures": product.getFeatures(True),
-            "mandatory": product.ProductFunction.MandatoryFeatures.all(),
-            "optionals": product.ProductFunction.OptionalFeatures.all(),
-            "drawbacks": product.ProductFunction.Drawbacks.all(),
-        },
-        "materials": moduleBaseMaterials,
-        "moduleListString": moduleListString,
-        "total": {
-            "amount": totalAmount,
-            "totalcost": totalCost,
-        },
-        "commands": commands,
-        "range": range(1, 11),
     })
 
 def modulePathOverview(request):
@@ -748,13 +601,6 @@ def researchOverview(request):
                 "icon": p.IconAssetID
             })
 
-        for f in devProj.UnlocksProductFunctions.all():
-            functions.append({
-                "id": f.id,
-                "name": f.Name,
-                "icon": f.IconAssetID
-            })
-
         for requiredData in devProj.RequiredData.all():
             data.append({
                 "id": requiredData.DataType.id,
@@ -775,7 +621,6 @@ def researchOverview(request):
             "modules": modules,
             "buildables": buildables,
             "productTypes": productTypes,
-            "functions": functions,
             "data": data,
             "projects": projects,
         })
@@ -788,7 +633,6 @@ def researchDetail(request, projectID):
     modules = []
     buildables = []
     productTypes = []
-    functions = []
     data = []
     projectNetworth = 0
 
@@ -839,15 +683,6 @@ def researchDetail(request, projectID):
                 "icon": p.IconAssetID
             })
 
-    allFunctions = ProductFunction.objects.all()
-    for f in allFunctions:
-        if f in project.UnlocksProductFunctions.all():
-            functions.append({
-                "id": f.id,
-                "name": f.Name,
-                "icon": f.IconAssetID
-            })
-
     for requiredData in project.RequiredData.all():
         data.append({
             "id": requiredData.DataType.id,
@@ -872,7 +707,6 @@ def researchDetail(request, projectID):
         "modules": modules,
         "buildables": buildables,
         "productTypes": productTypes,
-        "functions": functions,
         "data": data,
         "datacount": len(data),
     }
@@ -1093,43 +927,11 @@ def viewAll(request, displaymode):
                 "name": slot.Name
             })
 
-        functions = []
-        for function in type.PossibleFunctions.all():
-            functions.append({
-                "id": function.id,
-                "name": function.Name
-            })
-
         productTypeList.append({
             "id": type.id,
             "name": type.Name,
             "icon": type.IconAssetID,
             "slots": slots,
-            "functions": functions,
-            "researches": researches
-        })
-
-    functionList = []
-    for function in ProductFunction.objects.all():
-        types = []
-        for type in function.ViableProductTypes.all():
-            types.append({
-                "id": type.id,
-                "name": type.Name
-            })
-
-        researches = []
-        for research in function.UnlockedByResearch.all():
-            researches.append({
-                "id": research.id,
-                "name": research.Name
-            })
-
-        functionList.append({
-            "id": function.id,
-            "name": function.Name,
-            "icon": function.IconAssetID,
-            "types": types,
             "researches": researches
         })
 
@@ -1164,19 +966,11 @@ def viewAll(request, displaymode):
                 "name": type.Name
             })
 
-        functions = []
-        for function in project.UnlocksProductFunctions.all():
-            functions.append({
-                "id": function.id,
-                "name": function.Name
-            })
-
         projectList.append({
             "id": project.id,
             "name": project.Name,
             "icon": project.IconAssetID,
             "researches": researches,
-            "functions": functions,
             "types": types,
             "buildables": buildables,
             "modules": modules,
@@ -1195,6 +989,5 @@ def viewAll(request, displaymode):
         "slotList": slotList,
         "tableList": tableList,
         "productTypeList": productTypeList,
-        "functionList": functionList,
         "projectList": projectList
     })

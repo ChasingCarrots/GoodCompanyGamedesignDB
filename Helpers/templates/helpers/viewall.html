@@ -79,9 +79,6 @@
             <a href="{{url}}#producttypes" class="item">Product Types</a>
         </div>
         <div class="ui container">
-            <a href="{{url}}#functions" class="item">Product Functions</a>
-        </div>
-        <div class="ui container">
             <a href="{{url}}#projects" class="item">Research Projects</a>
         </div>
     </div>
@@ -291,7 +288,6 @@
                     <th width="7%">ID</th>
                     <th width="15%">Name</th>
                     <th width="25%">Slots</th>
-                    <th width="20%">Functions</th>
                     <th width="25%">Unlocked By</th>
                 </tr>
             </thead>
@@ -309,51 +305,6 @@
                 </td>
                 <td>
                     {% for subitem in item.slots %}
-                        {{subitem.name}} ({{subitem.id}})<br>
-                    {% endfor %}
-                </td>
-                <td>
-                    {% for subitem in item.functions %}
-                        {{subitem.name}} ({{subitem.id}})<br>
-                    {% endfor %}
-                </td>
-                <td>
-                    {% for subitem in item.researches %}
-                        {{subitem.name}} ({{subitem.id}})<br>
-                    {% endfor %}
-                </td>
-            </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-        <br><br>
-
-
-        <h2 id="functions" class="ui header">Function List</h2>
-        <table class="ui celled table" style="text-align:center;">
-            <thead>
-                <tr>
-                    <th width="8%">Icon</th>
-                    <th width="7%">ID</th>
-                    <th width="15%">Name</th>
-                    <th width="25%">Product Types</th>
-                    <th width="25%">Unlocked By</th>
-                </tr>
-            </thead>
-            <tbody>
-            {% for item in functionList %}
-            <tr>
-                <td>
-                    <a href="{{url}}#function_{{item.id}}"><img height="40" src="/goodcompany/static/img/{{item.icon}}.png" onerror="this.src='/goodcompany/static/img/unknown.png';"></a>
-                </td>
-                <td>
-                    {{item.id}}
-                </td>
-                <td>
-                    {{item.name}}
-                </td>
-                <td>
-                    {% for subitem in item.types %}
                         {{subitem.name}} ({{subitem.id}})<br>
                     {% endfor %}
                 </td>
@@ -378,7 +329,6 @@
                     <th width="16%">Modules</th>
                     <th width="16%">Tables</th>
                     <th width="16%">Types</th>
-                    <th width="16%">Functions</th>
                     <th width="16%">Unlocked By</th>
                 </tr>
             </thead>
@@ -403,11 +353,6 @@
                 </td>
                 <td>
                     {% for subitem in item.types %}
-                        {{subitem.name}} ({{subitem.id}})<br>
-                    {% endfor %}
-                </td>
-                <td>
-                    {% for subitem in item.functions %}
                         {{subitem.name}} ({{subitem.id}})<br>
                     {% endfor %}
                 </td>

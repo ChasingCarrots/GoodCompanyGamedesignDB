@@ -215,7 +215,8 @@ class Module(models.Model):
         for inputMat in self.InputMaterials.all():
             moduleMatQuery = Module.objects.filter(Material=inputMat.Material)
             if moduleMatQuery.exists():
-                totalCost += moduleMatQuery.all()[0].rawMaterialCost() * inputMat.Amount
+                if moduleMatQuery.all()[0].Name != self.Name:
+                    totalCost += moduleMatQuery.all()[0].rawMaterialCost() * inputMat.Amount
             else:
                 totalCost += inputMat.Material.getPricePerUnit() * inputMat.Amount
         return totalCost / float(self.OutputAmount)

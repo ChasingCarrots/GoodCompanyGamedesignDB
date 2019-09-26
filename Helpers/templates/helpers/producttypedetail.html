@@ -32,36 +32,6 @@
     {% endfor %}
         </tbody>
     </table>
-
-    <h2 class="ui header">Function Overview</h2>
-    <table class="ui celled table" style="text-align:center;">
-        <thead>
-            <tr>
-                <th width="15%">Icon</th>
-                <th width="25%">Name</th>
-                <th width="20%">Value</th>
-                <th width="40%">Sample Products</th>
-            </tr>
-        </thead>
-        <tbody>
-    {% for function in productType.functions %}
-        <tr>
-            <td>
-                <a  href="/goodcompany/admin/Production/productfunction/{{ function.id }}"><img height="40" src="/goodcompany/static/img/{{function.icon}}.png" onerror="this.src='/goodcompany/static/img/unknown.png';"></a>
-            </td>
-            <td>{{ function.name }}</td>
-            <td>{{ function.price }}</td>
-            <td>
-                {% for sample in productType.samples %}
-                    {% if sample.function == function.id %}
-                        <a href="{% url 'sampleproduct' sample.id %}">{{ sample.name }}</a><br>
-                    {% endif %}
-                {% endfor %}
-            </td>
-        </tr>
-    {% endfor %}
-        </tbody>
-    </table>
 <br><br><br>
 
 

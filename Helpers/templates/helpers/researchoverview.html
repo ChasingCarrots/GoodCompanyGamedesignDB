@@ -17,7 +17,7 @@
     <tr>
         <td>
             <a class='tooltip' href="{% url 'researchdetail' item.id %}">
-                <img height="100" src="/goodcompany/static/img/{{item.icon}}.png" onerror="this.src='/goodcompany/static/img/techimages/unknown.png';">
+                <img height="100" src="/goodcompany/static/img/{{item.icon}}.png" onerror="this.src='/goodcompany/static/img/icons_researchprojects/unknown.png';">
                 <span class='tooltiptext' style="font-size: 12px;">[{{item.id}}] &nbsp; {{item.name}}</span>
             </a>
         </td>
@@ -50,7 +50,7 @@
         <td>
             {% for subitem in item.projects %}
             <a class='tooltip' href="{% url 'researchdetail' subitem.id %}">
-                <img height="46" src="/goodcompany/static/img/{{subitem.icon}}.png" onerror="this.src='/goodcompany/static/img/techimages/unknown.png';">
+                <img height="46" src="/goodcompany/static/img/{{subitem.icon}}.png" onerror="this.src='/goodcompany/static/img/icons_researchprojects/unknown.png';">
                 <span class='tooltiptext' style="font-size: 12px;">[{{subitem.id}}] &nbsp; {{subitem.name}}</span>
             </a> &nbsp;
             {% endfor %}
@@ -62,12 +62,6 @@
             {% endfor %}
             {% for subitem in item.buildables %}
             <a class='tooltip' href="{% url 'objectdetailview' subitem.id %}">
-                <img height="46" src="/goodcompany/static/img/{{subitem.icon}}.png" onerror="this.src='/goodcompany/static/img/unknown.png';">
-                <span class='tooltiptext' style="font-size: 12px;">[{{subitem.id}}] &nbsp; {{subitem.name}}</span>
-            </a> &nbsp;
-            {% endfor %}
-            {% for subitem in item.functions %}
-            <a class='tooltip' href="{% url 'functionoverview' %}">
                 <img height="46" src="/goodcompany/static/img/{{subitem.icon}}.png" onerror="this.src='/goodcompany/static/img/unknown.png';">
                 <span class='tooltiptext' style="font-size: 12px;">[{{subitem.id}}] &nbsp; {{subitem.name}}</span>
             </a> &nbsp;

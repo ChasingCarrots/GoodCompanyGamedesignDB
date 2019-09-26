@@ -12,7 +12,7 @@
         <tr>
             <td width="33%">
                 <a href="/goodcompany/admin/Research/developmentproject/{{project.id}}/">
-                    <img height="100" src="/goodcompany/static/img/{{project.icon}}.png" onerror="this.src='/goodcompany/static/img/techimages/unknown.png';">
+                    <img height="100" src="/goodcompany/static/img/{{project.icon}}.png" onerror="this.src='/goodcompany/static/img/icons_researchprojects/unknown.png';">
                 </a>
             </td>
             <td width="33%">
@@ -53,7 +53,7 @@
         <td>
             {% for item in prerequisites %}
             <a class='tooltip' href="{% url 'researchdetail' item.id %}">
-                <img height="100" src="/goodcompany/static/img/{{item.icon}}.png" onerror="this.src='/goodcompany/static/img/techimages/unknown.png';">
+                <img height="100" src="/goodcompany/static/img/{{item.icon}}.png" onerror="this.src='/goodcompany/static/img/icons_researchprojects/unknown.png';">
                 <span class='tooltiptext' style="font-size: 12px;">[{{item.id}}] &nbsp; {{item.name}}</span>
             </a>
             {% endfor %}
@@ -61,7 +61,7 @@
         <td>
             {% for item in leadsTo %}
             <a class='tooltip' href="{% url 'researchdetail' item.id %}">
-                <img height="100" src="/goodcompany/static/img/{{item.icon}}.png" onerror="this.src='/goodcompany/static/img/techimages/unknown.png';">
+                <img height="100" src="/goodcompany/static/img/{{item.icon}}.png" onerror="this.src='/goodcompany/static/img/icons_researchprojects/unknown.png';">
                 <span class='tooltiptext' style="font-size: 12px;">[{{item.id}}] &nbsp; {{item.name}}</span>
             </a>
             {% endfor %}
@@ -77,7 +77,6 @@
     <tr>
         <th width="25%">Modules</th>
         <th width="25%">Buildables</th>
-        <th width="25%">Functions</th>
         <th width="25%">Product Types</th>
     </tr>
 </thead>
@@ -94,14 +93,6 @@
         <td>
             {% for item in buildables %}
             <a class='tooltip' href="{% url 'objectdetailview' item.id %}">
-                <img height="40" src="/goodcompany/static/img/{{item.icon}}.png" onerror="this.src='/goodcompany/static/img/unknown.png';">
-                <span class='tooltiptext' style="font-size: 12px;">[{{item.id}}] &nbsp; {{item.name}}</span>
-            </a>
-            {% endfor %}
-        </td>
-        <td>
-            {% for item in functions %}
-            <a class='tooltip' href="{% url 'functionoverview' %}">
                 <img height="40" src="/goodcompany/static/img/{{item.icon}}.png" onerror="this.src='/goodcompany/static/img/unknown.png';">
                 <span class='tooltiptext' style="font-size: 12px;">[{{item.id}}] &nbsp; {{item.name}}</span>
             </a>

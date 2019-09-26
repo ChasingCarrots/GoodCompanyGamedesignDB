@@ -9,7 +9,6 @@
                 <th width="15%">Icons</th>
                 <th width="40%">Product Type</th>
                 <th width="15%">Slot Count</th>
-                <th width="15%">Available Functions</th>
                 <th width="15%">Relevant Modules</th>
             </tr>
         </thead>
@@ -19,7 +18,6 @@
                 <td><a href="{% url 'producttypedetail' type.id %}"><img height="60" src="/goodcompany/static/img/{{ type.icon }}.png" onerror="this.src='/goodcompany/static/img/unknown.png';"></a></td>
                 <td><a href="{% url 'producttypedetail' type.id %}">{{ type.name | title}}</a></td>
                 <td>{{ type.slotCount }}</td>
-                <td>{{ type.functions }}</td>
                 <td>{{ type.relevantModules }}</td>
             </tr>
         {% endfor %}

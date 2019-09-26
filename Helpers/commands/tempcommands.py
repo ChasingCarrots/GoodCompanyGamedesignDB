@@ -190,7 +190,7 @@ class ProductTree(CommandBase):
         output += "<div style='height: "+str((position[0]) * paddingY)+"px; width: "+str((maxDepth[0]) * paddingX)+"px;'>&nbsp;</div>"
 
         for n in range(count):
-            if type(materials[n]) == ProductFunction:
+            if type(materials[n]) == ProductType:
                 output += "<a class='tooltip' target='_self' href='/goodcompany/admin/Production/productfunction/"+str(materials[n].id)+"/'>"
                 output += "<span class='tooltiptext' style='left: "+str(depths[n] * paddingX + size * 1.2 - paddingX * 0.75)+"px; top: "+str(positions[n] * paddingY + paddingY * 0.5 + size * 0.25)+"px;'>"
                 output += materials[n].Name + "</span>"
@@ -213,7 +213,7 @@ class ProductTree(CommandBase):
             output += "left: "+str(depths[n] * paddingX - size * 0.5 - paddingX * 0.75)+"px; top: "+str(positions[n] * paddingY + paddingY * 0.5 + size * 0.5)+"px;'>"
 
 
-            if type(materials[n]) == ProductFunction:
+            if type(materials[n]) == ProductType:
                 output += str("%3.1f" % amounts[n])
             if type(materials[n]) == Module:
                 if materials[n].OutputAmount != 1:

@@ -62,7 +62,10 @@
 
     <div class="ui fixed inverted menu">
         <div class="ui container">
-            <a href="{% url "admin:index" %}" class="item">Django Admin</a>
+            <a href="{% url 'admin:index' %}" class="item">Django Admin</a>
+        </div>
+        <div class="ui container">
+            <a href="http://{{ request.get_host }}/goodcompany/" class="item">Home</a>
         </div>
         <div class="ui container">
             <a href="{% url 'materialoverview' %}" class="item">Materials</a>
@@ -80,9 +83,6 @@
             <a href="{% url 'producttypeoverview' %}" class="item">Product Types</a>
         </div>
         <div class="ui container">
-            <a href="{% url 'functionoverview' %}" class="item">Functions</a>
-        </div>
-        <div class="ui container">
             <a href="{% url 'researchoverview' %}" class="item">Research</a>
         </div>
         <div class="ui container">
@@ -90,9 +90,6 @@
         </div>
         <div class="ui container">
             <a href="{% url 'commands' %}" class="item">Commands</a>
-        </div>
-        <div class="ui container">
-            <a href="{% url 'revertchanges' %}" class="item">Revert Changes</a>
         </div>
     </div>
     <div class="ui main container">
