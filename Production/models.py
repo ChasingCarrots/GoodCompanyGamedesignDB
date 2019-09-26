@@ -335,7 +335,9 @@ class ProductType(models.Model):
             "BaseMarketCurvePotential": self.BaseMarketCurvePotential,
             "MandatoryFeatures": featureRequirements,
             "OptionalFeatures": optionalFeatures,
-            "Drawbacks": drawbacks
+            "Drawbacks": drawbacks,
+            "RequiredDiscoveryPoints": self.RequiredDiscoveryPoints,
+            "MarketTier": self.MarketTier
         }
 
     class Meta:
