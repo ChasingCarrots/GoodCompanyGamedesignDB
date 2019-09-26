@@ -121,25 +121,6 @@ class ModuleFeature(models.Model):
     def __unicode__(self):
         return u"%s %s: %d" % (self.Module, self.ProductFeature, self.FeatureValue)
 
-class ModuleFeatureRequirement(models.Model):
-    history = HistoricalRecords()
-    Module = models.ForeignKey("Module", related_name="FeatureRequirements")
-    ProductFeature = models.ForeignKey("ProductFeature")
-    FeatureValue = models.IntegerField()
-
-    def getJsonObject(self):
-        return {
-            "FeatureID":self.ProductFeature.id,
-            "FeatureValue":self.FeatureValue,
-        }
-
-    class Meta:
-        verbose_name = 'Module Feature Requirement'
-        verbose_name_plural = 'Module Feature Requirements'
-
-    def __unicode__(self):
-        return u"%s %s: %d" % (self.Module, self.ProductFeature, self.FeatureValue)
-
 class ModuleResearchDataYield(models.Model):
     history = HistoricalRecords()
     Module = models.ForeignKey("Module", related_name="ResearchDataYield")
@@ -178,7 +159,6 @@ class Module(models.Model):
             fitsIntoSlot = self.FitsIntoSlot.id
 
         features = [feature.getJsonObject() for feature in self.Features.all()]
-        featureRequirements = [featureReq.getJsonObject() for featureReq in self.FeatureRequirements.all()]
         inputMaterials = [mat.getJsonObject() for mat in self.InputMaterials.all()]
         researchDataYield = [resYield.getJsonObject() for resYield in self.ResearchDataYield.all()]
 
@@ -189,7 +169,6 @@ class Module(models.Model):
             "MaterialID":self.Material.id,
             "FitsIntoSlot":fitsIntoSlot,
             "Features":features,
-            "FeatureRequirements":featureRequirements,
             "InputMaterials":inputMaterials,
             "ResearchDataYield":researchDataYield,
             "OutputAmount":self.OutputAmount,

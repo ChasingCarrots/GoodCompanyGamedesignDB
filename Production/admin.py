@@ -43,10 +43,6 @@ class ModuleFeatureAdmin(SuperInlineModelAdmin, admin.StackedInline):
     model = ModuleFeature
     extra = 0
 
-class ModuleFeatureRequirementAdmin(SuperInlineModelAdmin, admin.StackedInline):
-    model = ModuleFeatureRequirement
-    extra = 0
-
 class ModuleResearchDataYieldAdmin(SuperInlineModelAdmin, admin.StackedInline):
     model = ModuleResearchDataYield
     extra = 0
