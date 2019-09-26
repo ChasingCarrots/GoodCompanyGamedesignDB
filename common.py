@@ -22,11 +22,3 @@ SizeTypeChoices = (
     # large objects and materials
     (LARGESLOT, "LargeSlot"),
 )
-
-ADDITIVE = 0
-BINARY = 1
-
-FeatureTypeChoices = (
-    (BINARY, "Binary"),
-    (ADDITIVE, "Additive"),
-)

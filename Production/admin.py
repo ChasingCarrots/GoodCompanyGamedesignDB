@@ -75,6 +75,5 @@ class ProductTypeAdmin(SuperModelAdmin):
 admin.site.register(ProductType, ProductTypeAdmin)
 
 class ProductFeatureAdmin(SuperModelAdmin):
-    list_display = ("id", "__unicode__", "Type",)
-    list_filter = ("Type",)
+    list_display = ("id", "__unicode__",)
 admin.site.register(ProductFeature, ProductFeatureAdmin)

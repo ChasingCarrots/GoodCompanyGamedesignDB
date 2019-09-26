@@ -327,7 +327,6 @@ class ProductFeature(models.Model):
     history = HistoricalRecords()
     Name = models.CharField(max_length=255)
     Description = models.TextField(blank=True)
-    Type = models.IntegerField(choices=common.FeatureTypeChoices, default=common.BINARY)
     SymbolAssetID = models.CharField(max_length=255)
     HelperEmoji = models.CharField(max_length=4)
 
@@ -335,7 +334,6 @@ class ProductFeature(models.Model):
         return {
             "Name": self.Name,
             "Description": self.Description,
-            "Type": self.Type,
             "SymbolAssetID": self.SymbolAssetID,
         }
 
