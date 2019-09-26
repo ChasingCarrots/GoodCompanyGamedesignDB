@@ -63,24 +63,19 @@ class ProductTypeSlotUIPositionAdmin(SuperInlineModelAdmin, admin.StackedInline)
     model = ProductTypeSlotUIPosition
     extra = 0
 
-class ProductTypeFeatureRequirementAdmin(SuperInlineModelAdmin, admin.TabularInline):
-    model = ProductTypeFeatureRequirement
+class PositiveFeatureAdmin(SuperInlineModelAdmin, admin.TabularInline):
+    model = PositiveFeature
     extra = 0
 
-class ProductTypeOptionalFeaturesAdmin(SuperInlineModelAdmin, admin.TabularInline):
-    model = ProductTypeOptionalFeatures
-    extra = 0
-
-class ProductTypeDrawbacksAdmin(SuperInlineModelAdmin, admin.TabularInline):
-    model = ProductTypeDrawbacks
+class NegativeFeatureAdmin(SuperInlineModelAdmin, admin.TabularInline):
+    model = NegativeFeature
     extra = 0
 
 class ProductTypeAdmin(SuperModelAdmin):
     list_display = ("id", "__unicode__", )
     inlines = (ProductTypeSlotUIPositionAdmin,
-               ProductTypeFeatureRequirementAdmin,
-              ProductTypeOptionalFeaturesAdmin,
-              ProductTypeDrawbacksAdmin)
+               PositiveFeatureAdmin,
+               NegativeFeatureAdmin)
 admin.site.register(ProductType, ProductTypeAdmin)
 
 class ProductFeatureAdmin(SuperModelAdmin):
