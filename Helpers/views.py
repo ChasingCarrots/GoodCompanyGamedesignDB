@@ -66,7 +66,7 @@ def productBuilder(request):
         })
 
 
-    return render(request, "helpers/productBuilder.html", {
+    return render(request, "helpers/productbuilder.html", {
         "productTypes": productTypes,
         "moduleList": moduleList,
         "featureList": featureList,
