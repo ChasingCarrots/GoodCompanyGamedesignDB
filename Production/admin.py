@@ -47,16 +47,25 @@ class ModuleResearchDataYieldAdmin(SuperInlineModelAdmin, admin.StackedInline):
     model = ModuleResearchDataYield
     extra = 0
 
+class ModuleFieldAdmin(SuperInlineModelAdmin, admin.StackedInline):
+    model = ModuleField
+    extra = 0
+
 class ModuleAdmin(SuperModelAdmin):
     list_display = ("id", "__unicode__", "slot")
     list_filter = ("FitsIntoSlot",)
     inlines = (ModuleInputMaterialAmountAdmin,
                ModuleFeatureAdmin,
+               ModuleFieldAdmin,
                ModuleResearchDataYieldAdmin)
 admin.site.register(Module, ModuleAdmin)
 
 class ProductTypeSlotUIPositionAdmin(SuperInlineModelAdmin, admin.StackedInline):
     model = ProductTypeSlotUIPosition
+    extra = 0
+
+class ProductTypeFieldAdmin(SuperInlineModelAdmin, admin.StackedInline):
+    model = ProductTypeField
     extra = 0
 
 class PositiveFeatureAdmin(SuperInlineModelAdmin, admin.TabularInline):
@@ -70,6 +79,7 @@ class NegativeFeatureAdmin(SuperInlineModelAdmin, admin.TabularInline):
 class ProductTypeAdmin(SuperModelAdmin):
     list_display = ("id", "__unicode__", )
     inlines = (ProductTypeSlotUIPositionAdmin,
+               ProductTypeFieldAdmin,
                PositiveFeatureAdmin,
                NegativeFeatureAdmin)
 admin.site.register(ProductType, ProductTypeAdmin)

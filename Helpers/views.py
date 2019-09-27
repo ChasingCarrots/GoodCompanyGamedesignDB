@@ -13,6 +13,65 @@ from commands.sanitychecks import *
 from commands.tempcommands import *
 
 
+def productbuilder(request):
+    productTypes = []
+    for productType in ProductType.objects.all().order_by("Name"):
+
+        fields = []
+        for field in productType.GridFields.all():
+            fields.append({
+                "x": field.x,
+                "y": field.y
+            })
+
+        productTypes.append({
+            "id": productType.id,
+            "name": productType.Name,
+            "icon": productType.IconAssetID,
+            "fields": fields
+        })
+
+    moduleList = []
+    for module in Module.objects.all().order_by("Name"):
+        if module.GridFields.all():
+            fields = []
+            for field in module.GridFields.all():
+                fields.append({
+                    "x": field.x,
+                    "y": field.y
+                })
+
+            features = []
+            for feature in module.Features.all():
+                features.append({
+                    "feature": feature.ProductFeature,
+                    "value": feature.FeatureValue
+                })
+
+
+            moduleList.append({
+                "id": module.id,
+                "name": module.Name,
+                "icon": module.IconAssetID,
+                "fields": fields,
+                "features": features
+            })
+
+    featureList = []
+    for feature in ProductFeature.objects.all():
+        featureList.append({
+            "id": feature.id,
+            "name": feature.Name,
+            "symbol": feature.HelperEmoji
+        })
+
+
+    return render(request, "helpers/productbuilder.html", {
+        "productTypes": productTypes,
+        "moduleList": moduleList,
+        "featureList": featureList,
+    })
+
 def productTypeOverview(request):
     productTypes = []
 
@@ -219,12 +278,6 @@ def moduleDetail(request, moduleID):
             usedInModules.append(mod)
             usedInModCount += 1
 
-    usedInProduct = []
-    usedInProductCount = 0
-    for product in SampleProduct.objects.all():
-        if module in product.Modules.all():
-            usedInProduct.append(product)
-            usedInProductCount += 1
 
     features = []
     for feature in module.Features.all():
@@ -297,7 +350,6 @@ def moduleDetail(request, moduleID):
             "perMinuteProfit": componentProfitPerSecond(module, 0) * 60,
             "outputAmount": module.OutputAmount,
             "usedinmodulescount": usedInModCount,
-            "usedinproductcount": usedInProductCount,
             "handlingCost": handlingCost,
             "employeeCostSlow": employeeCostSlow,
             "employeeCostQuick": employeeCostFast,
@@ -306,7 +358,6 @@ def moduleDetail(request, moduleID):
         "criticalPath": criticalPath,
         "materials": moduleBaseMaterials,
         "usedinmodules": usedInModules,
-        "usedinproducts": usedInProduct,
         "total": {
             "amount": totalAmount,
             "totalcost": totalCost,

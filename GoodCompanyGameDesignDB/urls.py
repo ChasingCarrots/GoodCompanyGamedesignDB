@@ -34,6 +34,7 @@ urlpatterns = [
     url(r'^goodcompany/helper/moduledetail/(\d+)', moduleDetail, name="moduledetail"),
     url(r'^goodcompany/helper/producttypeoverview/', productTypeOverview, name="producttypeoverview"),
     url(r'^goodcompany/helper/producttypedetail/(\d+)', productTypeDetail, name="producttypedetail"),
+    url(r'^goodcompany/helper/productbuilder/', productbuilder, name="productbuilder"),
     url(r'^goodcompany/helper/revertchanges/', revertChangesView, name="revertchanges"),
     url(r'^goodcompany/helper/getbalancingtablejson/(?P<tablename>\w+)/(?P<limitFrom>\d+)/(?P<limitTo>\d+)/(?P<displayMode>\d+)/(?P<logisticTime>\d+)/(?P<option>\w+)', getBalancingTableJson, name="getbalancingtablejson"),
     url(r'^goodcompany/helper/balancingtables', balancingTablesView, name="balancingtables"),

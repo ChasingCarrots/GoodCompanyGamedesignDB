@@ -140,6 +140,19 @@ class ModuleResearchDataYield(models.Model):
     def __unicode__(self):
         return u"%s: %d" % (self.ResearchDataType, self.Amount)
 
+
+class ModuleField(models.Model):
+    module = models.ForeignKey("Module", related_name="GridFields")
+    x = models.IntegerField()
+    y = models.IntegerField()
+
+    class Meta:
+        verbose_name = 'Module Field'
+        verbose_name_plural = 'Module Fields'
+
+    def __unicode__(self):
+        return u"%s GridFields" % (unicode(self.module))
+
 class Module(models.Model):
     history = HistoricalRecords()
     Name = models.CharField(max_length=255)
@@ -262,6 +275,19 @@ class ProductTypeSlotUIPosition(models.Model):
 
     def __unicode__(self):
         return u"%s %s Slot Position" % (unicode(self.productType), unicode(self.slotType))
+
+
+class ProductTypeField(models.Model):
+    productType = models.ForeignKey("ProductType", related_name="GridFields")
+    x = models.IntegerField()
+    y = models.IntegerField()
+
+    class Meta:
+        verbose_name = 'Product Type Field'
+        verbose_name_plural = 'Product Type Fields'
+
+    def __unicode__(self):
+        return u"%s GridFields" % (unicode(self.productType))
 
 
 class ProductType(models.Model):
