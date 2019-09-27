@@ -13,7 +13,7 @@ from commands.sanitychecks import *
 from commands.tempcommands import *
 
 
-def productBuilder(request):
+def productbuilder(request):
     productTypes = []
     for productType in ProductType.objects.all().order_by("Name"):
 
