@@ -182,6 +182,8 @@
             s = ""
             var selection = document.getElementById("selected_product");
             fields = []
+            active_modules = [];
+            active_modules[0] = 0
             products[selection.options[selection.selectedIndex].value].forEach(function(item, index, array) {
                 s += "<div style='background-color: #ccc; position: absolute;"
                 s += "vertical-align: middle; text-align: center; line-height: "+(size)+"px;"
