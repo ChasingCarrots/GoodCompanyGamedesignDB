@@ -374,12 +374,12 @@ class PositiveFeature(models.Model):
     history = HistoricalRecords()
     ProductType = models.ForeignKey(ProductType, related_name="PositiveFeatures")
     Feature = models.ForeignKey(ProductFeature, related_name="ProductTypePositiveFeatures")
-    Min = models.IntegerField(default = 1)
+    Max = models.IntegerField(default = 1)
 
     def getJsonObject(self):
         return {
             "FeatureID": self.Feature.id,
-            "Min": self.Min,
+            "Max": self.Max,
         }
 
     class Meta:
@@ -387,7 +387,7 @@ class PositiveFeature(models.Model):
         verbose_name_plural = "Positive Features"
 
     def __unicode__(self):
-        return u"%s - %d" % (unicode(self.Feature), self.Min)
+        return u"%s - %d" % (unicode(self.Feature), self.Max)
 
 class NegativeFeature(models.Model):
     history = HistoricalRecords()
