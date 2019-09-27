@@ -200,20 +200,6 @@
                 </td>
             </tr>
             {% endif %}
-            {% if module.usedinproductcount > 0 %}
-            <tr>
-                <td>Products</td>
-                <td>{{module.usedinproductcount|floatformat:0 }}</td>
-                <td>
-                    {% for prod in usedinproducts %}
-                    <a class='tooltip' href="{% url 'sampleproduct' prod.id %}">
-                        <img height="40" src="/goodcompany/static/img/{{prod.ProductFunction.IconAssetID}}.png" onerror="this.src='/goodcompany/static/img/unknown.png';">
-                        <span class='tooltiptext'>{{prod.Name}}</span>
-                    </a>
-                    {% endfor %}
-                </td>
-            </tr>
-            {% endif %}
         </tbody>
     </table><br>
     {% else %}
