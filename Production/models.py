@@ -111,7 +111,7 @@ class ModuleFeature(models.Model):
     def getJsonObject(self):
         return {
             "FeatureID":self.ProductFeature.id,
-            "FeatureValue":self.FeatureValue,
+            "Value":self.FeatureValue,
         }
 
     class Meta:
