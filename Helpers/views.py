@@ -62,8 +62,7 @@ def productBuilder(request):
         featureList.append({
             "id": feature.id,
             "name": feature.Name,
-            "symbol": feature.HelperEmoji,
-            "type": feature.Type
+            "symbol": feature.HelperEmoji
         })
 
 
