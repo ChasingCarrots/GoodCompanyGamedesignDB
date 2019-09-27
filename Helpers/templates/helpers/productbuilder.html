@@ -254,6 +254,10 @@
             var b =  Math.floor(Math.random() * (+max - +min)) + +min;
             color = "rgb("+r+", "+g+", "+b+")"
 
+
+             bx = -moduleList[options[1]][2][0][0]
+             by = -moduleList[options[1]][2][0][1]
+
             moduleList[options[1]][2].forEach(function(item, index, array) {
                 px = item[0]
                 py = item[1]
@@ -267,13 +271,13 @@
                     px = -item[1]
                     py = item[0]
                 }
-                if (typeof fields[x+px][y+py] == 'undefined') {
+                if (typeof fields[x+px+bx][y+py+by] == 'undefined') {
                     end;
                 }
 
-                fields[x+px][y+py] = module;
+                fields[x+px+bx][y+py+by] = module;
 
-                element = document.getElementById("gridfield_"+(x+px)+"_"+(y+py))
+                element = document.getElementById("gridfield_"+(x+px+bx)+"_"+(y+py+by))
                 element.style.backgroundColor = color
                 if (index == 0) {
                     element.innerHTML = "<img height='50' src='/goodcompany/static/img/"+moduleList[options[1]][1]+".png' style='margin-top: 5px'>";
@@ -283,6 +287,8 @@
 
         function check_spaces(x, y, exception) {
             value = 1
+             bx = -moduleList[options[1]][2][0][0]
+             by = -moduleList[options[1]][2][0][1]
             moduleList[options[1]][2].forEach(function(item, index, array) {
                 px = item[0]
                 py = item[1]
@@ -296,10 +302,11 @@
                     px = -item[1]
                     py = item[0]
                 }
-                if (typeof fields[x+px][y+py] == 'undefined') {
+                if (typeof fields[x+px+bx] == 'undefined') {
                     value = 0
-                }
-                if (fields[x+px][y+py] != 0 && fields[x+px][y+py] != exception) {
+                } else if (typeof fields[x+px+bx][y+py+by] == 'undefined') {
+                    value = 0
+                } else if (fields[x+px+bx][y+py+by] != 0 && fields[x+px+bx][y+py+by] != exception) {
                     value = 0
                 }
             });
