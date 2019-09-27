@@ -379,7 +379,7 @@ class PositiveFeature(models.Model):
     def getJsonObject(self):
         return {
             "FeatureID": self.Feature.id,
-            "Max": self.Max,
+            "Value": self.Max,
         }
 
     class Meta:
@@ -398,7 +398,7 @@ class NegativeFeature(models.Model):
     def getJsonObject(self):
         return {
             "FeatureID": self.Feature.id,
-            "Min": self.Min,
+            "Value": self.Min,
         }
 
     class Meta:
