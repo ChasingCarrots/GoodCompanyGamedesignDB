@@ -58,7 +58,7 @@ def productbuilder(request):
             })
 
     featureList = []
-    for feature in ProductFeature.objects.all():
+    for feature in ProductFeature.objects.all().order_by("Name"):
         featureList.append({
             "id": feature.id,
             "name": feature.Name,

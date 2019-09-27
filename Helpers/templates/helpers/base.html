@@ -7,8 +7,138 @@
 
     <style type="text/css">
         body {
-            background-color: #FFFFFF;
+            background-color: #2d2d2d;
+            color: #ddd;
         }
+        .ui.header {
+            color: #ddd;
+        }
+
+        .div_block {
+            border-radius: 6px;
+            background-color: #323232;
+            padding: 10px;
+        }
+
+        .ui.message {
+            border-radius: 6px;
+            background-color: #323232;
+            padding: 10px;
+            color: #ccc;
+        }
+
+        .long_list {
+            border-radius: 6px;
+            overflow-y: scroll;
+            background-color: #323232;
+            color: #ddd;
+            font-family: Lato,'Helvetica Neue',Arial,Helvetica,sans-serif;
+        }
+
+        .long_list p {
+            display: block;
+            line-height: 16px;
+            left: 0px;
+            right: 0px;
+            margin: 2px;
+            padding: 2px;
+            padding-bottom: 6px;
+            border-bottom: 1px dotted #555;
+        }
+
+        .long_list p:hover {
+            background-color: #555;
+        }
+
+        .long_list p img {
+            height: 24px;
+            margin-bottom: -6px;
+        }
+
+        .ui.button {
+            color: #ccc;
+            border-radius: 6px;
+            padding: 8px;
+            background-color: #434343;
+        }
+
+        .ui.button:hover {
+            color: #EE9500;
+            background-color: #555;
+        }
+
+        a {
+            color: #EE9500;
+        }
+
+        a:hover {
+            color: #FFB511;
+            background-color: none;
+        }
+
+        .ui.selection.dropdown {
+            color: #ccc;
+            background-color: #434343;
+            border-radius: 6px;
+            padding: 2px;
+            height: 20px;
+            min-width: 14em;
+            min-height: 2em;
+        }
+
+        .top_menu {
+            background-color: #262626;
+            color: #ddd;
+        }
+
+        .top_menu_button {
+            display: inline-block;
+            border-right: 1px dotted #444;
+            color: #ddd;
+        }
+
+        .top_menu_button:hover {
+            background-color: #343434;
+
+        }
+
+        .top_menu_item {
+            display: inline-block;
+            margin: 8px;
+            color: #bbb;
+            font-size: 1.1em;
+        }
+
+        .top_menu_item:hover {
+            background-color: #343434;
+        }
+
+        .ui.celled.table {
+            border: 1px solid #444;
+        }
+
+        .ui.celled.table th {
+            background-color: #262626;
+            color: #bbb;
+        }
+        .ui.celled.table td {
+            background-color: #343434;
+            color: #ddd;
+            border-bottom: 1px dotted #444;
+        }
+
+        .ui.celled.table tr:hover {
+            background-color: #555;
+        }
+
+        input {
+            color: #ccc;
+            background-color: #434343;
+            border-radius: 6px;
+            border: 0px;
+            padding: 8px;
+        }
+
         .ui.menu .item img.logo {
             margin-right: 1.5em;
         }
@@ -36,7 +166,7 @@
 
         .tooltip .tooltiptext {
           visibility: hidden;
-          background-color: black;
+          background-color: #3f888f;
           color: #fff;
           text-align: center;
           border-radius: 6px;
@@ -60,36 +190,36 @@
 </head>
 <body>
 
-    <div class="ui fixed inverted menu">
-        <div class="ui container">
-            <a href="{% url 'admin:index' %}" class="item">Django Admin</a>
+    <div class="top_menu">
+        <div class="top_menu_button">
+            <a href="{% url 'admin:index' %}" class="top_menu_item">Django Admin</a>
         </div>
-        <div class="ui container">
-            <a href="http://{{ request.get_host }}/goodcompany/" class="item">Home</a>
+        <div class="top_menu_button">
+            <a href="http://{{ request.get_host }}/goodcompany/" class="top_menu_item">Home</a>
         </div>
-        <div class="ui container">
-            <a href="{% url 'materialoverview' %}" class="item">Materials</a>
+        <div class="top_menu_button">
+            <a href="{% url 'materialoverview' %}" class="top_menu_item">Materials</a>
         </div>
-        <div class="ui container">
-            <a href="{% url 'moduleoverview' %}" class="item">Modules</a>
+        <div class="top_menu_button">
+            <a href="{% url 'moduleoverview' %}" class="top_menu_item">Modules</a>
         </div>
-        <div class="ui container">
-            <a href="{% url 'modulepathoverview' %}" class="item">Module Paths</a>
+        <div class="top_menu_button">
+            <a href="{% url 'modulepathoverview' %}" class="top_menu_item">Module Paths</a>
         </div>
-        <div class="ui container">
-            <a href="{% url 'objectoverview' %}" class="item">Tables</a>
+        <div class="top_menu_button">
+            <a href="{% url 'objectoverview' %}" class="top_menu_item">Tables</a>
         </div>
-        <div class="ui container">
-            <a href="{% url 'producttypeoverview' %}" class="item">Product Types</a>
+        <div class="top_menu_button">
+            <a href="{% url 'producttypeoverview' %}" class="top_menu_item">Product Types</a>
         </div>
-        <div class="ui container">
-            <a href="{% url 'researchoverview' %}" class="item">Research</a>
+        <div class="top_menu_button">
+            <a href="{% url 'researchoverview' %}" class="top_menu_item">Research</a>
         </div>
-        <div class="ui container">
-            <a href="{% url 'balancingtables' %}" class="item">Balancing Tables</a>
+        <div class="top_menu_button">
+            <a href="{% url 'balancingtables' %}" class="top_menu_item">Balancing Tables</a>
         </div>
-        <div class="ui container">
-            <a href="{% url 'commands' %}" class="item">Commands</a>
+        <div class="top_menu_button">
+            <a href="{% url 'commands' %}" class="top_menu_item">Commands</a>
         </div>
     </div>
     <div class="ui main container">
