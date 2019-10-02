@@ -120,10 +120,6 @@
             border-bottom: 1px dotted #444;
         }
 
-        .ui.celled.table tr:hover {
-            background-color: #555;
-        }
-
         input {
             color: #ccc;
             background-color: #434343;
