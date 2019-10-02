@@ -124,15 +124,15 @@
                     module[3].forEach(function(feature, findex, farray) {
                         if (feature[0] == id) {
                             s += "<p value='"+mindex+"' onclick='view_module("+mindex+", 0)'>"
-                            s += "<img src='"+module[1]+".png'>&nbsp;&nbsp;"
-                            //s += "<img src='/goodcompany/static/img/"+module[1]+".png'>&nbsp;&nbsp;"
+                            //s += "<img src='"+module[1]+".png'>&nbsp;&nbsp;"
+                            s += "<img src='/goodcompany/static/img/"+module[1]+".png'>&nbsp;&nbsp;"
                             s += module[0]+"</p>"
                         }
                     });
                 } else {
                     s += "<p value='"+mindex+"' onclick='view_module("+mindex+", 0)'>"
-                    s += "<img src='"+module[1]+".png'>&nbsp;&nbsp;"
-                    //s += "<img src='/goodcompany/static/img/"+module[1]+".png'>&nbsp;&nbsp;"
+                    //s += "<img src='"+module[1]+".png'>&nbsp;&nbsp;"
+                    s += "<img src='/goodcompany/static/img/"+module[1]+".png'>&nbsp;&nbsp;"
                     s += module[0]+"</p>"
                 }
             });
@@ -248,8 +248,8 @@
                 s += "width:"+size+"px; height:"+size+"px;"
                 s += "left:"+(px*size)+"px; bottom:"+(py*size)+"px;'"
                 if (index == 0) {
-                //s += "><img height='30' src='/goodcompany/static/img/"+moduleList[moduleID][1]+".png' style='margin-top: 5px'></div>"
-                s += "><img height='30' src='"+moduleList[moduleID][1]+".png' style='margin-top: 5px'></div>"
+                s += "><img height='30' src='/goodcompany/static/img/"+moduleList[moduleID][1]+".png' style='margin-top: 5px'></div>"
+                //s += "><img height='30' src='"+moduleList[moduleID][1]+".png' style='margin-top: 5px'></div>"
                 } else {
                 s += "></div>"
                 }
@@ -381,8 +381,8 @@
                 element = document.getElementById("gridfield_"+(x+px+bx)+"_"+(y+py+by))
                 element.style.backgroundColor = color
                 if (index == 0) {
-                    //element.innerHTML = "<img height='50' src='/goodcompany/static/img/"+moduleList[options[1]][1]+".png' style='margin-top: 5px'>";
-                    element.innerHTML = "<img height='50' src='"+moduleList[options[1]][1]+".png' style='margin-top: 5px'>";
+                    element.innerHTML = "<img height='50' src='/goodcompany/static/img/"+moduleList[options[1]][1]+".png' style='margin-top: 5px'>";
+                    //element.innerHTML = "<img height='50' src='"+moduleList[options[1]][1]+".png' style='margin-top: 5px'>";
                 }
             });
         }
