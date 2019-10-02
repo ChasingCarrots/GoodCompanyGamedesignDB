@@ -5,8 +5,8 @@
 {% block content %}
     <h1 class="ui header">Commands</h1>
     <div class="ui action input">
-        <div class="ui selection dropdown" style="width:20em">
-            <input type="hidden" name="commandselection" id="commandselection">
+        <div class="ui selection dropdown" style="width:20em; height: 3em; padding: 5px;">
+            <input type="hidden" name="commandselection" id="commandselection" style="height:100%;">
             <i class="dropdown icon"></i>
             <div class="default text">Select command</div>
             <div class="menu">
@@ -15,10 +15,11 @@
                 {% endfor %}
             </div>
         </div>
-        <input style="width:30em" type="text" id="arguments" value="" placeholder="Commandline arguments">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input class="input_field" type="text" id="arguments" value="" placeholder="Commandline arguments">
         <div class="ui button" id="run">RUN</div>
     </div>
-    <div id="commandoutput" class="ui message"></div>
+<br>
+    <div id="commandoutput" class="ui message" style="margin-top:50px;"></div>
 {% endblock %}
 
 {% block customjavascript %}

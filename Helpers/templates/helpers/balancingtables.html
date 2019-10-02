@@ -4,7 +4,7 @@
 
 {% block content %}
     <h1 class="ui header">Balancing Tables</h1>
-    <div class="ui action input">
+    <div>
         <div class="ui selection dropdown">
             <input type="hidden" name="tableselection" id="tableselection">
             <i class="dropdown icon"></i>
@@ -27,14 +27,14 @@
                     <div class="item" data-value="3">Force Combined</div>
             </div>
         </div>
+        &nbsp;&nbsp;&nbsp;&nbsp;<br><br>
+        <input class="input_field" type="text" id="logisticTime" placeholder="Add. Logistic Time: 0">
         &nbsp;&nbsp;&nbsp;&nbsp;
-        <input type="text" id="logisticTime" placeholder="Add. Logistic Time: 0">
+        <input class="input_field" type="text" id="limitFrom" placeholder="Starting At: 0">
         &nbsp;&nbsp;&nbsp;&nbsp;
-        <input type="text" id="limitFrom" placeholder="Starting At: 0">
+        <input class="input_field" type="text" id="limitTo" placeholder="End Before: 10">
         &nbsp;&nbsp;&nbsp;&nbsp;
-        <input type="text" id="limitTo" placeholder="End Before: 10">
-        &nbsp;&nbsp;&nbsp;&nbsp;
-        <input type="text" id="option" placeholder="Options">
+        <input class="input_field" type="text" id="option" placeholder="Options">
         &nbsp;&nbsp;&nbsp;&nbsp;
         <div class="ui button" id="go">GO</div>
     </div>
@@ -72,14 +72,14 @@
         return result;
     };
 
-    var TableTemplate = `<table class="ui very compact small striped celled table">
+    var TableTemplate = `<table class="ui celled table">
     <br>
     <%for(var rowIndex in this.rows) { %>
         <% if(rowIndex % 15 == 0)  { %>
         <thead style="text-align: center;" border="1">
             <tr>
                 <%for(var colIndex in this.columns) { %>
-                <th class="one wide" style="background-color: #e0eae7;"><%this.columns[colIndex].header%></th>
+                <th><%this.columns[colIndex].header%></th>
                 <% } %>
             </tr>
         </thead>

@@ -24,10 +24,26 @@ def productbuilder(request):
                 "y": field.y
             })
 
+        pos = []
+        for feature in productType.PositiveFeatures.all():
+            pos.append({
+                "feature": feature.Feature,
+                "value": feature.Max
+            })
+
+        neg = []
+        for feature in productType.NegativeFeatures.all():
+            neg.append({
+                "feature": feature.Feature,
+                "value": feature.Min
+            })
+
         productTypes.append({
             "id": productType.id,
             "name": productType.Name,
             "icon": productType.IconAssetID,
+            "positiveFeatures": pos,
+            "negativeFeatures": neg,
             "fields": fields
         })
 
@@ -35,7 +51,9 @@ def productbuilder(request):
     for module in Module.objects.all().order_by("Name"):
         if module.GridFields.all():
             fields = []
+            fcount = 0
             for field in module.GridFields.all():
+                fcount = fcount + 1
                 fields.append({
                     "x": field.x,
                     "y": field.y
@@ -54,11 +72,13 @@ def productbuilder(request):
                 "name": module.Name,
                 "icon": module.IconAssetID,
                 "fields": fields,
-                "features": features
+                "fieldcount": fcount,
+                "features": features,
+                "price": module.BaseMarketPrice
             })
 
     featureList = []
-    for feature in ProductFeature.objects.all():
+    for feature in ProductFeature.objects.all().order_by("Name"):
         featureList.append({
             "id": feature.id,
             "name": feature.Name,
