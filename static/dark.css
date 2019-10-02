@@ -113,10 +113,16 @@
         .ui.celled.table th {
             background-color: #262626;
             color: #bbb;
+            border-bottom: 1px dotted #444;
         }
+
         .ui.celled.table td {
             background-color: #343434;
             color: #ddd;
+            border-bottom: 1px dotted #444;
+        }
+
+        .ui.celled.table tr {
             border-bottom: 1px dotted #444;
         }
 
