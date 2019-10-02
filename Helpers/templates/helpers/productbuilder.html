@@ -64,6 +64,7 @@
         options[0] = 0;
         options[1] = 0;
         options[2] = 0;
+        options[3] = 0;
 
 
         var active_modules = [];
@@ -73,8 +74,19 @@
          var products = []
          {% for type in productTypes %}
             products[{{type.id}}] = []
+            products[{{type.id}}][0] = "{{type.name}}"
+            products[{{type.id}}][1] = "{{type.icon}}"
+            products[{{type.id}}][2] = []
+            products[{{type.id}}][3] = []
+            products[{{type.id}}][4] = []
             {% for field in type.fields %}
-                products[{{type.id}}].push([{{field.x}}, {{field.y}}, 0])
+                products[{{type.id}}][2].push([{{field.x}}, {{field.y}}, 0])
+            {% endfor %}
+            {% for pos in type.positiveFeatures %}
+                products[{{type.id}}][3].push([{{pos.feature.id}}, {{pos.value}}])
+            {% endfor %}
+            {% for neg in type.negativeFeatures %}
+                products[{{type.id}}][4].push([{{neg.feature.id}}, {{neg.value}}])
             {% endfor %}
          {% endfor %}
 
@@ -86,6 +98,8 @@
             moduleList[{{module.id}}][1] = "{{module.icon}}"
             moduleList[{{module.id}}][2] = []
             moduleList[{{module.id}}][3] = []
+            moduleList[{{module.id}}][4] = {{module.fieldcount}}
+            moduleList[{{module.id}}][5] = {{module.price}}
             {% for field in module.fields %}
                 moduleList[{{module.id}}][2].push([{{field.x}}, {{field.y}}])
             {% endfor %}
@@ -110,13 +124,15 @@
                     module[3].forEach(function(feature, findex, farray) {
                         if (feature[0] == id) {
                             s += "<p value='"+mindex+"' onclick='view_module("+mindex+", 0)'>"
-                            s += "<img src='/goodcompany/static/img/"+module[1]+".png'>&nbsp;&nbsp;"
+                            s += "<img src='"+module[1]+".png'>&nbsp;&nbsp;"
+                            //s += "<img src='/goodcompany/static/img/"+module[1]+".png'>&nbsp;&nbsp;"
                             s += module[0]+"</p>"
                         }
                     });
                 } else {
                     s += "<p value='"+mindex+"' onclick='view_module("+mindex+", 0)'>"
-                    s += "<img src='/goodcompany/static/img/"+module[1]+".png'>&nbsp;&nbsp;"
+                    s += "<img src='"+module[1]+".png'>&nbsp;&nbsp;"
+                    //s += "<img src='/goodcompany/static/img/"+module[1]+".png'>&nbsp;&nbsp;"
                     s += module[0]+"</p>"
                 }
             });
@@ -129,19 +145,56 @@
                 item[3] = 0
             });
 
+            moduleprices = 0
             active_modules.forEach(function(module, mindex, array) {
                 if (module != 0) {
                     moduleList[module][3].forEach(function(feature, findex, array) {
                         featureList[feature[0]][3] += feature[1]
                     });
+                    moduleprices += moduleList[module][5]
                 }
             });
 
-            featureList.forEach(function(item, index, array) {
-                if (item[3] != 0) {
-                    s += item[1]+" - "+item[0]+": "+item[3]+"<br>"
+            totalmax = 0
+            positive = 0
+            negative = 0
+
+            s += "Positive Values:<table><tr><td>Feature</td><td>Built In</td><td>Maximum</td><td>Relative</td></tr>"
+            products[options[3]][3].forEach(function(item, index, array) {
+                n = featureList[item[0]][3]/item[1]
+                if (n > 1) {
+                    n = 1
+                    positive += item[1]
+                } else {
+                    positive += featureList[item[0]][3]
                 }
+
+                totalmax += item[1]
+                s += "<tr style='width: 100%;'><td style='width: 25%;' class='tooltip'>"+featureList[item[0]][1] +"<span class='tooltiptext'> "+ featureList[item[0]][0] + "</span></span></td>"
+                s += "<td style='width: 25%;'>"+featureList[item[0]][3]+"</td>"
+                s += "<td style='width: 25%;'>"+item[1]+"</td>"
+                s += "<td style='width: 25%;'>"+(n*100).toFixed(0)+"%</td></tr>"
             });
+            s += "</table>"
+
+
+            s += "<br>Negative Values:<table><tr><td>Feature</td><td>Built In</td><td>Minimum</td></tr>"
+            products[options[3]][4].forEach(function(item, index, array) {
+                if (featureList[item[0]][3] > item[1]) {
+                    negative += featureList[item[0]][3] - item[1]
+                }
+                s += "<tr style='width: 100%;'><td style='width: 25%;' class='tooltip'>"+featureList[item[0]][1] +"<span class='tooltiptext'> "+ featureList[item[0]][0] + "</span></span></td>"
+                s += "<td style='width: 25%;'>"+featureList[item[0]][3]+"</td>"
+                s += "<td style='width: 25%;'>"+item[1]+"</td></tr>"
+            });
+            s += "</table>"
+
+            value = positive-negative
+            s += "<br>Evaluation:<table style='width: 100%;'><tr style='width: 100%;'><td>Pos</td><td>Neg</td><td>Value</td><td>Max</td><td>Rating</td></tr>"
+            s += "<tr><td>"+positive.toFixed(0)+"</td><td>"+negative.toFixed(0)+"</td><td>"+value.toFixed(0)+"</td><td>"+totalmax.toFixed(0)+"</td><td>"+((value/totalmax)*100).toFixed(0)+"%</td></tr></table>"
+
+            s+= "<br>Module Prices:<br> "+moduleprices+" G"
+            s+= "<br><br>Score:<br> "+(value/Math.pow(moduleprices, 0.5)*100).toFixed(0)+" 🥕"
 
             document.getElementById("faeture_overview").innerHTML = s;
         }
@@ -162,12 +215,14 @@
             s = ""
             if (activeID == 0) { s += "<b>PLACEMENT MODE!</b> <br>"; }
             if (activeID > 0) { s += "<b>VIEW MODE!</b> <br>"; }
-            s += moduleList[moduleID][0]
+            s += moduleList[moduleID][0] +" ("+moduleList[moduleID][5]+" G)"
             document.getElementById("moduledetails").innerHTML = s;
 
-            s = ""
+            s = "<table style='width: 100%;'><tr><td>Feature</td><td>Value</td><td>per Slot</td><td>G/Value</td></tr>"
             moduleList[moduleID][3].forEach(function(item, index, array) {
-                s += ""+featureList[item[0]][1] +" &nbsp; "+ featureList[item[0]][0] + ": " +item[1]+"</br>"
+
+                s += "<tr><td class='tooltip'>"+featureList[item[0]][1] +"<span class='tooltiptext'> "+ featureList[item[0]][0] + "</span></td>"
+                s += "<td>" +item[1]+" </td><td>"+(item[1]/moduleList[moduleID][4]).toFixed(2)+"</td><td>"+(moduleList[moduleID][5]/item[1]).toFixed(0)+" </td>"
             });
             document.getElementById("modulefeatures").innerHTML = s;
 
@@ -193,7 +248,8 @@
                 s += "width:"+size+"px; height:"+size+"px;"
                 s += "left:"+(px*size)+"px; bottom:"+(py*size)+"px;'"
                 if (index == 0) {
-                s += "><img height='30' src='/goodcompany/static/img/"+moduleList[moduleID][1]+".png' style='margin-top: 5px'></div>"
+                //s += "><img height='30' src='/goodcompany/static/img/"+moduleList[moduleID][1]+".png' style='margin-top: 5px'></div>"
+                s += "><img height='30' src='"+moduleList[moduleID][1]+".png' style='margin-top: 5px'></div>"
                 } else {
                 s += "></div>"
                 }
@@ -217,7 +273,8 @@
             fields = []
             active_modules = [];
             active_modules[0] = 0
-            products[selection.options[selection.selectedIndex].value].forEach(function(item, index, array) {
+            options[3] = selection.options[selection.selectedIndex].value
+            products[selection.options[selection.selectedIndex].value][2].forEach(function(item, index, array) {
                 s += "<div style='background-color: #555; position: absolute;"
                 s += "vertical-align: middle; text-align: center; line-height: "+(size)+"px;"
                 s += "width:"+size+"px; height:"+size+"px;"
@@ -234,6 +291,7 @@
                 fields[item[0]][item[1]] = 0;
             });
             document.getElementById("builderview").innerHTML = s;
+            update_feature_overview()
         }
 
 
@@ -323,7 +381,8 @@
                 element = document.getElementById("gridfield_"+(x+px+bx)+"_"+(y+py+by))
                 element.style.backgroundColor = color
                 if (index == 0) {
-                    element.innerHTML = "<img height='50' src='/goodcompany/static/img/"+moduleList[options[1]][1]+".png' style='margin-top: 5px'>";
+                    //element.innerHTML = "<img height='50' src='/goodcompany/static/img/"+moduleList[options[1]][1]+".png' style='margin-top: 5px'>";
+                    element.innerHTML = "<img height='50' src='"+moduleList[options[1]][1]+".png' style='margin-top: 5px'>";
                 }
             });
         }
