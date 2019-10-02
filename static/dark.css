@@ -95,6 +95,10 @@
 
         }
 
+        .ui.table {
+            background-color: #2d2d2d;
+        }
+
         .top_menu_item {
             display: inline-block;
             margin: 8px;
