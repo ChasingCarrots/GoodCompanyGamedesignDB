@@ -165,6 +165,7 @@ class Module(models.Model):
     BaseMarketCapacity = models.IntegerField(default=50)
     MarketRecoveryFactor = models.FloatField(default=0.5)
     AssemblyTime = models.FloatField(default=5)
+    SamplingTime = models.FloatField(default=5)
 
     def getJsonObject(self):
         fitsIntoSlot = 0
@@ -188,7 +189,8 @@ class Module(models.Model):
             "BaseMarketPrice":self.BaseMarketPrice,
             "BaseMarketCapacity":self.BaseMarketCapacity,
             "MarketRecoveryFactor":self.MarketRecoveryFactor,
-            "AssemblyTime":self.AssemblyTime
+            "AssemblyTime":self.AssemblyTime,
+            "SamplingTime":self.SamplingTime
         }
 
     class Meta:
