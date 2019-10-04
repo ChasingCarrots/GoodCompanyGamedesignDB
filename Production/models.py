@@ -5,6 +5,7 @@ from django.db import models
 
 import common
 from simple_history.models import HistoricalRecords
+from django.core.exceptions import ValidationError
 
 class Material(models.Model):
     history = HistoricalRecords()
@@ -291,6 +292,9 @@ class ProductTypeField(models.Model):
     def __unicode__(self):
         return u"%s GridFields" % (unicode(self.productType))
 
+def ValidateMarketTier(tier):
+    if tier <= 0:
+        raise ValidationError("Market tiers must be greater than 0.")
 
 class ProductType(models.Model):
     history = HistoricalRecords()
@@ -303,7 +307,11 @@ class ProductType(models.Model):
     BaseMarketMaxPriceFactor = models.FloatField(default=5)
     BaseMarketCurvePotential = models.FloatField(default=2)
     RequiredDiscoveryPoints = models.IntegerField(default=10)
-    MarketTier = models.IntegerField(default=1)
+    MarketTier = models.IntegerField(
+        default=1,
+        validators=[ValidateMarketTier],
+        help_text="The market tier for this product type. "
+            "This value must be greater than 0")
 
 
     def getJsonObject(self):
