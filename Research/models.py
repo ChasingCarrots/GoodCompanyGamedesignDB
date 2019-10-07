@@ -50,6 +50,7 @@ class DevelopmentProject(models.Model):
     IsHidden = models.BooleanField(default=True)
     Description = models.CharField(max_length=255, blank=True)
     IconAssetID = models.CharField(max_length=255)
+    DiscoveryPoints = models.IntegerField(default=0)
     RequiredProjects = models.ManyToManyField("self", blank=True, symmetrical=False, related_name="RequiredForProjects")
     UnlocksModules = models.ManyToManyField("Production.Module", blank=True, related_name="UnlockedByResearch")
     UnlocksBuildables = models.ManyToManyField("ObjectTypes.ObjectType", blank=True, related_name="UnlockedByResearch")
@@ -67,6 +68,7 @@ class DevelopmentProject(models.Model):
             "IsHidden": self.IsHidden,
             "Description": self.Description,
             "IconAssetID": self.IconAssetID,
+            "DiscoveryPoints": self.DiscoveryPoints,
             "RequiredProjects": requiredProjects,
             "RequiredData": requiredData,
             "UnlocksModules": unlocksModules,

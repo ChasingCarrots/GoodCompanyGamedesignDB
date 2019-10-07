@@ -48,14 +48,14 @@
 
         .top_menu_button {
             display: inline-block;
-            border-right: 1px dotted #444;
             color: #ddd;
-            margin-left: 6px;
         }
 
         .top_menu_item {
             display: inline-block;
             margin: 8px;
+            margin-left: 16px;
+            border-right: 1px dotted #444;
             color: #bbb;
             font-size: 0.9em;
             font-family: Lato,'Helvetica Neue',Arial,Helvetica,sans-serif;
