@@ -304,6 +304,7 @@ class ProductType(models.Model):
     BigImageAssetID = models.CharField(max_length=255)
     Slots = models.ManyToManyField(ModuleSlotType, related_name="UsedInProductType")
     BaseMarketPrice = models.IntegerField(default=100)
+    BaseMarketDemand = models.IntegerField(default=10)
     BaseMarketMaxPriceFactor = models.FloatField(default=5)
     BaseMarketCurvePotential = models.FloatField(default=2)
     RequiredDiscoveryPoints = models.IntegerField(default=10)
@@ -331,12 +332,7 @@ class ProductType(models.Model):
                     "y": posY
                 }
             })
-        positiveFeatures = []
-        for pos in self.PositiveFeatures.all():
-            positiveFeatures.append(pos.getJsonObject())
-        negativeFeatures = []
-        for neg in self.NegativeFeatures.all():
-            negativeFeatures.append(neg.getJsonObject())
+
         return {
             "Name": self.Name,
             "Description": self.Description,
@@ -346,9 +342,9 @@ class ProductType(models.Model):
             "BaseMarketPrice": self.BaseMarketPrice,
             "BaseMarketMaxPriceFactor": self.BaseMarketMaxPriceFactor,
             "BaseMarketCurvePotential": self.BaseMarketCurvePotential,
-            "PositiveFeatures": positiveFeatures,
-            "NegativeFeatures": negativeFeatures,
             "RequiredDiscoveryPoints": self.RequiredDiscoveryPoints,
+            "PositiveFeatures": [],
+            "NegativeFeatures": [],
             "MarketTier": self.MarketTier
         }
 
@@ -358,6 +354,42 @@ class ProductType(models.Model):
 
     def __unicode__(self):
         return unicode(self.Name)
+
+class MarketPhase(models.Model):
+    history = HistoricalRecords()
+    Name = models.CharField(max_length=255)
+    ProductType = models.ForeignKey(ProductType, related_name="MarketPhases")
+    PhaseIndex = models.IntegerField(default=0)
+    PriceFactor = models.FloatField(default=1.0)
+    DemandFactor = models.FloatField(default=1.0)
+    Duration = models.IntegerField(default=30)
+    DiscoveryPoints = models.IntegerField(default=1)
+
+    def getJsonObject(self):
+        positiveFeatures = []
+        for pos in self.PositiveFeatures.all():
+            positiveFeatures.append(pos.getJsonObject())
+        negativeFeatures = []
+        for neg in self.NegativeFeatures.all():
+            negativeFeatures.append(neg.getJsonObject())
+
+        return {
+            "Name": self.Name,
+            "Index": self.PhaseIndex,
+            "PriceFactor": self.PriceFactor,
+            "DemandFactor": self.DemandFactor,
+            "Duration": self.Duration,
+            "DiscoveryPoints": self.DiscoveryPoints,
+            "PositiveFeatures": positiveFeatures,
+            "NegativeFeatures": negativeFeatures,
+        }
+
+    class Meta:
+        verbose_name = "Market Phase"
+        verbose_name_plural = "Market Phases"
+
+    def __unicode__(self):
+        return u"Phase %d: %d Days" % (self.PhaseIndex, self.Duration)
 
 class ProductFeature(models.Model):
     history = HistoricalRecords()
@@ -382,7 +414,7 @@ class ProductFeature(models.Model):
 
 class PositiveFeature(models.Model):
     history = HistoricalRecords()
-    ProductType = models.ForeignKey(ProductType, related_name="PositiveFeatures")
+    MarketPhase = models.ForeignKey(MarketPhase, related_name="PositiveFeatures")
     Feature = models.ForeignKey(ProductFeature, related_name="ProductTypePositiveFeatures")
     Max = models.IntegerField(default = 1)
 
@@ -401,7 +433,7 @@ class PositiveFeature(models.Model):
 
 class NegativeFeature(models.Model):
     history = HistoricalRecords()
-    ProductType = models.ForeignKey(ProductType, related_name="NegativeFeatures")
+    MarketPhase = models.ForeignKey(MarketPhase, related_name="NegativeFeatures")
     Feature = models.ForeignKey(ProductFeature, related_name="ProductTypeNegativeFeatures")
     Min = models.IntegerField(default = 1)
 

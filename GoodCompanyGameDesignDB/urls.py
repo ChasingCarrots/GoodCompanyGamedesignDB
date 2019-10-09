@@ -26,6 +26,7 @@ urlpatterns = [
     url(r'^goodcompany/admin/', include(admin.site.urls)),
     url(r'^goodcompany/gamedataManifest/', getManifestJson, name="gamedata"),
     url(r'^goodcompany/viewall/(\w*)', viewAll, name="viewall"),
+    url(r'^goodcompany/exportMarketProgression/', export_market_progression, name="exportMarketProgression"),
     url(r'^goodcompany/helper/materialoverview/', materialOverview, name="materialoverview"),
     url(r'^goodcompany/helper/materialdetail/(\d+)', materialDetail, name="materialdetail"),
     url(r'^goodcompany/helper/modulepathoverview/', modulePathOverview, name="modulepathoverview"),

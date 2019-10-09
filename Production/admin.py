@@ -76,12 +76,17 @@ class NegativeFeatureAdmin(SuperInlineModelAdmin, admin.TabularInline):
     model = NegativeFeature
     extra = 0
 
+class MarketPhaseAdmin (SuperInlineModelAdmin, admin.StackedInline):
+    model = MarketPhase
+    extra = 0
+    inlines = (PositiveFeatureAdmin,
+               NegativeFeatureAdmin)
+
 class ProductTypeAdmin(SuperModelAdmin):
     list_display = ("id", "__unicode__", )
     inlines = (ProductTypeSlotUIPositionAdmin,
-               ProductTypeFieldAdmin,
-               PositiveFeatureAdmin,
-               NegativeFeatureAdmin)
+               MarketPhaseAdmin,
+               ProductTypeFieldAdmin)
 admin.site.register(ProductType, ProductTypeAdmin)
 
 class ProductFeatureAdmin(SuperModelAdmin):

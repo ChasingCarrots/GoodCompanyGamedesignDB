@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+import zipfile
+import StringIO
+import os
 
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, Http404
@@ -8,7 +11,8 @@ from django.views.decorators.csrf import csrf_exempt
 
 from helpers import *
 from balancing.modules import *
-#from balancing.products import *
+from luaExports.productProgression import *
+# from balancing.products import *
 from commands.sanitychecks import *
 from commands.tempcommands import *
 
@@ -66,7 +70,6 @@ def productbuilder(request):
                     "value": feature.FeatureValue
                 })
 
-
             moduleList.append({
                 "id": module.id,
                 "name": module.Name,
@@ -85,12 +88,12 @@ def productbuilder(request):
             "symbol": feature.HelperEmoji
         })
 
-
     return render(request, "helpers/productbuilder.html", {
         "productTypes": productTypes,
         "moduleList": moduleList,
         "featureList": featureList,
     })
+
 
 def productTypeOverview(request):
     productTypes = []
@@ -120,8 +123,8 @@ def productTypeOverview(request):
         "productTypes": productTypes,
     })
 
-def productTypeDetail(request, typeID):
 
+def productTypeDetail(request, typeID):
     productType = get_object_or_404(ProductType, pk=typeID)
     productSlots = []
     modules = []
@@ -145,7 +148,6 @@ def productTypeDetail(request, typeID):
                 "icon": module.IconAssetID,
             })
 
-
     return render(request, "helpers/producttypedetail.html", {
         "productType": {
             "id": productType.id,
@@ -159,8 +161,8 @@ def productTypeDetail(request, typeID):
         }
     })
 
-def modulePathOverview(request):
 
+def modulePathOverview(request):
     paths = []
     for path in CriticalModulePath.objects.all().order_by("ProgressionStart", "ProgressionEnd"):
         modules = []
@@ -178,6 +180,7 @@ def modulePathOverview(request):
 
     return render(request, "helpers/modulepathoverview.html", {"paths": paths})
 
+
 def modulePathDetails(request, pathID):
     path = get_object_or_404(CriticalModulePath, pk=pathID)
 
@@ -185,8 +188,12 @@ def modulePathDetails(request, pathID):
     _baseHandlingtime = 3.0
     _handlingtimePerMaterial = 0.5
     for module in path.Modules.all().order_by("PathPosition"):
-        employeeCostSlow = employeeCostPerSecond() * getComponentCraftingTime(module.Module, _baseHandlingtime,_handlingtimePerMaterial, True, False, True) / module.Module.OutputAmount
-        employeeCostFast = employeeCostPerSecond() * getComponentCraftingTime(module.Module, _baseHandlingtime,_handlingtimePerMaterial, True, True, True) / module.Module.OutputAmount
+        employeeCostSlow = employeeCostPerSecond() * getComponentCraftingTime(module.Module, _baseHandlingtime,
+                                                                              _handlingtimePerMaterial, True, False,
+                                                                              True) / module.Module.OutputAmount
+        employeeCostFast = employeeCostPerSecond() * getComponentCraftingTime(module.Module, _baseHandlingtime,
+                                                                              _handlingtimePerMaterial, True, True,
+                                                                              True) / module.Module.OutputAmount
         totalSlow = (employeeCostSlow + module.Module.rawMaterialCost())
         totalQuick = (employeeCostFast + module.Module.rawMaterialCost())
         modules.append({
@@ -202,7 +209,6 @@ def modulePathDetails(request, pathID):
             "actualMinCost": totalQuick,
             "actualSellPrice": module.Module.BaseMarketPrice,
         })
-
 
     positionData = []
     for i in range(0, 11):
@@ -235,6 +241,7 @@ def modulePathDetails(request, pathID):
         "positionData": positionData,
     })
 
+
 def moduleOverview(request):
     modules = []
     for module in Module.objects.all().order_by("FitsIntoSlot", "BaseMarketPrice"):
@@ -257,6 +264,7 @@ def moduleOverview(request):
                 "income": module.BaseMarketPrice
             })
     return render(request, "helpers/moduleoverview.html", {"modules": modules})
+
 
 def moduleDetail(request, moduleID):
     module = get_object_or_404(Module, pk=moduleID)
@@ -294,10 +302,9 @@ def moduleDetail(request, moduleID):
     usedInModules = []
     usedInModCount = 0
     for mod in Module.objects.all():
-        if mod.InputMaterials.all().filter(Material = module.Material).exists():
+        if mod.InputMaterials.all().filter(Material=module.Material).exists():
             usedInModules.append(mod)
             usedInModCount += 1
-
 
     features = []
     for feature in module.Features.all():
@@ -306,14 +313,17 @@ def moduleDetail(request, moduleID):
     tableList = []
     _baseHandlingtime = 3.0
     _handlingtimePerMaterial = 0.5
-    handlingCost = employeeCostPerSecond() * (len(module.InputMaterials.all()) * _handlingtimePerMaterial + _baseHandlingtime) / module.OutputAmount
-    employeeCostSlow = employeeCostPerSecond() * getComponentCraftingTime(module, _baseHandlingtime, _handlingtimePerMaterial, True, False, False)
-    employeeCostFast = employeeCostPerSecond() * getComponentCraftingTime(module, _baseHandlingtime, _handlingtimePerMaterial, True, True, False)
+    handlingCost = employeeCostPerSecond() * (
+                len(module.InputMaterials.all()) * _handlingtimePerMaterial + _baseHandlingtime) / module.OutputAmount
+    employeeCostSlow = employeeCostPerSecond() * getComponentCraftingTime(module, _baseHandlingtime,
+                                                                          _handlingtimePerMaterial, True, False, False)
+    employeeCostFast = employeeCostPerSecond() * getComponentCraftingTime(module, _baseHandlingtime,
+                                                                          _handlingtimePerMaterial, True, True, False)
 
-    for object in ObjectType.objects.all().filter(BuildableProperty__isnull=True).filter(CrafterProperty__isnull=False).order_by("Name"):
+    for object in ObjectType.objects.all().filter(BuildableProperty__isnull=True).filter(
+            CrafterProperty__isnull=False).order_by("Name"):
         for possibleModule in object.CrafterProperty.PossibleModules.all():
             if possibleModule.Module == module:
-
                 productionCost = employeeCostPerSecond() * possibleModule.Duration / module.OutputAmount
                 totalSlow = (productionCost + handlingCost + employeeCostSlow + module.rawMaterialCost())
                 totalQuick = (productionCost + handlingCost + employeeCostFast + module.rawMaterialCost())
@@ -350,7 +360,6 @@ def moduleDetail(request, moduleID):
         criticalPath["minimumCosts"] = criticalModule[0].getExpectedMinimumCosts()
         criticalPath["sellPrice"] = criticalModule[0].getExpectedSellPrice()
 
-
     return render(request, "helpers/moduledetail.html", {
         "module": {
             "name": module.Name,
@@ -385,6 +394,7 @@ def moduleDetail(request, moduleID):
         "commands": commands,
     })
 
+
 def materialOverview(request):
     materials = []
     # get all materials
@@ -397,6 +407,7 @@ def materialOverview(request):
         })
 
     return render(request, "helpers/materialoverview.html", {"materials": materials})
+
 
 def materialDetail(request, materialID):
     material = get_object_or_404(Material, pk=materialID)
@@ -426,8 +437,9 @@ def materialDetail(request, materialID):
         "modules": modules,
         "appliedValues": appliedValues,
     }
-    
+
     return render(request, "helpers/materialdetail.html", detailInformation)
+
 
 def getManifestJson(request):
     materials = {}
@@ -573,6 +585,7 @@ def getManifestJson(request):
         "DevelopmentProjects": developmentProjects
     }, indent=4), content_type='application/json')
 
+
 def revertChangesView(request):
     if request.method == "POST":
         year = int(request.POST["year"])
@@ -589,11 +602,13 @@ def revertChangesView(request):
     else:
         return render(request, "helpers/revertchanges.html")
 
+
 def balancingTablesView(request):
     balancingTables = []
     for table in BalancingTableBase.__subclasses__():
         balancingTables.append(table.__name__)
-    return render(request, "helpers/balancingtables.html", { "tables": balancingTables })
+    return render(request, "helpers/balancingtables.html", {"tables": balancingTables})
+
 
 @csrf_exempt
 def getBalancingTableJson(request, tablename, limitFrom, limitTo, displayMode, logisticTime, option):
@@ -604,21 +619,25 @@ def getBalancingTableJson(request, tablename, limitFrom, limitTo, displayMode, l
 
     raise Http404()
 
+
 @csrf_exempt
 def setBalancingTableValue(request):
     for table in BalancingTableBase.__subclasses__():
         if request.POST["tablename"] == table.__name__:
-            balancingTable = table(0,0)
-            balancingTable.SetValueReceived(int(request.POST["column"]), int(request.POST["objID"]), request.POST["value"])
+            balancingTable = table(0, 0)
+            balancingTable.SetValueReceived(int(request.POST["column"]), int(request.POST["objID"]),
+                                            request.POST["value"])
             return HttpResponse('{"result": "OK"}', content_type='application/json')
 
     return HttpResponse("{'result': 'FAIL'}", content_type='application/json')
+
 
 def commandsView(request):
     commands = []
     for command in CommandBase.__subclasses__():
         commands.append(command.__name__)
-    return render(request, "helpers/commands.html", { "commands": commands })
+    return render(request, "helpers/commands.html", {"commands": commands})
+
 
 @csrf_exempt
 def runCommand(request, commandname, arguments):
@@ -629,6 +648,7 @@ def runCommand(request, commandname, arguments):
             return HttpResponse('{"output": "%s"}' % output, content_type="application/json")
 
     return HttpResponse('{"output": "Error: command not found!"}', content_type="application/json")
+
 
 def researchOverview(request):
     devProjects = []
@@ -695,7 +715,8 @@ def researchOverview(request):
             "data": data,
             "projects": projects,
         })
-    return render(request, "helpers/researchoverview.html", { "devProjects": devProjects })
+    return render(request, "helpers/researchoverview.html", {"devProjects": devProjects})
+
 
 def researchDetail(request, projectID):
     project = get_object_or_404(DevelopmentProject, pk=projectID)
@@ -785,10 +806,9 @@ def researchDetail(request, projectID):
 
 
 def ObjectOverview(request):
-
     crafterList = []
-    for object in ObjectType.objects.all().filter(BuildableProperty__isnull=True).filter(CrafterProperty__isnull=False).order_by("Name"):
-
+    for object in ObjectType.objects.all().filter(BuildableProperty__isnull=True).filter(
+            CrafterProperty__isnull=False).order_by("Name"):
         crafterList.append({
             "id": object.id,
             "name": object.Name,
@@ -796,7 +816,8 @@ def ObjectOverview(request):
         })
 
     inventoryList = []
-    for object in ObjectType.objects.all().filter(BuildableProperty__isnull=True).filter(InventoryProperty__isnull=False).order_by("Name"):
+    for object in ObjectType.objects.all().filter(BuildableProperty__isnull=True).filter(
+            InventoryProperty__isnull=False).order_by("Name"):
         if "DECO_" not in object.Name:
             inventoryList.append({
                 "id": object.id,
@@ -812,7 +833,6 @@ def ObjectOverview(request):
                 "name": object.Name,
             })
 
-
     return render(request, "helpers/objectoverview.html", {
         "crafterList": crafterList,
         "inventoryList": inventoryList,
@@ -823,7 +843,8 @@ def ObjectOverview(request):
 def ObjectDetails(request, objectID):
     object = get_object_or_404(ObjectType, pk=objectID)
 
-    employeeCostsPerSecond = float(TuningValue.objects.all().filter(Name="EmployeeWage")[0].Value) / float(TuningValue.objects.all().filter(Name="SecondsPerDay")[0].Value)
+    employeeCostsPerSecond = float(TuningValue.objects.all().filter(Name="EmployeeWage")[0].Value) / float(
+        TuningValue.objects.all().filter(Name="SecondsPerDay")[0].Value)
 
     possibleModules = []
     try:
@@ -843,12 +864,12 @@ def ObjectDetails(request, objectID):
                 "employeeCosts": employeeCostsPerSecond * module.Duration / module.Module.OutputAmount,
             })
 
-
     return render(request, "helpers/objectdetailview.html", {
         "object": object,
         "employeeCostsPerSecond": employeeCostsPerSecond,
         "possibleModules": possibleModules,
     })
+
 
 def viewAll(request, displaymode):
     url = "https://www.chasing-carrots.com/download/goodcompany/viewall.htm"
@@ -1050,7 +1071,6 @@ def viewAll(request, displaymode):
     htmlsite = "helpers/viewall.html"
     if displaymode == "csv":
         htmlsite = "helpers/viewallcsv.html"
-
 
     return render(request, htmlsite, {
         "url": url,
