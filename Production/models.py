@@ -268,6 +268,7 @@ class ProductType(models.Model):
     BaseMarketMaxPriceFactor = models.FloatField(default=5)
     BaseMarketCurvePotential = models.FloatField(default=2)
     RequiredDiscoveryPoints = models.IntegerField(default=10)
+    MandatoryFeatures = models.ManyToManyField("ProductFeature")
     MarketTier = models.IntegerField(
         default=1,
         validators=[ValidateMarketTier],
@@ -288,6 +289,7 @@ class ProductType(models.Model):
         cases = []
         for case in self.Cases.all():
             cases.append(case.getJsonObject())
+        mandatoryFeatures = [feat.id for feat in self.MandatoryFeatures.all()]
         return {
             "Name": self.Name,
             "Description": self.Description,
@@ -301,7 +303,8 @@ class ProductType(models.Model):
             "RequiredDiscoveryPoints": self.RequiredDiscoveryPoints,
             "MarketTier": self.MarketTier,
             "GridFields": gridfields,
-            "Cases": cases
+            "Cases": cases,
+            "MandatoryFeatures": mandatoryFeatures
         }
 
     class Meta:
