@@ -56,27 +56,5 @@ class Migration(migrations.Migration):
                 'verbose_name': 'Market Phase',
                 'verbose_name_plural': 'Market Phases',
             },
-        ),
-        migrations.AddField(
-            model_name='historicalnegativefeature',
-            name='MarketPhase',
-            field=models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='Production.MarketPhase'),
-        ),
-        migrations.AddField(
-            model_name='historicalpositivefeature',
-            name='MarketPhase',
-            field=models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='Production.MarketPhase'),
-        ),
-        migrations.AddField(
-            model_name='negativefeature',
-            name='MarketPhase',
-            field=models.ForeignKey(default=1, on_delete=django.db.models.deletion.CASCADE, related_name='NegativeFeatures', to='Production.MarketPhase'),
-            preserve_default=False,
-        ),
-        migrations.AddField(
-            model_name='positivefeature',
-            name='MarketPhase',
-            field=models.ForeignKey(default=1, on_delete=django.db.models.deletion.CASCADE, related_name='PositiveFeatures', to='Production.MarketPhase'),
-            preserve_default=False,
-        ),
+        )
     ]
