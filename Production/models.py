@@ -158,6 +158,12 @@ class ModuleCategory(models.Model):
     Name = models.CharField(max_length=255)
     Order = models.IntegerField(default=1)
 
+    def getJsonObject(self):
+        return {
+            "Name": self.Name,
+            "Order": self.Order
+        }
+
     class Meta:
         verbose_name = "Module Category"
         verbose_name_plural = "Module Categories"
@@ -205,7 +211,9 @@ class Module(models.Model):
             "BaseMarketCapacity":self.BaseMarketCapacity,
             "MarketRecoveryFactor":self.MarketRecoveryFactor,
             "AssemblyTime":self.AssemblyTime,
-            "SamplingTime":self.SamplingTime
+            "SamplingTime":self.SamplingTime,
+            "CategoryID": self.Category.id,
+            "OrderInCategory": self.OrderInCategory
         }
 
     class Meta:

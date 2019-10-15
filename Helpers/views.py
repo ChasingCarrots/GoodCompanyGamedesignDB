@@ -551,6 +551,10 @@ def getManifestJson(request):
     for devProj in DevelopmentProject.objects.all():
         developmentProjects[str(devProj.id)] = devProj.getJsonObject()
 
+    moduleCategories = {}
+    for modCat in ModuleCategory.objects.all():
+        moduleCategories[str(modCat.id)] = modCat.getJsonObject()
+
     return HttpResponse(json.dumps({
         "Materials": materials,
         "Modules": modules,
@@ -579,7 +583,8 @@ def getManifestJson(request):
         "LogisticsWorkplaceProperties": logisticsWorkplaces,
         "TuningValues": tuningValues,
         "ResearchDataTypes": researchDataTypes,
-        "DevelopmentProjects": developmentProjects
+        "DevelopmentProjects": developmentProjects,
+        "ModuleCategories": moduleCategories
     }, indent=4), content_type='application/json')
 
 
