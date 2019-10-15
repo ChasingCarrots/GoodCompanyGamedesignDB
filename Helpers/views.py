@@ -159,23 +159,20 @@ def productTypeDetail(request, typeID):
     })
 
 
-def modulePathOverview(request):
-    paths = []
-    for path in CriticalModulePath.objects.all().order_by("ProgressionStart", "ProgressionEnd"):
+def moduleCategoryOverview(request):
+    categories = []
+    for cat in ModuleCategory.objects.all().order_by("Order"):
         modules = []
-        for module in path.Modules.all():
-            modules.append(module.Module)
-        paths.append({
-            "id": path.id,
-            "name": path.Name,
-            "slot": path.Slot,
-            "modules": modules,
-            "mainFeature": path.MainFeature,
-            "progressionStart": path.ProgressionStart,
-            "progressionEnd": path.ProgressionEnd,
+        for module in Module.objects.filter(Category=cat):
+            modules.append(module)
+        categories.append({
+            "id": cat.id,
+            "name": cat.Name,
+            "order": cat.Order,
+            "modules": modules
         })
 
-    return render(request, "helpers/modulepathoverview.html", {"paths": paths})
+    return render(request, "helpers/modulecategories.html", {"categories": categories})
 
 
 def modulePathDetails(request, pathID):
