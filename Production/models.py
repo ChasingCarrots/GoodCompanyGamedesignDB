@@ -197,6 +197,10 @@ class Module(models.Model):
         inputMaterials = [mat.getJsonObject() for mat in self.InputMaterials.all()]
         researchDataYield = [resYield.getJsonObject() for resYield in self.ResearchDataYield.all()]
 
+        category = 0
+        if self.Category:
+            category = self.Category.id
+
         return {
             "Name":self.Name,
             "Description": self.Description,
@@ -212,7 +216,7 @@ class Module(models.Model):
             "MarketRecoveryFactor":self.MarketRecoveryFactor,
             "AssemblyTime":self.AssemblyTime,
             "SamplingTime":self.SamplingTime,
-            "CategoryID": self.Category.id,
+            "CategoryID": category,
             "OrderInCategory": self.OrderInCategory
         }
 
