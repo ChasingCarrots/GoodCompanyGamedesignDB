@@ -51,6 +51,10 @@ class ModuleFieldAdmin(SuperInlineModelAdmin, admin.StackedInline):
     model = ModuleField
     extra = 0
 
+class ModuleCategoryAdmin(SuperModelAdmin):
+    pass
+admin.site.register(ModuleCategory, ModuleCategoryAdmin)
+
 class ModuleAdmin(SuperModelAdmin):
     list_display = ("id", "__unicode__", "slot")
     list_filter = ("FitsIntoSlot",)

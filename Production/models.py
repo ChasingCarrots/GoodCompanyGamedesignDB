@@ -154,6 +154,18 @@ class ModuleField(models.Model):
     def __unicode__(self):
         return u"%s GridFields" % (unicode(self.module))
 
+class ModuleCategory(models.Model):
+    Name = models.CharField(max_length=255)
+    Order = models.IntegerField(default=1)
+
+    class Meta:
+        verbose_name = "Module Category"
+        verbose_name_plural = "Module Categories"
+
+    def __unicode__(self):
+        return self.Name
+
+
 class Module(models.Model):
     history = HistoricalRecords()
     Name = models.CharField(max_length=255)
@@ -167,6 +179,8 @@ class Module(models.Model):
     MarketRecoveryFactor = models.FloatField(default=0.5)
     AssemblyTime = models.FloatField(default=5)
     SamplingTime = models.FloatField(default=5)
+    Category = models.ForeignKey(ModuleCategory, related_name="Modules", null=True, blank=True)
+    OrderInCategory = models.IntegerField(default=1)
 
     def getJsonObject(self):
         fitsIntoSlot = 0
@@ -414,7 +428,7 @@ class ProductFeature(models.Model):
 
 class PositiveFeature(models.Model):
     history = HistoricalRecords()
-    MarketPhase = models.ForeignKey(MarketPhase, related_name="PositiveFeatures")
+    MarketPhase = models.ForeignKey(MarketPhase, related_name="PositiveFeatures", null=True, blank=True)
     Feature = models.ForeignKey(ProductFeature, related_name="ProductTypePositiveFeatures")
     Max = models.IntegerField(default = 1)
 
@@ -433,7 +447,7 @@ class PositiveFeature(models.Model):
 
 class NegativeFeature(models.Model):
     history = HistoricalRecords()
-    MarketPhase = models.ForeignKey(MarketPhase, related_name="NegativeFeatures")
+    MarketPhase = models.ForeignKey(MarketPhase, related_name="NegativeFeatures", null=True, blank=True)
     Feature = models.ForeignKey(ProductFeature, related_name="ProductTypeNegativeFeatures")
     Min = models.IntegerField(default = 1)
 
