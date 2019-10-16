@@ -97,7 +97,7 @@ def generate_market_progression_content(product_id):
         count = 0
         for drawback in NegativeFeature.objects.filter(MarketPhase=phase):
             count = count + 1
-            text = text + "\n\t" + "drawbacks[" + str(count) + "] = {" + str(drawback.Feature.id) + ", " + str(drawback.Min) + "}"
+            text = text + "\n\t" + "progression.drawbacks[" + str(count) + "] = {" + str(drawback.Feature.id) + ", " + str(drawback.Min) + "}"
         phase_text = phase_text.replace('%phase_drawbacks%', text)
 
         s = s + "\n" + phase_text + "\n\n"
