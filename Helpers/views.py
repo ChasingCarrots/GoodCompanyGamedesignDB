@@ -163,7 +163,7 @@ def moduleCategoryOverview(request):
     categories = []
     for cat in ModuleCategory.objects.all().order_by("Order"):
         modules = []
-        for module in Module.objects.filter(Category=cat):
+        for module in Module.objects.filter(Category=cat).order_by("OrderInCategory"):
             modules.append(module)
         categories.append({
             "id": cat.id,
