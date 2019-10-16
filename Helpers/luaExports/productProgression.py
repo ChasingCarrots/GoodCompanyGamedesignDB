@@ -90,7 +90,7 @@ def generate_market_progression_content(product_id):
         count = 0
         for feature in PositiveFeature.objects.filter(MarketPhase=phase):
             count = count + 1
-            text = text + "\n\t" + "features[" + str(count) + "] = {" + str(feature.Feature.id) + ", " + str(feature.Max) + "}"
+            text = text + "\n\t" + "progression.features[" + str(count) + "] = {" + str(feature.Feature.id) + ", " + str(feature.Max) + "}"
         phase_text = phase_text.replace('%phase_features%', text)
 
         text = ""
