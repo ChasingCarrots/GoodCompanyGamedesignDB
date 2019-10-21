@@ -55,10 +55,12 @@ class ObjectLookProperty(models.Model):
     history = HistoricalRecords()
     ObjectType = models.OneToOneField(ObjectType, related_name="ObjectLookProperty", blank=False)
     ModelAssetID = models.CharField(max_length=255, blank=False)
+    CanChangeColor = models.BooleanField(default=True)
 
     def getJsonObject(self):
         return {
             "ModelAssetID": self.ModelAssetID,
+            "CanChangeColor": self.CanChangeColor
         }
 
     class Meta:
