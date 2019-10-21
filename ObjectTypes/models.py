@@ -55,7 +55,7 @@ class ObjectLookProperty(models.Model):
     history = HistoricalRecords()
     ObjectType = models.OneToOneField(ObjectType, related_name="ObjectLookProperty", blank=False)
     ModelAssetID = models.CharField(max_length=255, blank=False)
-    CanChangeColor = models.BooleanField(default=True)
+    CanChangeColor = models.BooleanField(default=False)
 
     def getJsonObject(self):
         return {
