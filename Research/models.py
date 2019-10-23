@@ -44,12 +44,32 @@ class DevelopmentProjectRequiredData(models.Model):
     def __unicode__(self):
         return u"%d x %s" %(self.Amount, unicode(self.DataType))
 
+class ProjectCategory(models.Model):
+    Name = models.CharField(max_length=255)
+    Order = models.IntegerField(default=1)
+    IconAssetID = models.CharField(max_length=255, null=True, blank=True)
+
+    def getJsonObject(self):
+        return {
+            "Name": self.Name,
+            "Order": self.Order
+        }
+
+    class Meta:
+        verbose_name = "Project Category"
+        verbose_name_plural = "Project Categories"
+
+    def __unicode__(self):
+        return self.Name
+
 class DevelopmentProject(models.Model):
     history = HistoricalRecords()
     Name = models.CharField(max_length=255)
     IsHidden = models.BooleanField(default=True)
     Description = models.CharField(max_length=255, blank=True)
     IconAssetID = models.CharField(max_length=255)
+    Category = models.ForeignKey(ProjectCategory, related_name="Projects", null=True, blank=True)
+    OrderInCategory = models.IntegerField(default=1)
     DiscoveryPoints = models.IntegerField(default=0)
     RequiredProjects = models.ManyToManyField("self", blank=True, symmetrical=False, related_name="RequiredForProjects")
     UnlocksModules = models.ManyToManyField("Production.Module", blank=True, related_name="UnlockedByResearch")
@@ -62,12 +82,17 @@ class DevelopmentProject(models.Model):
         unlocksModules = [module.id for module in self.UnlocksModules.all()]
         unlocksBuildables = [objType.id for objType in self.UnlocksBuildables.all()]
         unlocksProductTypes = [prodType.id for prodType in self.UnlocksProductTypes.all()]
+        category = 0
+        if self.Category:
+            category = self.Category.id
 
         return {
             "Name": self.Name,
             "IsHidden": self.IsHidden,
             "Description": self.Description,
             "IconAssetID": self.IconAssetID,
+            "CategoryID": category,
+            "OrderInCategory": self.OrderInCategory,
             "DiscoveryPoints": self.DiscoveryPoints,
             "RequiredProjects": requiredProjects,
             "RequiredData": requiredData,

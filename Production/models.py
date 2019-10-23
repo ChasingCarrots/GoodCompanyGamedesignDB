@@ -137,6 +137,7 @@ class ModuleField(models.Model):
 class ModuleCategory(models.Model):
     Name = models.CharField(max_length=255)
     Order = models.IntegerField(default=1)
+    IconAssetID = models.CharField(max_length=255, null=True, blank=True)
 
     def getJsonObject(self):
         return {

@@ -14,6 +14,10 @@ class DevelopmentProjectRequiredDataAdmin(SuperInlineModelAdmin, admin.StackedIn
     model = DevelopmentProjectRequiredData
     extra = 0
 
+class ProjectCategoryAdmin(SuperModelAdmin):
+    pass
+admin.site.register(ProjectCategory, ProjectCategoryAdmin)
+
 class DevelopmentProjectAdmin(SuperModelAdmin):
     inlines = (DevelopmentProjectRequiredDataAdmin,)
 admin.site.register(DevelopmentProject, DevelopmentProjectAdmin)

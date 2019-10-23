@@ -181,7 +181,8 @@ class BuildsObjectConnection(models.Model):
 
 class BuildabelCategory(models.Model):
     Name = models.CharField(max_length=255)
-    Icon = models.CharField(max_length=255)
+    Order = models.IntegerField(default=1)
+    Icon = models.CharField(max_length=255, null=True, blank=True)
 
     def getJsonObject(self):
         return {
@@ -201,6 +202,7 @@ class BuildableProperty(models.Model):
     ObjectType = models.OneToOneField(ObjectType, related_name="BuildableProperty", blank=False)
     BuildDuration = models.FloatField(blank=False)
     Category = models.ForeignKey(BuildabelCategory, blank=True, null=True)
+    OrderInCategory = models.IntegerField(default=1)
 
 
     def getJsonObject(self):
@@ -218,7 +220,8 @@ class BuildableProperty(models.Model):
             "BuildDuration": self.BuildDuration,
             "BuildsObjectID": self.BuildsObjectConnection.BuildsObject.id,
             "CanBuildInWorkplaces": canBuildInWorkplaces,
-            "Category": category
+            "Category": category,
+            "OrderInCategory": self.OrderInCategory
         }
 
     class Meta:

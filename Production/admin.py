@@ -34,15 +34,15 @@ class ModuleInputMaterialAmountAdmin(SuperInlineModelAdmin, admin.TabularInline)
     model = ModuleInputMaterialAmount
     extra = 0
 
-class ModuleFeatureAdmin(SuperInlineModelAdmin, admin.StackedInline):
+class ModuleFeatureAdmin(SuperInlineModelAdmin, admin.TabularInline):
     model = ModuleFeature
     extra = 0
 
-class ModuleResearchDataYieldAdmin(SuperInlineModelAdmin, admin.StackedInline):
+class ModuleResearchDataYieldAdmin(SuperInlineModelAdmin, admin.TabularInline):
     model = ModuleResearchDataYield
     extra = 0
 
-class ModuleFieldAdmin(SuperInlineModelAdmin, admin.StackedInline):
+class ModuleFieldAdmin(SuperInlineModelAdmin, admin.TabularInline):
     model = ModuleField
     extra = 0
 
@@ -58,7 +58,7 @@ class ModuleAdmin(SuperModelAdmin):
                ModuleResearchDataYieldAdmin)
 admin.site.register(Module, ModuleAdmin)
 
-class ProductTypeFieldAdmin(SuperInlineModelAdmin, admin.StackedInline):
+class ProductTypeFieldAdmin(SuperInlineModelAdmin, admin.TabularInline):
     model = ProductTypeField
     extra = 0
 
