@@ -444,10 +444,6 @@ def getManifestJson(request):
     for mod in Module.objects.all():
         modules[str(mod.id)] = mod.getJsonObject()
 
-    slotTypes = {}
-    for slotType in ModuleSlotType.objects.all():
-        slotTypes[str(slotType.id)] = slotType.getJsonObject()
-
     productTypes = {}
     for productType in ProductType.objects.all():
         productTypes[str(productType.id)] = productType.getJsonObject()
@@ -555,7 +551,6 @@ def getManifestJson(request):
     return HttpResponse(json.dumps({
         "Materials": materials,
         "Modules": modules,
-        "SlotTypes": slotTypes,
         "ProductTypes": productTypes,
         "ProductFeatures": productFeatures,
         "ObjectTypes": objectTypes,

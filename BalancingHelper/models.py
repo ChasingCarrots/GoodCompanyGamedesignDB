@@ -244,7 +244,6 @@ class ModulePathObject(models.Model):
 class CriticalModulePath(models.Model):
     history = HistoricalRecords()
     Name = models.CharField(max_length=255)
-    Slot = models.ForeignKey(ModuleSlotType, null=True, blank=True)
     MainFeature = models.ForeignKey(ProductFeature, null=True, blank=True)
     PositiveFeatures = models.ManyToManyField(ProductFeature, related_name="PositiveOnPath", blank=True)
     NegativeFeatures = models.ManyToManyField(ProductFeature, related_name="NegativeOnPath", blank=True)

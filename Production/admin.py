@@ -30,11 +30,6 @@ class MaterialAdmin(SuperModelAdmin):
 admin.site.register(Material, MaterialAdmin)
 
 
-class ModuleSlotTypeAdmin(SuperModelAdmin):
-    list_filter = ("FittingModule", "UsedInProductType",)
-    list_display = ("id", "__unicode__", "IsOptional",)
-admin.site.register(ModuleSlotType, ModuleSlotTypeAdmin)
-
 class ModuleInputMaterialAmountAdmin(SuperInlineModelAdmin, admin.TabularInline):
     model = ModuleInputMaterialAmount
     extra = 0
@@ -56,17 +51,12 @@ class ModuleCategoryAdmin(SuperModelAdmin):
 admin.site.register(ModuleCategory, ModuleCategoryAdmin)
 
 class ModuleAdmin(SuperModelAdmin):
-    list_display = ("id", "__unicode__", "slot")
-    list_filter = ("FitsIntoSlot",)
+    list_display = ("id", "__unicode__")
     inlines = (ModuleInputMaterialAmountAdmin,
                ModuleFeatureAdmin,
                ModuleFieldAdmin,
                ModuleResearchDataYieldAdmin)
 admin.site.register(Module, ModuleAdmin)
-
-class ProductTypeSlotUIPositionAdmin(SuperInlineModelAdmin, admin.StackedInline):
-    model = ProductTypeSlotUIPosition
-    extra = 0
 
 class ProductTypeFieldAdmin(SuperInlineModelAdmin, admin.StackedInline):
     model = ProductTypeField
@@ -80,17 +70,26 @@ class NegativeFeatureAdmin(SuperInlineModelAdmin, admin.TabularInline):
     model = NegativeFeature
     extra = 0
 
+class CaseBlockingFieldAdmin(SuperInlineModelAdmin, admin.TabularInline):
+    model = ProductTypeCaseBlockingField
+    extra = 0
+
 class MarketPhaseAdmin (SuperInlineModelAdmin, admin.StackedInline):
     model = MarketPhase
     extra = 0
     inlines = (PositiveFeatureAdmin,
                NegativeFeatureAdmin)
 
+class ProductTypeCaseAdmin(SuperInlineModelAdmin, admin.StackedInline):
+    model = ProductTypeCase
+    extra = 0
+    inlines = (CaseBlockingFieldAdmin,)
+
 class ProductTypeAdmin(SuperModelAdmin):
     list_display = ("id", "__unicode__", )
-    inlines = (ProductTypeSlotUIPositionAdmin,
-               MarketPhaseAdmin,
-               ProductTypeFieldAdmin)
+    inlines = (ProductTypeFieldAdmin,
+               ProductTypeCaseAdmin,
+               MarketPhaseAdmin)
 admin.site.register(ProductType, ProductTypeAdmin)
 
 class ProductFeatureAdmin(SuperModelAdmin):
