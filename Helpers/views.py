@@ -25,57 +25,86 @@ def productbuilder(request):
                 "y": field.y
             })
 
-        pos = []
-        for feature in productType.PositiveFeatures.all():
-            pos.append({
-                "feature": feature.Feature,
-                "value": feature.Max
+        phases = []
+        for phase in productType.MarketPhases.all().order_by("PhaseIndex"):
+
+            pos = []
+            for feature in phase.PositiveFeatures.all():
+                pos.append({
+                    "feature": feature.Feature,
+                    "value": feature.Max
+                })
+
+            neg = []
+            for feature in phase.NegativeFeatures.all():
+                neg.append({
+                    "feature": feature.Feature,
+                    "value": feature.Min
+                })
+
+            phases.append({
+                "name": phase.Name,
+                "index": phase.PhaseIndex,
+                "positiveFeatures": pos,
+                "negativeFeatures": neg
             })
 
-        neg = []
-        for feature in productType.NegativeFeatures.all():
-            neg.append({
-                "feature": feature.Feature,
-                "value": feature.Min
+        cases = []
+        for case in productType.Cases.all():
+
+            bfields = []
+            for field in case.BlockingGridFields.all():
+                bfields.append({
+                    "x": field.X,
+                    "y": field.Y
+                })
+
+            cases.append({
+                "moduleid": case.CaseModule.id,
+                "fields": bfields
             })
 
         productTypes.append({
             "id": productType.id,
             "name": productType.Name,
             "icon": productType.IconAssetID,
-            "positiveFeatures": pos,
-            "negativeFeatures": neg,
+            "phases": phases,
+            "cases": cases,
             "fields": fields
         })
 
     moduleList = []
     for module in Module.objects.all().order_by("Name"):
+        hasFields = False
         if module.GridFields.all():
-            fields = []
-            fcount = 0
-            for field in module.GridFields.all():
-                fcount = fcount + 1
-                fields.append({
-                    "x": field.x,
-                    "y": field.y
-                })
+            hasFields = True
 
-            features = []
-            for feature in module.Features.all():
-                features.append({
-                    "feature": feature.ProductFeature,
-                    "value": feature.FeatureValue
-                })
-
-            moduleList.append({
-                "id": module.id,
-                "name": module.Name,
-                "icon": module.IconAssetID,
-                "fields": fields,
-                "fieldcount": fcount,
-                "features": features,
-                "price": module.BaseMarketPrice
+        fields = []
+        fcount = 0
+        for field in module.GridFields.all():
+            fcount = fcount + 1
+            fields.append({
+                "x": field.x,
+                "y": field.y
             })
+
+        features = []
+        for feature in module.Features.all():
+            features.append({
+                "feature": feature.ProductFeature,
+                "value": feature.FeatureValue
+            })
+
+        moduleList.append({
+            "id": module.id,
+            "name": module.Name,
+            "icon": module.IconAssetID,
+            "fields": fields,
+            "fieldcount": fcount,
+            "features": features,
+            "price": module.BaseMarketPrice,
+            "hasFields": hasFields
+        })
 
     featureList = []
     for feature in ProductFeature.objects.all().order_by("Name"):

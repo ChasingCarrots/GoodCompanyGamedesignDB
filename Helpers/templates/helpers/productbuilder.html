@@ -26,9 +26,11 @@
 <div id="modulelist" class="div_block" style="position: absolute; top: 580px; left: 50px;">
     <div id="modules" size="30" multiple style="width: 280px; height: 420px;"  class="long_list">
         {% for module in moduleList %}
+        {% if module.hasFields %}
         <p value="{{module.id}}" onclick="view_module({{module.id}}, 0)">
             <img src="/goodcompany/static/img/{{module.icon}}.png" onerror="this.src='/goodcompany/static/img/unknown.png';">&nbsp;&nbsp;
             {{module.name}}</p>
+        {% endif %}
         {% endfor %}
     </div>
 </div>
@@ -37,23 +39,36 @@
 
 
 <div id="interface" class="div_block" style="position: absolute; top: 70px; left: 400px; width: 600px; height: 50px; padding:10px;">
-    <select class="ui selection dropdown" id="selected_product">
+    <select class="ui selection dropdown" id="selected_product" onchange="generate_case_list(this.value)">
         {% for type in productTypes %}
         <option value="{{type.id}}">{{type.name}}</option>
         {% endfor %}
     </select>
     &nbsp;&nbsp;&nbsp;<button onclick="generate_grid()" class="ui button" style="padding: 8px;">Generate Grid</button>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    Selected Case: <span id="selected_case">None</span>
 </div>
 
 
-<div id="builderview" class="div_block" style="position: absolute; top: 150px; left: 400px; width: 600px; height: 600px;"></div>
+<div id="placeholder" class="div_block" style="position: absolute; top: 820px; left: 400px; width: 600px; height: 200px;"></div>
+
+<div id="builderview" class="div_block" style="position: absolute; top: 150px; left: 400px; width: 600px; height: 640px;"></div>
 
 
-<div id="log" class="div_block" style="position: absolute; top: 800px; left: 400px; width: 600px; height: 200px;"></div>
 
 
 
-<div id="faeture_overview" class="div_block" style="position: absolute; top: 70px; left: 1050px; width: 300px; height: 500px; padding:20px;">
+<div id="phase_overview" class="div_block" style="position: absolute; top: 70px; left: 1050px; width: 300px; height: 50px; padding:10px;">
+    <select class="ui selection dropdown" id="selected_phase" onchange="change_phase_selection()">
+    </select>
+</div>
+
+<div id="caselist" class="div_block" style="position: absolute; top: 150px; left: 1050px;">
+    <div id="cases" size="30" multiple style="width: 280px; height: 180px;"  class="long_list">
+    </div>
+</div>
+
+<div id="faeture_overview" class="div_block" style="position: absolute; top: 380px; left: 1050px; width: 300px; height: 640px; padding:20px;">
 </div>
 
 {% endblock %}
@@ -65,6 +80,8 @@
         options[1] = 0;
         options[2] = 0;
         options[3] = 0;
+        options[4] = 1;
+        options[5] = 0;
 
 
         var active_modules = [];
@@ -82,12 +99,29 @@
             {% for field in type.fields %}
                 products[{{type.id}}][2].push([{{field.x}}, {{field.y}}, 0])
             {% endfor %}
-            {% for pos in type.positiveFeatures %}
-                products[{{type.id}}][3].push([{{pos.feature.id}}, {{pos.value}}])
+
+            {% for phase in type.phases %}
+                products[{{type.id}}][3][{{phase.index}}] = []
+                products[{{type.id}}][3][{{phase.index}}][0] = "{{phase.name}}"
+                products[{{type.id}}][3][{{phase.index}}][1] = []
+                products[{{type.id}}][3][{{phase.index}}][2] = []
+
+                {% for pos in phase.positiveFeatures %}
+                    products[{{type.id}}][3][{{phase.index}}][1].push([{{pos.feature.id}}, {{pos.value}}])
+                {% endfor %}
+
+                {% for neg in phase.negativeFeatures %}
+                    products[{{type.id}}][3][{{phase.index}}][2].push([{{neg.feature.id}}, {{neg.value}}])
+                {% endfor %}
             {% endfor %}
-            {% for neg in type.negativeFeatures %}
-                products[{{type.id}}][4].push([{{neg.feature.id}}, {{neg.value}}])
+
+            {% for case in type.cases %}
+                products[{{type.id}}][4][{{case.moduleid}}] = []
+                {% for field in case.fields %}
+                    products[{{type.id}}][4][{{case.moduleid}}].push([{{field.x}}, {{field.y}}])
+                {% endfor %}
             {% endfor %}
+
          {% endfor %}
 
 
@@ -160,7 +194,7 @@
             negative = 0
 
             s += "Positive Values:<table><tr><td>Feature</td><td>Built In</td><td>Maximum</td><td>Relative</td></tr>"
-            products[options[3]][3].forEach(function(item, index, array) {
+            products[options[3]][3][options[4]][1].forEach(function(item, index, array) {
                 n = featureList[item[0]][3]/item[1]
                 if (n > 1) {
                     n = 1
@@ -179,7 +213,7 @@
 
 
             s += "<br>Negative Values:<table><tr><td>Feature</td><td>Built In</td><td>Minimum</td></tr>"
-            products[options[3]][4].forEach(function(item, index, array) {
+            products[options[3]][3][options[4]][2].forEach(function(item, index, array) {
                 if (featureList[item[0]][3] > item[1]) {
                     negative += featureList[item[0]][3] - item[1]
                 }
@@ -227,7 +261,7 @@
             document.getElementById("modulefeatures").innerHTML = s;
 
 
-            size = 40
+            size = 30
             s = ""
             moduleList[moduleID][2].forEach(function(item, index, array) {
                 px = item[0]
@@ -248,8 +282,8 @@
                 s += "width:"+size+"px; height:"+size+"px;"
                 s += "left:"+(px*size)+"px; bottom:"+(py*size)+"px;'"
                 if (index == 0) {
-                s += "><img height='30' src='/goodcompany/static/img/"+moduleList[moduleID][1]+".png' style='margin-top: 5px'></div>"
-                //s += "><img height='30' src='"+moduleList[moduleID][1]+".png' style='margin-top: 5px'></div>"
+                s += "><img height='26' src='/goodcompany/static/img/"+moduleList[moduleID][1]+".png' style='margin-top: 2px'></div>"
+                //s += "><img height='26' src='"+moduleList[moduleID][1]+".png' style='margin-top: 2px'></div>"
                 } else {
                 s += "></div>"
                 }
@@ -265,6 +299,63 @@
             view_module(options[1], options[2])
         }
 
+        function change_phase_selection() {
+            options[4] = document.getElementById("selected_phase").value
+            update_feature_overview()
+        }
+
+        function change_case_selection(moduleID) {
+            options[5] = moduleID
+            if (moduleID == 0) {
+                document.getElementById("selected_case").innerHTML = "None"
+            } else {
+                document.getElementById("selected_case").innerHTML = moduleList[moduleID][0]
+            }
+        }
+
+        function generate_case_list(productID) {
+            s = ""
+            value = 0
+
+            products[productID][4].forEach(function(item, index, array) {
+                if (value == "") {
+                    value = index
+                }
+                s += '<p value="'+index+'" onclick="change_case_selection('+index+')">'
+                s += '<img src="/goodcompany/static/img/'+moduleList[index][1]+'.png" onerror="this.src=\'/goodcompany/static/img/unknown.png\';">&nbsp;&nbsp;'
+                s += moduleList[index][0]+'</p>'
+            });
+
+            document.getElementById("cases").innerHTML = s;
+            change_case_selection(value)
+        }
+
+        function generate_phase_list() {
+            s = ""
+            value = ""
+
+            products[options[3]][3].forEach(function(item, index, array) {
+                if (value == "") {
+                    value = index
+                }
+                s += '<option value="'+index+'">'+item[0]+'</option>'
+            });
+
+            document.getElementById("selected_phase").innerHTML = s;
+            document.getElementById("selected_phase").value = value;
+            change_phase_selection()
+        }
+
+        function check_for_free_tile(x, y) {
+            isFree = true
+            products[options[3]][4][options[5]].forEach(function(item, index, array) {
+                if (x == item[0] && y == item[1]) {
+                    isFree = false;
+                }
+            });
+            return isFree;
+        }
+
         function generate_grid() {
             size = 60
             offset = 30
@@ -275,23 +366,25 @@
             active_modules[0] = 0
             options[3] = selection.options[selection.selectedIndex].value
             products[selection.options[selection.selectedIndex].value][2].forEach(function(item, index, array) {
-                s += "<div style='background-color: #555; position: absolute;"
-                s += "vertical-align: middle; text-align: center; line-height: "+(size)+"px;"
-                s += "width:"+size+"px; height:"+size+"px;"
-                s += "left:"+(item[0]*size+offset)+"px; bottom:"+(item[1]*size+offset)+"px;'"
-                s += "onclick='on_grid_click("+item[0]+", "+item[1]+")'"
-                s += "id='gridfield_"+item[0]+"_"+item[1]+"'"
-                s += "></div>"
-                if (typeof fields[item[0]] == 'undefined') {
-                    fields[item[0]] = [];
+                if (check_for_free_tile(item[0], item[1])) {
+                    s += "<div style='background-color: #555; position: absolute;"
+                    s += "vertical-align: middle; text-align: center; line-height: "+(size)+"px;"
+                    s += "width:"+size+"px; height:"+size+"px;"
+                    s += "left:"+(item[0]*size+offset)+"px; bottom:"+(item[1]*size+offset)+"px;'"
+                    s += "onclick='on_grid_click("+item[0]+", "+item[1]+")'"
+                    s += "id='gridfield_"+item[0]+"_"+item[1]+"'"
+                    s += "></div>"
+                    if (typeof fields[item[0]] == 'undefined') {
+                        fields[item[0]] = [];
+                    }
+                    if (typeof fields[item[0]][item[1]] == 'undefined') {
+                        fields[item[0]][item[1]] = [];
+                    }
+                    fields[item[0]][item[1]] = 0;
                 }
-                if (typeof fields[item[0]][item[1]] == 'undefined') {
-                    fields[item[0]][item[1]] = [];
-                }
-                fields[item[0]][item[1]] = 0;
             });
             document.getElementById("builderview").innerHTML = s;
-            update_feature_overview()
+            generate_phase_list()
         }
 
 
