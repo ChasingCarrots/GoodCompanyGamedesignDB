@@ -357,34 +357,39 @@
         }
 
         function generate_grid() {
-            size = 60
-            offset = 30
-            s = ""
             var selection = document.getElementById("selected_product");
-            fields = []
-            active_modules = [];
-            active_modules[0] = 0
-            options[3] = selection.options[selection.selectedIndex].value
-            products[selection.options[selection.selectedIndex].value][2].forEach(function(item, index, array) {
-                if (check_for_free_tile(item[0], item[1])) {
-                    s += "<div style='background-color: #555; position: absolute;"
-                    s += "vertical-align: middle; text-align: center; line-height: "+(size)+"px;"
-                    s += "width:"+size+"px; height:"+size+"px;"
-                    s += "left:"+(item[0]*size+offset)+"px; bottom:"+(item[1]*size+offset)+"px;'"
-                    s += "onclick='on_grid_click("+item[0]+", "+item[1]+")'"
-                    s += "id='gridfield_"+item[0]+"_"+item[1]+"'"
-                    s += "></div>"
-                    if (typeof fields[item[0]] == 'undefined') {
-                        fields[item[0]] = [];
+            if (options[5] == 0) {
+                generate_case_list(selection.options[selection.selectedIndex].value)
+                document.getElementById("placeholder").innerHTML = "You need to select a case to generate a grid!";
+            } else {
+                size = 60
+                offset = 30
+                s = ""
+                fields = []
+                active_modules = [];
+                active_modules[0] = 0
+                options[3] = selection.options[selection.selectedIndex].value
+                products[selection.options[selection.selectedIndex].value][2].forEach(function(item, index, array) {
+                    if (check_for_free_tile(item[0], item[1])) {
+                        s += "<div style='background-color: #555; position: absolute;"
+                        s += "vertical-align: middle; text-align: center; line-height: "+(size)+"px;"
+                        s += "width:"+size+"px; height:"+size+"px;"
+                        s += "left:"+(item[0]*size+offset)+"px; bottom:"+(item[1]*size+offset)+"px;'"
+                        s += "onclick='on_grid_click("+item[0]+", "+item[1]+")'"
+                        s += "id='gridfield_"+item[0]+"_"+item[1]+"'"
+                        s += "></div>"
+                        if (typeof fields[item[0]] == 'undefined') {
+                            fields[item[0]] = [];
+                        }
+                        if (typeof fields[item[0]][item[1]] == 'undefined') {
+                            fields[item[0]][item[1]] = [];
+                        }
+                        fields[item[0]][item[1]] = 0;
                     }
-                    if (typeof fields[item[0]][item[1]] == 'undefined') {
-                        fields[item[0]][item[1]] = [];
-                    }
-                    fields[item[0]][item[1]] = 0;
-                }
-            });
-            document.getElementById("builderview").innerHTML = s;
-            generate_phase_list()
+                });
+                document.getElementById("builderview").innerHTML = s;
+                generate_phase_list()
+            }
         }
 
 
