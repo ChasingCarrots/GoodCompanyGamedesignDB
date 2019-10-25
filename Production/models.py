@@ -167,6 +167,7 @@ class Module(models.Model):
     SamplingTime = models.FloatField(default=5)
     Category = models.ForeignKey(ModuleCategory, related_name="Modules", null=True, blank=True)
     OrderInCategory = models.IntegerField(default=1)
+    Tags = models.CharField(max_length=512, default="", help_text="Separate multiple tags by comma")
 
     def getJsonObject(self):
         features = [feature.getJsonObject() for feature in self.Features.all()]
@@ -193,7 +194,8 @@ class Module(models.Model):
             "SamplingTime":self.SamplingTime,
             "GridDimensions": gridDimensions,
             "CategoryID": category,
-            "OrderInCategory": self.OrderInCategory
+            "OrderInCategory": self.OrderInCategory,
+            "Tags": self.Tags
         }
 
     class Meta:
