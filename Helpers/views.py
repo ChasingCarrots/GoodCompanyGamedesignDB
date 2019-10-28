@@ -363,7 +363,9 @@ def moduleDetail(request, moduleID):
     drawbackRating = 0.0
     if drawbackValue > 0:
         drawbackRating = (float(featureValue)/float(drawbackValue))
-    sizeRating = (featureValue/moduleSize)*3.0
+    sizeRating = 0
+    if moduleSize > 0:
+        sizeRating = (featureValue/moduleSize)*3.0
     timeRating = (featureValue/totalTime)*1.0
     totalRating = (featureRating + drawbackRating + sizeRating + timeRating) * 0.25
 
