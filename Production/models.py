@@ -289,6 +289,7 @@ def ValidateMarketTier(tier):
 class ProductType(models.Model):
     history = HistoricalRecords()
     Name = models.CharField(max_length=255)
+    ProductAssetID = models.CharField(max_length=255, default="")
     Description = models.CharField(max_length=255, blank=True)
     IconAssetID = models.CharField(max_length=255)
     BigImageAssetID = models.CharField(max_length=255)
@@ -316,6 +317,7 @@ class ProductType(models.Model):
         mandatoryFeatures = [feat.id for feat in self.MandatoryFeatures.all()]
         return {
             "Name": self.Name,
+            "ProductAssetID": self.ProductAssetID,
             "Description": self.Description,
             "IconAssetID": self.IconAssetID,
             "BigImageAssetID": self.BigImageAssetID,
