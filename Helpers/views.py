@@ -319,8 +319,7 @@ def moduleDetail(request, moduleID):
     employeeCostFast = employeeCostPerSecond() * getComponentCraftingTime(module, _baseHandlingtime,
                                                                           _handlingtimePerMaterial, True, True, False)
 
-    for object in ObjectType.objects.all().filter(BuildableProperty__isnull=True).filter(
-            CrafterProperty__isnull=False).order_by("Name"):
+    for object in ObjectType.objects.filter(CrafterProperty__isnull=False).order_by("Name"):
         for possibleModule in object.CrafterProperty.PossibleModules.all():
             if possibleModule.Module == module:
                 productionCost = employeeCostPerSecond() * possibleModule.Duration / module.OutputAmount
