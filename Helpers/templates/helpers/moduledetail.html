@@ -35,51 +35,48 @@
         </tbody>
     </table><br>
 
-        {% if criticalPath.id %}
-        Critical Path Balance Helper
+        Balance Helper
         <table class="ui celled table" style="text-align:center;">
             <thead>
                 <tr>
-                    <th width="15%">Critical Path</th>
-                    <th width="10%">Path Pos.</th>
-                    <th width="10%">Progression</th>
-                    <th width="10%">Init. Costs</th>
-                    <th width="10%">Min. Costs</th>
-                    <th width="10%">Sell Price</th>
-                    <th width="10%">Main Feat.</th>
-                    <th width="10%">Other Feat.</th>
+                    <th width="20%">Features</th>
+                    <th width="20%">Material Costs</th>
+                    <th width="20%">Drawbacks</th>
+                    <th width="20%">Module Size</th>
+                    <th width="20%">Time Consumption</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td>
-                        <a class='tooltip' href="{% url 'modulepathdetails' criticalPath.id %}">{{criticalPath.name}}</a></td>
-                    <td>{{criticalPath.position|floatformat:1}} <small>({{criticalPath.expectedPosition|floatformat:1}})</small>
-                    </td>
-                    <td>{{criticalPath.progression|floatformat:1}}</td>
-                    <td>{{criticalPath.initialCosts|floatformat:1}}</td>
-                    <td>{{criticalPath.minimumCosts|floatformat:1}}</td>
-                    <td>{{criticalPath.sellPrice|floatformat:1}}</td>
-                    <td>
-                        <a class='tooltip' href="/goodcompany/admin/Production/productfeature/{{criticalPath.mainFeature.id}}/">{{ criticalPath.mainFeature.HelperEmoji }}
-                        <span class='tooltiptext'>{{criticalPath.mainFeature.Name}}</span></a>
-                    </td>
-                    <td>
-                        {% for feature in criticalPath.positiveFeatures %}
-                        <a class='tooltip' href="/goodcompany/admin/Production/productfeature/{{feature.id}}/">{{ feature.HelperEmoji }}
-                        <span class='tooltiptext'>{{feature.Name}}</span></a>
-                        {% endfor %}
-                        {% for feature in criticalPath.negativeFeatures %}
-                        <a class='tooltip' href="/goodcompany/admin/Production/productfeature/{{feature.id}}/">{{ feature.HelperEmoji }}
-                        <span class='tooltiptext'>{{feature.Name}}</span></a>
-                        {% endfor %}
-                    </td>
+                    <td>{{balancing.featureCount|floatformat:1}}</td>
+                    <td>{{balancing.materialCosts|floatformat:1}}</td>
+                    <td>{{balancing.drawbackCount|floatformat:1}}</td>
+                    <td>{{balancing.moduleSize|floatformat:1}}</td>
+                    <td>{{balancing.totalTime|floatformat:1}}</td>
                 </tr>
             </tbody>
         </table><br>
-    {% else %}
-    - has no critical path - <br><br>
-    {% endif %}
+
+        <table class="ui celled table" style="text-align:center;">
+            <thead>
+                <tr>
+                    <th width="20%">Total Rating</th>
+                    <th width="20%">Cost Rating</th>
+                    <th width="20%">Drawback Rating</th>
+                    <th width="20%">Size Rating</th>
+                    <th width="20%">Time Rating</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{balancing.totalRating|floatformat:1}}</td>
+                    <td>{{balancing.featureRating|floatformat:1}}</td>
+                    <td>{{balancing.drawbackRating|floatformat:1}}</td>
+                    <td>{{balancing.sizeRating|floatformat:1}}</td>
+                    <td>{{balancing.timeRating|floatformat:1}}</td>
+                </tr>
+            </tbody>
+        </table><br>
 
     <h2 class="ui header">Production Tables</h2>
     <table class="ui celled table" style="text-align:center;">

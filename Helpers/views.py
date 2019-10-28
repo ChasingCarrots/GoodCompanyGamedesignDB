@@ -130,19 +130,12 @@ def productTypeOverview(request):
 
     for productType in ProductType.objects.all().order_by("Name"):
 
-        moduleCount = 0
-        for slot in productType.Slots.all():
-            moduleQuery = Module.objects.filter(FitsIntoSlot=slot)
-            if moduleQuery.exists():
-                moduleCount += len(moduleQuery)
 
         productTypes.append({
             "id": productType.id,
             "name": productType.Name,
             "value": productType.BaseMarketPrice,
-            "icon": productType.IconAssetID,
-            "slotCount": productType.Slots.count(),
-            "relevantModules": moduleCount
+            "icon": productType.IconAssetID
         })
 
     return render(request, "helpers/producttypeoverview.html", {
@@ -158,32 +151,13 @@ def productTypeDetail(request, typeID):
     moduleCount = 0
     functionCount = 0
 
-    for slot in productType.Slots.all().order_by("Name"):
-        productSlots.append({
-            "id": slot.id,
-            "name": slot.Name,
-            "isOptional": slot.IsOptional
-        })
-        moduleQuery = Module.objects.filter(FitsIntoSlot=slot)
-        for module in moduleQuery.all().order_by("BaseMarketPrice"):
-            moduleCount += 1
-            modules.append({
-                "slot": slot.id,
-                "id": module.id,
-                "name": module.Name,
-                "icon": module.IconAssetID,
-            })
-
     return render(request, "helpers/producttypedetail.html", {
         "productType": {
             "id": productType.id,
             "name": productType.Name,
             "icon": productType.IconAssetID,
-            "slotCount": productType.Slots.count(),
             "functionCound": functionCount,
-            "moduleCount": moduleCount,
-            "slots": productSlots,
-            "modules": modules,
+            "moduleCount": moduleCount
         }
     })
 
@@ -267,30 +241,33 @@ def modulePathDetails(request, pathID):
 
 def moduleOverview(request):
     modules = []
-    for module in Module.objects.all().order_by("FitsIntoSlot", "BaseMarketPrice"):
-        if module.FitsIntoSlot != None:
-            modules.append({
-                "id": module.id,
-                "slot": module.FitsIntoSlot.Name,
-                "icon": module.IconAssetID,
-                "name": module.Name,
-                "matCost": module.rawMaterialCost(),
-                "income": module.BaseMarketPrice
-            })
-        else:
-            modules.append({
-                "id": module.id,
-                "slot": "None",
-                "icon": module.IconAssetID,
-                "name": module.Name,
-                "matCost": module.rawMaterialCost(),
-                "income": module.BaseMarketPrice
-            })
+    for module in Module.objects.all().order_by("BaseMarketPrice"):
+        modules.append({
+            "id": module.id,
+            "icon": module.IconAssetID,
+            "name": module.Name,
+            "matCost": module.rawMaterialCost(),
+            "income": module.BaseMarketPrice
+        })
     return render(request, "helpers/moduleoverview.html", {"modules": modules})
 
 
 def moduleDetail(request, moduleID):
     module = get_object_or_404(Module, pk=moduleID)
+
+    featureValue = 0.0
+    drawbackValue = 0.0
+    moduleSize = 0.0
+
+    for feature in module.Features.all():
+        if feature.ProductFeature.IsDrawback:
+            drawbackValue = drawbackValue + feature.FeatureValue
+        else:
+            featureValue = featureValue + feature.FeatureValue
+
+    for field in module.GridFields.all():
+        moduleSize = moduleSize + 1
+
     moduleBaseMaterials = module.collectMaterials()
     totalAmount = 0
     totalCost = 0
@@ -305,7 +282,6 @@ def moduleDetail(request, moduleID):
     moduleInputMaterials = []
     for moduleInputMat in module.InputMaterials.all():
         moduleInputMatModuleID = -1
-        moduleInputMatMaterialID = -1
         cost = moduleInputMat.Material.getPricePerUnit()
         moduleInputModuleQuery = Module.objects.filter(Material=moduleInputMat.Material)
         moduleInputMatMaterialID = moduleInputMat.Material.id
@@ -374,7 +350,6 @@ def moduleDetail(request, moduleID):
         criticalPath["expectedPosition"] = criticalModule[0].getExpectedPathPosition()
         criticalPath["id"] = criticalModule[0].Path.id
         criticalPath["name"] = criticalModule[0].Path.Name
-        criticalPath["slot"] = criticalModule[0].Path.Slot
         criticalPath["progression"] = criticalModule[0].getProgressionPoint()
         criticalPath["mainFeature"] = criticalModule[0].Path.MainFeature
         criticalPath["positiveFeatures"] = criticalModule[0].Path.PositiveFeatures.all()
@@ -382,6 +357,15 @@ def moduleDetail(request, moduleID):
         criticalPath["initialCosts"] = criticalModule[0].getExpectedInitialCosts()
         criticalPath["minimumCosts"] = criticalModule[0].getExpectedMinimumCosts()
         criticalPath["sellPrice"] = criticalModule[0].getExpectedSellPrice()
+
+    totalTime = getComponentCraftingTime(module, 0, 0, False, False) + module.AssemblyTime
+    featureRating = (featureValue/module.rawMaterialCost())*5.0
+    drawbackRating = 0.0
+    if drawbackValue > 0:
+        drawbackRating = (float(featureValue)/float(drawbackValue))
+    sizeRating = (featureValue/moduleSize)*3.0
+    timeRating = (featureValue/totalTime)*1.0
+    totalRating = 1.0 * featureRating * drawbackRating * sizeRating * timeRating
 
     return render(request, "helpers/moduledetail.html", {
         "module": {
@@ -405,6 +389,18 @@ def moduleDetail(request, moduleID):
             "handlingCost": handlingCost,
             "employeeCostSlow": employeeCostSlow,
             "employeeCostQuick": employeeCostFast,
+        },
+        "balancing": {
+            "totalRating": totalRating,
+            "featureRating": featureRating,
+            "drawbackRating": drawbackRating,
+            "sizeRating": sizeRating,
+            "timeRating": timeRating,
+            "featureCount": featureValue,
+            "materialCosts": module.rawMaterialCost(),
+            "drawbackCount": drawbackValue,
+            "moduleSize": moduleSize,
+            "totalTime": totalTime,
         },
         "tableList": tableList,
         "criticalPath": criticalPath,
@@ -948,7 +944,7 @@ def viewAll(request, displaymode):
         })
 
     componentList = []
-    for module in Module.objects.all().filter(FitsIntoSlot__isnull=True):
+    for module in Module.objects.all():
         tables = []
         for crafterModule in CrafterPropertyModuleDuration.objects.all().filter(Module=module):
             tables.append({
@@ -977,7 +973,7 @@ def viewAll(request, displaymode):
         })
 
     moduleList = []
-    for module in Module.objects.all().filter(FitsIntoSlot__isnull=False):
+    for module in Module.objects.all():
         tables = []
         for crafterModule in CrafterPropertyModuleDuration.objects.all().filter(Module=module):
             tables.append({
@@ -999,7 +995,6 @@ def viewAll(request, displaymode):
         moduleList.append({
             "id": module.id,
             "name": module.Name,
-            "slot": module.FitsIntoSlot.id,
             "icon": module.IconAssetID,
             "isActive": isActive,
             "researches": researches,
