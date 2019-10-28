@@ -365,7 +365,7 @@ def moduleDetail(request, moduleID):
         drawbackRating = (float(featureValue)/float(drawbackValue))
     sizeRating = (featureValue/moduleSize)*3.0
     timeRating = (featureValue/totalTime)*1.0
-    totalRating = 1.0 * featureRating * drawbackRating * sizeRating * timeRating
+    totalRating = (featureRating + drawbackRating + sizeRating + timeRating) * 0.25
 
     return render(request, "helpers/moduledetail.html", {
         "module": {
