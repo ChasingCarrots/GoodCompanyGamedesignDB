@@ -360,17 +360,17 @@ def moduleDetail(request, moduleID):
     totalTime = getComponentCraftingTime(module, 0, 0, False, False) + module.AssemblyTime
     featureRating = 0.0
     if module.rawMaterialCost() > 0:
-        featureRating = (featureValue/module.rawMaterialCost())*5.0
+        featureRating = (featureValue/module.rawMaterialCost())*10.0
     drawbackRating = 0.0
     if drawbackValue > 0:
         drawbackRating = (float(featureValue)/float(drawbackValue))
     sizeRating = 0.0
     if moduleSize > 0:
-        sizeRating = (featureValue/moduleSize)*3.0
+        sizeRating = (featureValue/moduleSize)*2
     timeRating = 0.0
     if totalTime > 0:
-        timeRating = (featureValue/totalTime)*1.0
-    totalRating = (featureRating + featureRating + drawbackRating + sizeRating + timeRating) * 0.2
+        timeRating = (featureValue/totalTime)*10
+    totalRating = (featureRating + drawbackRating + sizeRating + timeRating) * 0.25
 
     return render(request, "helpers/moduledetail.html", {
         "module": {
