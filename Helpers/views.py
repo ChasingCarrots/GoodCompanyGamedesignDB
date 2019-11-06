@@ -8,7 +8,6 @@ from django.views.decorators.csrf import csrf_exempt
 
 from helpers import *
 from balancing.modules import *
-from luaExports.productProgression import *
 # from balancing.products import *
 from commands.sanitychecks import *
 from commands.tempcommands import *

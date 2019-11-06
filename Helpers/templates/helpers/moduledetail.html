@@ -2,11 +2,43 @@
 
 {% block title %}{{ module.name }} Details{% endblock %}
 
+
 {% block content %}
 
-    <h1 class="ui header" id="modname">{{ module.name | title}}</h1>
-    <a href="/goodcompany/admin/Production/module/{{module.id}}/"><img height="100" src="/goodcompany/static/img/{{module.icon}}.png" onerror="this.src='/goodcompany/static/img/unknown.png';"></a><br>
-    <a href="/goodcompany/admin/Production/material/{{module.materialId}}/">Edit Material</a>
+    <div class="main_frame">
+        <div class="col_frame">
+
+            <div class="sub_frame">
+                <table class="frame_table">
+                    <tr>
+                        <td aria-rowspan="3" rowspan="3">
+                            <img height="100" src="/goodcompany/static/img/{{module.icon}}.png">
+                        </td>
+                        <td>
+                            {{ module.name | title}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <a href="/goodcompany/admin/Production/module/{{module.id}}/">Edit Module</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <a href="/goodcompany/admin/Production/material/{{module.materialId}}/">Edit Material</a>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+        </div>
+        <div class="col_frame">
+        </div>
+    </div>
+
+
+    <br>
+
     <br>
 
     <h2 class="ui header">Module Details</h2>
@@ -274,30 +306,4 @@
 
 
 
-{% endblock %}
-
-
-{% block customjavascript %}
-    <script>
-    // our json calls can take very long and we don't want them to timeout
-    $.ajaxSetup({
-        timeout: 30000 // that number is in miliseconds!
-    });
-
-    function runCommand(commandname, arguments) {
-        $('#run').addClass("disabled loading");
-        var runcommandURL = "{% url "runcommand" commandname="commandname" arguments="arguments"%}";
-        runcommandURL = runcommandURL.replace("commandname", commandname)
-        runcommandURL = runcommandURL.replace("arguments", arguments)
-        $.getJSON(runcommandURL, function (data, status) {
-            console.log("runcommand returned...");
-            $('#commandoutput').html(data.output);
-            $('#run').removeClass("disabled loading");
-        }).done(function() { console.log( "second success" ); }) .fail(function(jqXHR, textStatus, errorThrown) {
-            console.log("error " + textStatus);
-        console.log("incoming Text " + jqXHR.responseText); }) .always(function() { console.log( "complete" ); });
-    }
-
-    runCommand("ProductTree",  '{{ module.name }}');
-    </script>
 {% endblock %}

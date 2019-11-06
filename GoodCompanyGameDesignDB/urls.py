@@ -1,13 +1,13 @@
 """GoodCompanyGameDesignDB URL Configuration
 
-The `urlpatterns` list routes URLs to views. For more information please see:
+The `urlpatterns` list routes URLs to view_scripts. For more information please see:
     https://docs.djangoproject.com/en/1.11/topics/http/urls/
 Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  url(r'^$', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
+Function view_scripts
+    1. Add an import:  from my_app import view_scripts
+    2. Add a URL to urlpatterns:  url(r'^$', view_scripts.home, name='home')
+Class-based view_scripts
+    1. Add an import:  from other_app.view_scripts import Home
     2. Add a URL to urlpatterns:  url(r'^$', Home.as_view(), name='home')
 Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
@@ -20,6 +20,8 @@ from django.conf.urls.static import static
 from django.views.generic import TemplateView
 
 from Helpers.views import *
+from Helpers.luaExports.productProgression import *
+from Helpers.view_scripts.modules import *
 
 urlpatterns = [
     url(r'^goodcompany/$', TemplateView.as_view(template_name="helpers/home.html")),
@@ -32,7 +34,7 @@ urlpatterns = [
     url(r'^goodcompany/helper/modulecategories/', moduleCategoryOverview, name="modulecategories"),
     url(r'^goodcompany/helper/modulepathdetails/(\d+)', modulePathDetails, name="modulepathdetails"),
     url(r'^goodcompany/helper/moduleoverview/', moduleOverview, name="moduleoverview"),
-    url(r'^goodcompany/helper/moduledetail/(\d+)', moduleDetail, name="moduledetail"),
+    url(r'^goodcompany/helper/moduledetails/(\d+)', moduleDetail, name="moduledetail"),
     url(r'^goodcompany/helper/producttypeoverview/', productTypeOverview, name="producttypeoverview"),
     url(r'^goodcompany/helper/producttypedetail/(\d+)', productTypeDetail, name="producttypedetail"),
     url(r'^goodcompany/helper/productbuilder/', productbuilder, name="productbuilder"),
