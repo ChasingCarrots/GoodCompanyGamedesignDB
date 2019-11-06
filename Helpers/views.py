@@ -360,13 +360,13 @@ def moduleDetail(request, moduleID):
     totalTime = getComponentCraftingTime(module, 0, 0, False, False) + module.AssemblyTime
     featureRating = 0.0
     if module.rawMaterialCost() > 0:
-        featureRating = (featureValue/module.rawMaterialCost())*5.0
+        featureRating = 1.0+(module.rawMaterialCost()/(50.0*float(featureValue)))*30.0
     drawbackRating = 0.0
     if drawbackValue > 0:
         drawbackRating = (float(featureValue)/float(drawbackValue))
     sizeRating = 0.0
     if moduleSize > 0:
-        sizeRating = (featureValue/moduleSize)*2.0
+        sizeRating = (featureValue/moduleSize)*1.5
     timeRating = 0.0
     if totalTime > 0:
         timeRating = (featureValue/totalTime)*5.0
