@@ -203,6 +203,7 @@ class BuildableProperty(models.Model):
     BuildDuration = models.FloatField(blank=False)
     Category = models.ForeignKey(BuildabelCategory, blank=True, null=True)
     OrderInCategory = models.IntegerField(default=1)
+    MoneyCost = models.IntegerField(default=1000)
 
 
     def getJsonObject(self):
@@ -221,7 +222,7 @@ class BuildableProperty(models.Model):
             "BuildsObjectID": self.BuildsObjectConnection.BuildsObject.id,
             "CanBuildInWorkplaces": canBuildInWorkplaces,
             "Category": category,
-            "OrderInCategory": self.OrderInCategory
+            "MoneyCost": self.MoneyCost
         }
 
     class Meta:
