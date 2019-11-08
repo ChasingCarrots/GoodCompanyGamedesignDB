@@ -222,7 +222,7 @@ class BuildableProperty(models.Model):
             "BuildsObjectID": self.BuildsObjectConnection.BuildsObject.id,
             "CanBuildInWorkplaces": canBuildInWorkplaces,
             "Category": category,
-            "MoneyCost": self.MoneyCost
+            "BuildCost": self.MoneyCost
         }
 
     class Meta:
