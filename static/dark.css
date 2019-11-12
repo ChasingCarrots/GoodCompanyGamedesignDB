@@ -150,14 +150,13 @@
 
         .tooltip .tooltiptext {
           visibility: hidden;
-          background-color: #3f888f;
+          background-color: #4c576a;
           color: #fff;
           text-align: center;
           border-radius: 6px;
           padding: 5px;
           margin-top: 35px;
           margin-left: -15px;
-          /* Position the tooltip */
           position: absolute;
           z-index: 5;
         }
@@ -166,3 +165,117 @@
           visibility: visible;
         }
 
+        .main_frame {
+            display: flex;
+            border: 0px;
+        }
+
+        .col_frame_left {
+            flex: 50%;
+            border: 0px;
+            padding-right: 30px;
+        }
+
+        .col_frame_right {
+            flex: 50%;
+            border: 0px;
+            padding-left: 30px;
+        }
+
+        .sub_frame {
+            width: 100%;
+            border: 0px solid #333;
+            border-radius: 15px;
+        }
+
+        .frame_helptable {
+            width: 100%;
+            border: 2px solid #2d2d2d;
+            border-radius: 0px;
+            padding-top: 10px;
+            padding-bottom: 10px;
+        }
+
+        .frame_table {
+            width: 100%;
+            border: 0px;
+        }
+
+        .frame_table tr th {
+            background-color: #383e49;
+            text-align: center;
+            padding: 5px;
+        }
+
+        .frame_table tr th:hover {
+            background-color: #4c576a;
+        }
+
+        .frame_table tr {
+            background-color: #343434;
+            text-align: center;
+        }
+
+        .frame_table tr td {
+            padding: 5px;
+        }
+
+        .frame_table tr td img {
+            margin-top: 5px;
+            height: 35px;
+        }
+
+        .frame_table tr:hover {
+            background-color: #414141;
+        }
+
+        .grid_container {
+            position: relative;
+        }
+
+        .grid_field {
+            position: absolute;
+            height: 20px;
+            width: 20px;
+            display: inline-block;
+            background-color: #434343;
+            border: 1px #343434 solid;
+        }
+
+        .grid_field:hover {
+            background-color: #5c677a;
+        }
+
+        .frame_title {
+            display: block;
+            background-color: #4c576a;
+            margin-right: 3px;
+            margin-left: 2px;
+            padding: 5px;
+            font-weight: bolder;
+            text-align: center;
+            font-variant: small-caps;
+            font-size: large;
+            border-radius: 10px 10px 0px 0px;
+        }
+
+        .frame_footer {
+            display: block;
+            background-color: #4c576a;
+            margin-right: 3px;
+            margin-left: 2px;
+            padding: 5px;
+            font-weight: bolder;
+            text-align: center;
+            font-variant: small-caps;
+            border-radius: 0px 0px 10px 10px;
+            margin-bottom: 60px;
+        }
+
+        .col_frame_right .frame_title {
+            margin-right: 2px;
+        }
+
+        .col_frame_right .frame_footer {
+            margin-right: 2px;
+        }
