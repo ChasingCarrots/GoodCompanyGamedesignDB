@@ -6,36 +6,348 @@
 {% block content %}
 
     <div class="main_frame">
-        <div class="col_frame">
+        <div class="col_frame_left">
+
+            {% if module.features or module.drawbacks %}
+            <span class="frame_title" style="background-color:#9b4c77;">{{ module.name }}</span>
+            {% else %}
+            <span class="frame_title" style="background-color:#90a039;">{{ module.name }}</span>
+            {% endif %}
 
             <div class="sub_frame">
-                <table class="frame_table">
+                <table class="frame_helptable" style="background-color:#343434;">
                     <tr>
-                        <td aria-rowspan="3" rowspan="3">
+                        <td class="tooltip" aria-rowspan="3" rowspan="3" width="120">
                             <img height="100" src="/goodcompany/static/img/{{module.icon}}.png">
+                            <span class="tooltiptext">{{module.icon}}</span>
+                        </td>
+                        <td aria-rowspan="3" rowspan="3" width="160">
+                            {% for item in module.fields %}
+                            <div class="grid_container">
+                                {% if item.x == 0 and item.y == 0 %}
+                                    <div class="grid_field" style="left:{{item.posx}}px; bottom:{{item.posy}}px; background-color: #4c576a;">
+                                    </div>
+                                {% else %}
+                                    <div class="grid_field" style="left:{{item.posx}}px; bottom:{{item.posy}}px;">
+                                    </div>
+                                {% endif %}
+                            </div>
+                            {% endfor %}
                         </td>
                         <td>
-                            {{ module.name | title}}
+                            <a href="/goodcompany/admin/Production/module/{{module.id}}/">[{{module.id}}] &nbsp;&nbsp;&nbsp; Edit Module Data</a>
                         </td>
                     </tr>
                     <tr>
                         <td>
-                            <a href="/goodcompany/admin/Production/module/{{module.id}}/">Edit Module</a>
+                            <a href="/goodcompany/admin/Production/material/{{material.id}}/">[{{material.id}}] &nbsp;&nbsp;&nbsp; Edit Material Data</a>
                         </td>
                     </tr>
                     <tr>
                         <td>
-                            <a href="/goodcompany/admin/Production/material/{{module.materialId}}/">Edit Material</a>
+                            {% if research %}
+                                <a href="/goodcompany/admin/Research/developmentproject/{{research.id}}/">[{{research.id}}] &nbsp;&nbsp;&nbsp; Edit Research Project</a>
+                            {% endif %}
                         </td>
                     </tr>
                 </table>
             </div>
+            {% if module.features or module.drawbacks %}
+            <span class="frame_footer" style="background-color:#9b4c77;"></span>
+            {% else %}
+            <span class="frame_footer" style="background-color:#90a039;"></span>
+            {% endif %}
+
+            {% if module.features or module.drawbacks %}
+            <span class="frame_title">Balancing Information</span>
+            <div class="sub_frame">
+                <table class="frame_table">
+                    <tr>
+                        <th width="40%">Category</th>
+                        <th width="20%">Total</th>
+                        <th width="20%">per Feature</th>
+                        <th width="20%">Rating</th>
+                    </tr>
+                    <tr>
+                        <td>Material Cost</td>
+                        <td>{{rating.cost|floatformat:1}} G</td>
+                        <td>{{rating.feat_cost|floatformat:1}} G</td>
+                        <td>{{rating.rating_cost|floatformat:2}}</td>
+                    </tr>
+                    <tr>
+                        <td>Drawbacks</td>
+                        <td>{{rating.drawbacks|floatformat:1}}</td>
+                        <td>{{rating.feat_drawbacks|floatformat:2}}</td>
+                        <td>{{rating.rating_drawbacks|floatformat:2}}</td>
+                    </tr>
+                    <tr>
+                        <td>Fields</td>
+                        <td>{{rating.fields}}</td>
+                        <td>{{rating.feat_fields|floatformat:2}}</td>
+                        <td>{{rating.rating_fields|floatformat:2}}</td>
+                    </tr>
+                    <tr>
+                        <td>Assembly Time</td>
+                        <td>{{rating.time|floatformat:1}}s</td>
+                        <td>{{rating.feat_time|floatformat:2}}s</td>
+                        <td>{{rating.rating_time|floatformat:2}}</td>
+                    </tr>
+                    <tr>
+                        <th>Feature Summary</th>
+                        <th>{{rating.features|floatformat:1}}</th>
+                        <th></th>
+                        <th>{{rating.rating_total|floatformat:2}}</th>
+                    </tr>
+                </table>
+            </div>
+            <span class="frame_footer"></span>
+            {% endif %}
+
+            {% if module.features or module.drawbacks %}
+            <span class="frame_title">Features & Drawbacks</span>
+            <div class="sub_frame">
+                <table class="frame_table">
+                    <tr>
+                        <th width="10%">+/-</th>
+                        <th width="10%">ID</th>
+                        <th width="10%">Emoji</th>
+                        <th width="60%">Feature</th>
+                        <th width="20%">Value</th>
+                    </tr>
+
+                    {% if module.features %}
+                        {% for item in module.features %}
+                            <tr>
+                                <td>🟢</td>
+                                <td>{{ item.id }}</td>
+                                <td>{{ item.emoji }}</td>
+                                <td>{{ item.name }}</td>
+                                <td>{{ item.value|floatformat:1 }}</td>
+                            </tr>
+                        {% endfor %}
+                    {% endif %}
+
+                    {% if module.drawbacks %}
+                        {% for item in module.drawbacks %}
+                            <tr>
+                                <td>🔻</td>
+                                <td>{{ item.id }}</td>
+                                <td>{{ item.emoji }}</td>
+                                <td>{{ item.name }}</td>
+                                <td>{{ item.value|floatformat:1 }}</td>
+                            </tr>
+                        {% endfor %}
+                    {% endif %}
+                </table>
+            </div>
+            <span class="frame_footer"></span>
+            {% endif %}
+
+            {% if research.data %}
+            <span class="frame_title">Data Yield</span>
+            <div class="sub_frame">
+                <table class="frame_table">
+                    <tr>
+                        <th width="10%">Icon</th>
+                        <th width="10%">ID</th>
+                        <th width="50%">Name</th>
+                        <th width="15%">Yield</th>
+                        <th width="15%">Value</th>
+                    </tr>
+
+                    {% for item in research.data %}
+                    <tr>
+                        <td><img height="30" src="/goodcompany/static/img/{{item.icon}}.png"></td>
+                        <td>{{item.id}}<br>
+                            <a href="/goodcompany/admin/Research/researchdatatype/{{item.id}}/">edit</a>
+                        </td>
+                        <td>{{item.name}}</td>
+                        <td>{{item.amount}}</td>
+                        <td class="tooltip">
+                            <span>
+                                {{item.value}} G
+                                <span class="tooltiptext" style="margin-left: 30px; margin-top: -5px;">
+                                    {{item.worth}} G per data point
+                                </span>
+                            </span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+            <span class="frame_footer"></span>
+            {% endif %}
+
+            {% if material.usedIn %}
+            <span class="frame_title">Used as Material</span>
+            <div class="sub_frame">
+                <table class="frame_table">
+                    <tr>
+                        <th width="10%">Icon</th>
+                        <th width="10%">ID</th>
+                        <th width="80%">Name</th>
+                    </tr>
+
+                    {% for item in material.usedIn %}
+                    <tr>
+                        <td><img height="40" src="/goodcompany/static/img/{{item.icon}}.png"></td>
+                        <td>{{item.id}}<br>
+                            <a href="/goodcompany/admin/Production/material/{{item.id}}/">edit</a>
+                        </td>
+                        <td>{{item.name}}<br>
+                            <a href="{% url 'moduledetail' item.id %}">View Details</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+            <span class="frame_footer"></span>
+            {% endif %}
+
 
         </div>
-        <div class="col_frame">
+        <div class="col_frame_right">
+
+            {% if module.features or module.drawbacks %}
+            <span class="frame_title" style="background-color:#9b4c77;">Module Overview</span>
+            {% else %}
+            <span class="frame_title" style="background-color:#90a039;">Module Overview</span>
+            {% endif %}
+
+            <div class="sub_frame">
+                <table class="frame_table">
+                    <tr>
+                        <td colspan="2">{{module.category}} ({{module.categoryOrder}})</td>
+                        <td colspan="2">{{module.tags}}</td>
+                    </tr>
+                    <tr>
+                        <td width="30%">Stack Size:</td>
+                        <td width="20%">{{material.stacksize}}</td>
+                        <td width="30%">Batch Size:</td>
+                        <td width="20%">{{module.outputAmount}}</td>
+                    </tr>
+                    <tr>
+                        <td>Sell Price:</td>
+                        <td>{{module.sellPrice|floatformat:0}} G</td>
+                        <td>Demand:</td>
+                        <td>{{module.demand}}</td>
+                    </tr>
+                </table>
+            </div>
+
+            {% if module.features or module.drawbacks %}
+            <span class="frame_footer" style="background-color:#9b4c77;"></span>
+            {% else %}
+            <span class="frame_footer" style="background-color:#90a039;"></span>
+            {% endif %}
+
+
+            {% if objects %}
+            <span class="frame_title">Crafting Stations</span>
+            <div class="sub_frame">
+                <table class="frame_table">
+                    <tr>
+                        <th width="10%">Icon</th>
+                        <th width="10%">ID</th>
+                        <th width="50%">Name</th>
+                        <th width="15%">Batch Time</th>
+                        <th width="15%">Item Time</th>
+                    </tr>
+                    {% for item in objects %}
+                        <tr>
+                            <td><img height="40" src="/goodcompany/static/img/{{item.icon}}.png"></td>
+                            <td>{{ item.id }}<br>
+                                <a href="/goodcompany/admin/ObjectTypes/objecttype/{{item.id}}/">Edit</a>
+                            </td>
+                            <td>{{ item.name }}<br>
+                                <a href="{% url 'objectdetailview' item.id %}">View Details</a>
+                            </td>
+                            <td>{{ item.totalTime }}s</td>
+                            <td>{{ item.petItem|floatformat:1 }}s</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+            <span class="frame_footer"></span>
+            {% endif %}
+
+            <span class="frame_title">Recipe</span>
+            <div class="sub_frame">
+                <table class="frame_table">
+                    <tr>
+                        <th width="10%">Icon</th>
+                        <th width="10%">MatID</th>
+                        <th width="10%">ModID</th>
+                        <th width="40%">Name</th>
+                        <th width="15%">Amount</th>
+                        <th width="15%">Cost</th>
+                    </tr>
+                    {% for item in module.inputMaterials %}
+                    <tr>
+                        <td><img height="40" src="/goodcompany/static/img/{{item.icon}}.png"></td>
+                        <td>{{item.materialID}}<br>
+                            <a href="/goodcompany/admin/Production/material/{{item.materialID}}/">edit</a>
+                        </td>
+                        {% if item.moduleID == -1 %}
+                            <td>/</td>
+                        {% else %}
+                            <td>{{item.moduleID}}<br>
+                            <a href="/goodcompany/admin/Production/module/{{item.moduleID}}/">edit</a>
+                            </td>
+                        {% endif %}
+                        <td>{{item.name}}<br>
+                        {% if item.moduleID == -1 %}
+                            <a href="{% url 'materialdetail' item.materialID %}">View Details</a>
+                        {% else %}
+                            <a href="{% url 'moduledetail' item.moduleID %}">View Details</a>
+                        {% endif %}
+                        </td>
+                        <td>{{item.amount|floatformat}}</td>
+                        <td>{{item.cost|floatformat}} G</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+            <span class="frame_footer"></span>
+
+            <span class="frame_title">Base Materials</span>
+            <div class="sub_frame">
+                <table class="frame_table">
+                    <tr>
+                        <th width="10%">Icon</th>
+                        <th width="10%">ID</th>
+                        <th width="50%">Name</th>
+                        <th width="15%">Amount</th>
+                        <th width="15%">Cost</th>
+                    </tr>
+                    {% for id, item in module.baseMaterials %}
+                    <tr>
+                        <td><img height="40" src="/goodcompany/static/img/{{item.icon}}.png"></td>
+                        <td>{{id}}<br>
+                            <a href="/goodcompany/admin/Production/material/{{id}}/">edit</a>
+                        </td>
+                        <td>{{item.name}}<br>
+                            <a href="{% url 'materialdetail' id %}">View Details</a>
+                        </td>
+                        <td>{{item.amount|floatformat:2}}</td>
+                        <td>{{item.totalcost|floatformat:2}} G</td>
+                    </tr>
+                    {% endfor %}
+
+                    <tr>
+                        <th colspan="3">Summary</th>
+                        <th>{{module.baseMaterialsAmount|floatformat:2}}</th>
+                        <th>{{module.baseMaterialCost|floatformat:2}} G</th>
+                    </tr>
+                </table>
+            </div>
+            <span class="frame_footer"></span>
+
+
         </div>
     </div>
 
+{% endblock %}
 
     <br>
 
@@ -179,29 +491,7 @@
         </tbody>
     </table><br>
 
-    {% if module.features %}
-    <h2 class="ui header">Features</h2>
-    <table class="ui celled table" style="text-align:center; width:50%;">
-        <thead>
-            <tr>
-                <th width="10%"></th>
-                <th width="70%">Feature</th>
-                <th width="20%">Value</th>
-            </tr>
-        </thead>
-        <tbody>
-                {% for feature in module.features %}
-            <tr>
-                <td><a href="/goodcompany/admin/Production/productfeature/{{feature.ProductFeature.id}}/">{{ feature.ProductFeature.HelperEmoji }}</a></td>
-                <td><a href="/goodcompany/admin/Production/productfeature/{{feature.ProductFeature.id}}/">{{ feature.ProductFeature.Name }}</a></td>
-                <td>{{ feature.FeatureValue }}</td>
-            </tr>
-                {% endfor %}
-        </tbody>
-    </table><br>
-    {% else %}
-    - has no features - <br><br>
-    {% endif %}
+
 
 
     {% if module.usedinmodulescount > 0 or module.usedinproductcount > 0 %}
@@ -305,5 +595,3 @@
     <br><br><br>
 
 
-
-{% endblock %}
