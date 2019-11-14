@@ -170,6 +170,11 @@
             border: 0px;
         }
 
+        .col_frame_full {
+            flex: 100%;
+            border: 0px;
+        }
+
         .col_frame_left {
             flex: 50%;
             border: 0px;
@@ -214,6 +219,7 @@
         .frame_table tr {
             background-color: #343434;
             text-align: center;
+            width: 100%;
         }
 
         .frame_table tr td {
@@ -240,6 +246,7 @@
             display: inline-block;
             background-color: #434343;
             border: 1px #343434 solid;
+            border-radius: 5px;
         }
 
         .grid_field:hover {
@@ -272,10 +279,30 @@
             margin-bottom: 60px;
         }
 
+        .frame_footer_end {
+            display: block;
+            background-color: #4c576a;
+            margin-right: 3px;
+            margin-left: 2px;
+            padding: 5px;
+            font-weight: bolder;
+            text-align: center;
+            font-variant: small-caps;
+            border-radius: 0px 0px 10px 10px;
+        }
+
         .col_frame_right .frame_title {
             margin-right: 2px;
         }
 
         .col_frame_right .frame_footer {
+            margin-right: 2px;
+        }
+
+        .col_frame_full .frame_title {
+            margin-right: 2px;
+        }
+
+        .col_frame_full .frame_footer {
             margin-right: 2px;
         }
