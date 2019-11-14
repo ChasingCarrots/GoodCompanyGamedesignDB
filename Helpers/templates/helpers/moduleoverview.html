@@ -3,29 +3,38 @@
 {% block title %}Module Overview{% endblock %}
 
 {% block content %}
-    <table class="ui celled table" style="text-align:center;">
-        <thead>
+    <div class="main_frame">
+        <div class="col_frame_full">
+            <span class="frame_title">Module Overview</span>
+            <div class="sub_frame">
+                <table class="frame_table">
             <tr>
-                <th width="10%">Icon</th>
-                <th width="25%">Module</th>
-                <th width="15%">Slot</th>
-                <th width="10%">Material Cost</th>
-                <th width="10%">SellPrice</th>
+                <th width="10%">Order</th>
+                <th width="20%">Category</th>
+                <th width="70%">Modules</th>
             </tr>
-        </thead>
-        <tbody>
-        {% for module in modules %}
-            <tr>
-                <td>
-                    <a href="{% url 'moduledetail' module.id %}"><img height="40" src="/goodcompany/static/img/{{module.icon}}.png" onerror="this.src='/goodcompany/static/img/unknown.png';"></a>
-                </td>
-                <td><a href="{% url 'moduledetail' module.id %}">{{ module.name }}</a></td>
-                <td>{{ module.slot }}</td>
-                <td>{{ module.matCost|floatformat:0 }}</td>
-                <td>{{ module.income|floatformat:0 }}</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-<br><br><br>
+            {% for cat in categories %}
+                <tr>
+                    <td>
+                       {{cat.order}}
+                    </td>
+                    <td>
+                        {{cat.name}}<br>
+                        <a href="{% url 'modulecategory' cat.id %}">View Category</a>
+                    </td>
+                    <td>
+                        {% for module in cat.modules %}
+                        <a class='tooltip' href="{% url 'moduledetail' module.id %}">
+                            <img height="40" src="/goodcompany/static/img/{{module.IconAssetID}}.png" onerror="this.src='/goodcompany/static/img/unknown.png';">
+                            <span class='tooltiptext'>{{module.Name}}</span>
+                        </a>
+                        {% endfor %}
+                    </td>
+                </tr>
+            {% endfor %}
+                </table>
+            </div>
+            <span class="frame_footer"></span>
+        </div>
+    </div>
 {% endblock %}

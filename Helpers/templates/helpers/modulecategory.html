@@ -1,0 +1,188 @@
+{% extends 'helpers/base.html' %}
+
+{% block title %}{{ category.name }} Details{% endblock %}
+
+{% block content %}
+
+    <div class="main_frame">
+        <div class="col_frame_full">
+            <span class="frame_title">{{ category.name }}</span>
+            <div class="sub_frame">
+                <table class="frame_table">
+                    <tr>
+                        <th width="5%">Order</th>
+                        <th width="5%">Icon</th>
+                        <th width="5%">ID</th>
+                        <th>Module</th>
+                        <th width="85">Fields</th>
+                        <th width="9%">Rating</th>
+                        <th width="9%">Features</th>
+                        <th width="6%">Stack</th>
+                        <th width="6%">Batch</th>
+                        <th width="6%">Material</th>
+                        <th width="6%">Price</th>
+                        <th width="6%">Demand</th>
+                    </tr>
+                    {% for item in modules %}
+                    <tr>
+                        <td>{{item.order}}<br></td>
+                        <td><a href="{% url 'moduledetail' item.id %}"><img height="40" src="/goodcompany/static/img/{{item.icon}}.png"></a></td>
+                        <td>{{item.id}}</td>
+                        <td class="tooltip">
+                            {{item.name}}<br>
+                            <a href="{% url 'moduledetail' item.id %}">View Details</a> &nbsp;&nbsp;/&nbsp;&nbsp; <a href="/goodcompany/admin/Production/module/{{item.id}}/">Edit Data</a>
+                        </td>
+                        <td height="55">
+                            {% for subitem in item.fields %}
+                            <div class="grid_container">
+                                {% if subitem.x == 0 and subitem.y == 0 %}
+                                    <div class="grid_field" style="left:{{subitem.posx}}px; bottom:{{subitem.posy}}px; width:15px; height:15px; background-color: #4c576a;">
+                                    </div>
+                                {% else %}
+                                    <div class="grid_field" style="left:{{subitem.posx}}px; width:15px; height:15px; bottom:{{subitem.posy}}px;">
+                                    </div>
+                                {% endif %}
+                            </div>
+                            {% endfor %}
+                        </td>
+                        <td class="tooltip">
+                            {{item.rating.rating_total|floatformat:2}}
+                            {% if item.features %}
+                            <div class="tooltiptext" style="margin-top: 70px; margin-left: -190px;">
+                                <span class="frame_title">Balancing Information</span>
+                                <div class="sub_frame">
+                                    <table class="frame_table">
+                                        <tr>
+                                            <th width="40%">Category</th>
+                                            <th width="20%">Total</th>
+                                            <th width="20%">per Feature</th>
+                                            <th width="20%">Rating</th>
+                                        </tr>
+                                        <tr>
+                                            <td>Material Cost</td>
+                                            <td>{{item.rating.cost|floatformat:1}} G</td>
+                                            <td>{{item.rating.feat_cost|floatformat:1}} G</td>
+                                            <td>{{item.rating.rating_cost|floatformat:2}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Drawbacks</td>
+                                            <td>{{item.rating.drawbacks|floatformat:1}}</td>
+                                            <td>{{item.rating.feat_drawbacks|floatformat:2}}</td>
+                                            <td>{{item.rating.rating_drawbacks|floatformat:2}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Fields</td>
+                                            <td>{{item.rating.fields}}</td>
+                                            <td>{{item.rating.feat_fields|floatformat:2}}</td>
+                                            <td>{{item.rating.rating_fields|floatformat:2}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Assembly Time</td>
+                                            <td>{{item.rating.time|floatformat:1}}s</td>
+                                            <td>{{item.rating.feat_time|floatformat:2}}s</td>
+                                            <td>{{item.rating.rating_time|floatformat:2}}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Feature Summary</th>
+                                            <th>{{item.rating.features|floatformat:1}}</th>
+                                            <th></th>
+                                            <th>{{item.rating.rating_total|floatformat:2}}</th>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <span class="frame_footer_end"></span>
+                                {% endif %}
+                            </div>
+                        </td>
+
+                        <td class="tooltip">
+                            <span style="color: #9c9;">{{item.rating.features|floatformat:1}}</span><br>
+                            <span style="color: #c99;">{{item.rating.drawbacks|floatformat:1}}</span>
+                            {% if item.features or item.drawbacks %}
+                            <div class="tooltiptext" style="margin-top: 70px; margin-left: -220px;">
+                            <span class="frame_title">Features & Drawbacks</span>
+                            <div class="sub_frame">
+                                <table class="frame_table">
+                                    <tr>
+                                        <th width="10%">+/-</th>
+                                        <th width="10%">ID</th>
+                                        <th width="10%">Emoji</th>
+                                        <th width="60%">Feature</th>
+                                        <th width="20%">Value</th>
+                                    </tr>
+
+                                    {% if item.features %}
+                                        {% for subitem in item.features %}
+                                            <tr>
+                                                <td>🟢</td>
+                                                <td>{{ subitem.id }}</td>
+                                                <td>{{ subitem.emoji }}</td>
+                                                <td>{{ subitem.name }}</td>
+                                                <td>{{ subitem.value|floatformat:1 }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    {% endif %}
+
+                                    {% if item.drawbacks %}
+                                        {% for subitem in item.drawbacks %}
+                                            <tr>
+                                                <td>🔻</td>
+                                                <td>{{ subitem.id }}</td>
+                                                <td>{{ subitem.emoji }}</td>
+                                                <td>{{ subitem.name }}</td>
+                                                <td>{{ subitem.value|floatformat:1 }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    {% endif %}
+                                </table>
+                            </div>
+                            <span class="frame_footer_end"></span>
+                            </div>
+                            {% endif %}
+                        </td>
+                        <td>{{item.stacksize}}</td>
+                        <td>{{item.outputAmount}}</td>
+                        <td class="tooltip">
+                            {{item.baseMaterialCost|floatformat:0}} G
+                            <div class="tooltiptext" style="margin-top: 70px; margin-left: -220px;">
+                            <span class="frame_title">Base Materials</span>
+                                <div class="sub_frame">
+                                    <table class="frame_table">
+                                        <tr>
+                                            <th width="50">Icon</th>
+                                            <th width="50">ID</th>
+                                            <th width="200">Name</th>
+                                            <th width="75">Amount</th>
+                                            <th width="75">Cost</th>
+                                        </tr>
+                                        {% for id, subitem in item.baseMaterials %}
+                                        <tr>
+                                            <td><img height="40" src="/goodcompany/static/img/{{item.icon}}.png"></td>
+                                            <td>{{id}}</td>
+                                            <td>{{subitem.name}}</td>
+                                            <td>{{subitem.amount|floatformat:1}}</td>
+                                            <td>{{subitem.totalcost|floatformat:1}} G</td>
+                                        </tr>
+                                        {% endfor %}
+
+                                        <tr>
+                                            <th colspan="3">Summary</th>
+                                            <th>{{item.baseMaterialsAmount|floatformat:1}}</th>
+                                            <th>{{item.baseMaterialCost|floatformat:1}} G</th>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <span class="frame_footer_end"></span>
+                            </div>
+                        </td>
+                        <td>{{item.sellPrice|floatformat:0}} G</td>
+                        <td>{{item.demand}}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+            <span class="frame_footer"></span>
+        </div>
+    </div>
+
+{% endblock %}
