@@ -157,7 +157,7 @@
                                         </tr>
                                         {% for id, subitem in item.baseMaterials %}
                                         <tr>
-                                            <td><img height="40" src="/goodcompany/static/img/{{item.icon}}.png"></td>
+                                            <td><img height="40" src="/goodcompany/static/img/{{subitem.icon}}.png"></td>
                                             <td>{{id}}</td>
                                             <td>{{subitem.name}}</td>
                                             <td>{{subitem.amount|floatformat:1}}</td>
