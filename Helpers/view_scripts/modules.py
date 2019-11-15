@@ -89,6 +89,10 @@ def module_category(request, category_id):
 
     module_list = []
     for module in Module.objects.filter(Category=category).order_by("OrderInCategory"):
+        researchid = False
+        if DevelopmentProject.objects.filter(UnlocksModules=module):
+            researchid = DevelopmentProject.objects.filter(UnlocksModules=module)[0].id
+
         base_materials = module.collectMaterials()
         base_amount = 0
         base_cost = 0
@@ -99,6 +103,7 @@ def module_category(request, category_id):
         module_list.append({
             "id": module.id,
             "material": module.Material.id,
+            "research": researchid,
             "name": module.Name,
             "order": module.OrderInCategory,
             "icon": module.IconAssetID,

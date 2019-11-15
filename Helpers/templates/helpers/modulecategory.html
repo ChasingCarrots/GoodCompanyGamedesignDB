@@ -30,7 +30,11 @@
                         <td>{{item.id}}</td>
                         <td class="tooltip">
                             {{item.name}}<br>
-                            <a href="{% url 'moduledetail' item.id %}">View Details</a> &nbsp;&nbsp;/&nbsp;&nbsp; <a href="/goodcompany/admin/Production/module/{{item.id}}/">Edit Data</a>
+                            <a href="{% url 'moduledetail' item.id %}">View</a> &nbsp;&nbsp;/&nbsp;&nbsp; <a href="/goodcompany/admin/Production/module/{{item.id}}/">Module</a>
+                            &nbsp;&nbsp;/&nbsp;&nbsp; <a href="/goodcompany/admin/Production/material/{{item.material}}/">Material</a>
+                            {% if item.research %}
+                            &nbsp;&nbsp;/&nbsp;&nbsp; <a href="/goodcompany/admin/Research/developmentproject/{{item.research}}/">Research</a>
+                            {% endif %}
                         </td>
                         <td height="55">
                             {% for subitem in item.fields %}
