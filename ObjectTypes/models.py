@@ -5,6 +5,7 @@ from django.db import models
 import Production
 import common
 from simple_history.models import HistoricalRecords
+from bitfield import BitField
 
 class ObjectType(models.Model):
     history = HistoricalRecords()
@@ -260,11 +261,13 @@ class CrafterPropertyModuleDuration(models.Model):
     CrafterProperty = models.ForeignKey("CrafterProperty", related_name="PossibleModules", blank=False)
     Module = models.ForeignKey(Production.models.Module, blank=False)
     Duration = models.FloatField(blank=False)
+    BatchSize = models.IntegerField(default=1)
 
     def getJsonObject(self):
         return {
             "ModuleID": self.Module.id,
-            "Duration": self.Duration
+            "Duration": self.Duration,
+            "BatchSize": self.BatchSize
         }
 
     class Meta:
@@ -278,6 +281,7 @@ class CrafterProperty(models.Model):
     history = HistoricalRecords()
     ObjectType = models.OneToOneField(ObjectType, related_name="CrafterProperty", blank=False)
     SwitchingTime = models.FloatField(blank=False, default=1)
+    Automatic = models.BooleanField(default=False, help_text="doesn't need an employee when set to true")
 
     def getJsonObject(self):
         possibleModules = [step.getJsonObject() for step in self.PossibleModules.all()]
@@ -563,3 +567,53 @@ class LogisticsWorkplaceProperty(models.Model):
 
     def __unicode__(self):
         return u"LogisticsWorkplaceProperty of %s" % (self.ObjectType)
+
+class TransferTilesPropertyTile(models.Model):
+    history = HistoricalRecords()
+    TransferTilesProperty = models.ForeignKey("TransferTilesProperty", related_name="Tiles", blank=False)
+    XCoord = models.IntegerField(blank=False)
+    YCoord = models.IntegerField(blank=False)
+    PushDirections = BitField(flags=[
+        "PositiveX",
+        "PositiveY",
+        "NegativeX",
+        "NegativeY"
+    ], default=0)
+    ReceiveDirections = BitField(flags=[
+        "PositiveX",
+        "PositiveY",
+        "NegativeX",
+        "NegativeY"
+    ], default=0)
+
+    class Meta:
+        verbose_name = 'Transfer tile'
+        verbose_name_plural = 'Transfer tiles'
+
+    def getJsonObject(self):
+        return {
+            "X": self.XCoord,
+            "Y": self.YCoord,
+            "PushDirections": int(self.PushDirections),
+            "ReceiveDirections": int(self.ReceiveDirections)
+        }
+
+    def __unicode__(self):
+        return u"(%d, %d)" % (self.XCoord, self.YCoord)
+
+
+class TransferTilesProperty(models.Model):
+    history = HistoricalRecords()
+    ObjectType = models.OneToOneField(ObjectType, related_name="TransferTilesProperty", blank=False)
+
+    def getJsonObject(self):
+        return {
+            "Tiles": [tile.getJsonObject() for tile in self.Tiles.all()]
+        }
+
+    class Meta:
+        verbose_name = 'Transfer Tiles Property'
+        verbose_name_plural = "Transfer Tiles Properties"
+
+    def __unicode__(self):
+        return u"TransferTilesProperty of %s" % (self.ObjectType)

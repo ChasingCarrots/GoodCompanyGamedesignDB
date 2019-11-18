@@ -304,6 +304,10 @@ def getManifestJson(request):
     for logWork in LogisticsWorkplaceProperty.objects.all():
         logisticsWorkplaces[str(logWork.ObjectType.id)] = logWork.getJsonObject()
 
+    transferTilesProperties = {}
+    for transTile in TransferTilesProperty.objects.all():
+        transferTilesProperties[str(transTile.ObjectType.id)] = transTile.getJsonObject()
+
     tuningValues = {}
     for tuningValue in TuningValue.objects.all():
         tuningValues[tuningValue.Name] = tuningValue.getJsonValue()
@@ -345,6 +349,7 @@ def getManifestJson(request):
         "ConveyorProperties": conveyorProperties,
         "InventoryGroupProperties": inventoryGroupProperties,
         "LogisticsWorkplaceProperties": logisticsWorkplaces,
+        "TransferTilesProperties": transferTilesProperties,
         "TuningValues": tuningValues,
         "ResearchDataTypes": researchDataTypes,
         "DevelopmentProjects": developmentProjects,

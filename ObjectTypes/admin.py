@@ -3,6 +3,8 @@ from __future__ import unicode_literals
 
 from django.contrib import admin
 from super_inlines.admin import SuperInlineModelAdmin, SuperModelAdmin
+from bitfield import BitField
+from bitfield.forms import BitFieldCheckboxSelectMultiple
 
 from ObjectTypes.models import *
 
@@ -125,6 +127,18 @@ class LogisticsWorkplaceInlineAdmin(SuperInlineModelAdmin, admin.StackedInline):
     model = LogisticsWorkplaceProperty
     extra = 0
 
+class TransferTilesPropertyTileInlineAdmin(SuperInlineModelAdmin, admin.TabularInline):
+    model = TransferTilesPropertyTile
+    extra = 0
+    formfield_overrides = {
+        BitField: {'widget': BitFieldCheckboxSelectMultiple},
+    }
+
+class TransferTilesPropertyInlineAdmin(SuperInlineModelAdmin, admin.StackedInline):
+    model = TransferTilesProperty
+    extra = 0
+    inlines = (TransferTilesPropertyTileInlineAdmin,)
+
 class HasPropertyFilter(admin.SimpleListFilter):
     title = 'Filter title not set'
     parameter_name = 'parameter name not set'
@@ -240,7 +254,8 @@ class ObjectTypeAdmin(SuperModelAdmin):
                ResearchAndDevelopmentPropertyInlineAdmin,
                InventoryGroupPropertyInlineAdmin,
                ConveyorPropertyInlineAdmin,
-               LogisticsWorkplaceInlineAdmin)
+               LogisticsWorkplaceInlineAdmin,
+               TransferTilesPropertyInlineAdmin)
     list_filter = (HasMovablePropertyFilter,
                    HasObjectLookPropertyFilter,
                    HasIconPropertyFilter,
