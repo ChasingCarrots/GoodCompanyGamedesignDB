@@ -258,7 +258,7 @@ def get_module_rating(module):
     rating_data["rating_drawbacks"] = 0.0
     if rating_data["drawbacks"] > 0 and rating_data["features"] > 0:
         rating_data["feat_drawbacks"] = rating_data["drawbacks"] / rating_data["features"]
-        rating_data["rating_drawbacks"] = rating_data["features"] / rating_data["drawbacks"]
+        rating_data["rating_drawbacks"] = rating_data["features"] / rating_data["drawbacks"] * 5.0
 
     rating_data["feat_fields"] = 0.0
     rating_data["rating_fields"] = 0.0
@@ -269,8 +269,8 @@ def get_module_rating(module):
     rating_data["feat_time"] = 0.0
     rating_data["rating_time"] = 0.0
     if rating_data["time"] > 0 and rating_data["features"] > 0:
-        rating_data["feat_time"] = rating_data["time"] / (rating_data["features"] * 10)
-        rating_data["rating_time"] = rating_data["features"] * 10 / rating_data["time"]
+        rating_data["feat_time"] = rating_data["time"] / (rating_data["features"] * 10.0)
+        rating_data["rating_time"] = rating_data["features"] * 10.0 / rating_data["time"] * 1.0
 
     rating_data["rating_total"] = 0
     rating_data["rating_total"] += rating_data["rating_time"] * 0.25
