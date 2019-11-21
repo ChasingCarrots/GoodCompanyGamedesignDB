@@ -52,7 +52,7 @@ class ProjectCategory(models.Model):
     def getJsonObject(self):
         return {
             "Name": self.Name,
-            "Icon": self.Icon,
+            "Icon": self.IconAssetID,
             "Order": self.Order
         }
 
