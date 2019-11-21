@@ -188,7 +188,7 @@ class BuildabelCategory(models.Model):
     def getJsonObject(self):
         return {
             "Name": self.Name,
-            "Icon": self.Icon,
+            "IconAssetID": self.Icon,
             "Order": self.Order
         }
 

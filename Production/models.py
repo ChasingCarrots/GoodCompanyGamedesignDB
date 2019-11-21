@@ -142,7 +142,7 @@ class ModuleCategory(models.Model):
     def getJsonObject(self):
         return {
             "Name": self.Name,
-            "Icon": self.IconAssetID,
+            "IconAssetID": self.IconAssetID,
             "Order": self.Order
         }
 
