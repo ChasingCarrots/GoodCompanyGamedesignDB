@@ -320,6 +320,10 @@ def getManifestJson(request):
     for devProj in DevelopmentProject.objects.all():
         developmentProjects[str(devProj.id)] = devProj.getJsonObject()
 
+    projectCategories = {}
+    for projCat in ProjectCategory.objects.all():
+        projectCategories[str(projCat.id)] = projCat.getJsonObject()
+
     moduleCategories = {}
     for modCat in ModuleCategory.objects.all():
         moduleCategories[str(modCat.id)] = modCat.getJsonObject()
@@ -353,6 +357,7 @@ def getManifestJson(request):
         "TuningValues": tuningValues,
         "ResearchDataTypes": researchDataTypes,
         "DevelopmentProjects": developmentProjects,
+        "ProjectCategories": projectCategories,
         "ModuleCategories": moduleCategories
     }, indent=4), content_type='application/json')
 
