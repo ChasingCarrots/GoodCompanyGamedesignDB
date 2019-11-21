@@ -69,6 +69,7 @@ class DevelopmentProject(models.Model):
     IsHidden = models.BooleanField(default=True)
     Description = models.CharField(max_length=255, blank=True)
     IconAssetID = models.CharField(max_length=255)
+    Tier = models.IntegerField(default=1)
     Category = models.ForeignKey(ProjectCategory, related_name="Projects", null=True, blank=True)
     OrderInCategory = models.IntegerField(default=1)
     DiscoveryPoints = models.IntegerField(default=0)
@@ -92,6 +93,7 @@ class DevelopmentProject(models.Model):
             "IsHidden": self.IsHidden,
             "Description": self.Description,
             "IconAssetID": self.IconAssetID,
+            "Tier": self.Tier,
             "CategoryID": category,
             "OrderInCategory": self.OrderInCategory,
             "DiscoveryPoints": self.DiscoveryPoints,
