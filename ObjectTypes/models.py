@@ -289,6 +289,7 @@ class CrafterProperty(models.Model):
         return {
             "SwitchingDuration": self.SwitchingTime,
             "PossibleModules": possibleModules,
+            "Automatic": self.Automatic
         }
 
     class Meta:
