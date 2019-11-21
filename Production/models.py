@@ -293,11 +293,8 @@ class ProductType(models.Model):
     ProductAssetID = models.CharField(max_length=255, default="")
     Description = models.CharField(max_length=255, blank=True)
     IconAssetID = models.CharField(max_length=255)
-    BigImageAssetID = models.CharField(max_length=255)
     BaseMarketPrice = models.IntegerField(default=100)
     BaseMarketDemand = models.IntegerField(default=10)
-    BaseMarketMaxPriceFactor = models.FloatField(default=5)
-    BaseMarketCurvePotential = models.FloatField(default=2)
     RequiredDiscoveryPoints = models.IntegerField(default=10)
     MandatoryFeatures = models.ManyToManyField("ProductFeature")
     MarketTier = models.IntegerField(
@@ -321,10 +318,7 @@ class ProductType(models.Model):
             "ProductAssetID": self.ProductAssetID,
             "Description": self.Description,
             "IconAssetID": self.IconAssetID,
-            "BigImageAssetID": self.BigImageAssetID,
             "BaseMarketPrice": self.BaseMarketPrice,
-            "BaseMarketMaxPriceFactor": self.BaseMarketMaxPriceFactor,
-            "BaseMarketCurvePotential": self.BaseMarketCurvePotential,
             "RequiredDiscoveryPoints": self.RequiredDiscoveryPoints,
             "PositiveFeatures": [],
             "NegativeFeatures": [],
