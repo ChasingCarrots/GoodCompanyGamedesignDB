@@ -24,7 +24,7 @@ class InitAllModuleMarketPrices(CommandBase):
 
         return "Changed the BaseMarketPrice of %d modules" % numModules
 
-class GenerateComponent(CommandBase):
+class GenerateModule(CommandBase):
     def RunCommand(self, commandline):
         if Module.objects.all().filter(Name="itm_"+commandline):
             return "Module already exists!"
@@ -34,11 +34,24 @@ class GenerateComponent(CommandBase):
         if material is not None:
             module = generateModule(material, commandline)
             if module is not None:
+                project = generateProject(module, commandline)
                 return "<a href='/goodcompany/helper/moduledetail/"+str(module.id)+"'>Module "+str(module.Name)+" Created!</a>"
             else:
                 return "<a href='/goodcompany/helper/materialdetail/"+str(material.id)+"'>Only Material Created!</a>"
         else:
             return "Could not generate Material!"
+
+class GenerateComponents(CommandBase):
+    def RunCommand(self, commandline):
+        if Module.objects.all().filter(Name="itm_"+commandline):
+            return "Module already exists!"
+        if Material.objects.all().filter(Name="itm_"+commandline):
+            return "Material already exists!"
+        module = generateComponent(commandline)
+        if module is not None:
+            return "<a href='/goodcompany/helper/moduledetail/"+str(module.id)+"'>Component "+str(module.Name)+" Created!</a>"
+        else:
+            return ""
 
 
 class SetMaterialIcons(CommandBase):
@@ -89,6 +102,19 @@ def generateMaterial(materialName):
 def generateModule(material, moduleName):
     module = Module.objects.create(Name="itm_"+moduleName, Description="itm_desc_"+moduleName, IconAssetID="icons_modules/itm_"+moduleName, Material=material)
     return module
+
+def generateComponent(materialName):
+    material = Material.objects.create(Name="itm_"+materialName, Description="itm_desc_"+materialName, IconAssetID="icons_components/itm_"+materialName, ModelAssetID="components/itm_"+materialName, TextSpriteAssetID="icons_components", TextSpriteEntry="itm_"+materialName, SizeType=common.NORMALSLOT, StackSize=100, StackBuyPrice=0)
+    module = Module.objects.create(Name="itm_"+materialName, Description="itm_desc_"+materialName, IconAssetID="icons_components/itm_"+materialName, Material=material)
+    return module
+
+def generateProject(module, moduleName):
+    project = DevelopmentProject.objects.create(Name="itm_"+moduleName, Description="itm_desc_"+moduleName, IconAssetID="icons_modules/itm_"+moduleName, IsHidden=False)
+    modules = []
+    modules.append(module)
+    project.UnlocksModules = modules
+    project.save()
+    return project
 
 def getTreeNode(module, parent, count, materials, parents, amount, amounts, position, positions, depth, depths, maxDepth):
     id = count
