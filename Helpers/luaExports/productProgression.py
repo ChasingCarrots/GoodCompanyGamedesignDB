@@ -13,9 +13,9 @@ def export_market_progression(request):
     in_memory = StringIO()
     zipfile = ZipFile(in_memory, "a")
 
-    zipfile.writestr("market_handler.lua", str(generate_market_handler_content()))
+    zipfile.writestr("market_handler.json", str(generate_market_handler_content()))
     for product in ProductType.objects.all():
-        path = 'progression_data/progr_' + str(product.Name).lower().replace(' ', '_') + '.lua'
+        path = 'type_' + str(product.Name).lower().replace(' ', '_') + '.json'
         zipfile.writestr(path, str(generate_market_progression_content(product.id)))
 
     for file in zipfile.filelist:
@@ -44,11 +44,15 @@ def generate_market_handler_content():
     output = template[0].Text
 
     product_text = ""
+    i = 1
     for product in ProductType.objects.all():
         text = product_template[0].Text
+        if not i == 1:
+            text = '\n' + "," + text
+        i += 1
         text = text.replace("%product_id%", str(product.id))
-        text = text.replace("%progression_file%", "progr_" + str(product.Name).lower().replace(" ", "_"))
-        product_text = product_text + '\n' + text + '\n'
+        text = text.replace("%product_name%", str(product.Name).lower().replace(" ", "_"))
+        product_text = product_text + text
 
     output = output.replace("%market_data%", product_text)
     return output
@@ -67,6 +71,10 @@ def generate_market_progression_content(product_id):
     if not phase_template:
         return
 
+    feature_template = LuaTemplates.objects.filter(Name='market_progression_features')
+    if not phase_template:
+        return
+
     product_data = ProductType.objects.filter(id=product_id)
     if not product_data:
         return
@@ -79,28 +87,40 @@ def generate_market_progression_content(product_id):
     s = ""
     for phase in MarketPhase.objects.filter(ProductType=product_data):
         phase_text = phase_template[0].Text
+        if not phase.PhaseIndex == 1:
+            phase_text = '\n' + "," + phase_text
         phase_text = phase_text.replace('%phase_id%', str(phase.PhaseIndex))
-        phase_text = phase_text.replace('%phase_next_id%', str(phase.PhaseIndex+1))
         phase_text = phase_text.replace('%phase_duration%', str(phase.Duration))
         phase_text = phase_text.replace('%phase_points%', str(phase.DiscoveryPoints))
         phase_text = phase_text.replace('%phase_demand_factor%', str(phase.DemandFactor))
         phase_text = phase_text.replace('%phase_price_factor%', str(phase.PriceFactor))
+        phase_text = phase_text.replace('%phase_min_features%', str(phase.MinimumFeatures))
 
         text = ""
-        count = 0
+        count = 1
         for feature in PositiveFeature.objects.filter(MarketPhase=phase):
+            if not count == 1:
+                text = text + "," + '\n'
             count = count + 1
-            text = text + "\n\t" + "progression.features["+str(phase.PhaseIndex)+"][" + str(count) + "] = {" + str(feature.Feature.id) + ", " + str(feature.Max) + "}"
+            feature_text = feature_template[0].Text
+            feature_text = feature_text.replace('%feature_id%', str(feature.Feature.id))
+            feature_text = feature_text.replace('%feature_value%', str(feature.Max))
+            text = text + feature_text
         phase_text = phase_text.replace('%phase_features%', text)
 
         text = ""
-        count = 0
+        count = 1
         for drawback in NegativeFeature.objects.filter(MarketPhase=phase):
+            if not count == 1:
+                text = text + ","
             count = count + 1
-            text = text + "\n\t" + "progression.drawbacks["+str(phase.PhaseIndex)+"][" + str(count) + "] = {" + str(drawback.Feature.id) + ", " + str(drawback.Min) + "}"
+            drawback_text = feature_template[0].Text
+            drawback_text = drawback_text.replace('%feature_id%', str(drawback.Feature.id))
+            drawback_text = drawback_text.replace('%feature_value%', str(drawback.Min))
+            text = text + drawback_text
         phase_text = phase_text.replace('%phase_drawbacks%', text)
 
-        s = s + "\n" + phase_text + "\n\n"
+        s = s + phase_text
     c = c.replace('%progressionphases%', s)
     return c
 
