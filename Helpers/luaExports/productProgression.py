@@ -15,7 +15,7 @@ def export_market_progression(request):
 
     zipfile.writestr("market_handler.json", str(generate_market_handler_content()))
     for product in ProductType.objects.all():
-        path = 'type_' + str(product.Name).lower().replace(' ', '_') + '.json'
+        path = str(product.Name).lower().replace(' ', '_') + '.json'
         zipfile.writestr(path, str(generate_market_progression_content(product.id)))
 
     for file in zipfile.filelist:
