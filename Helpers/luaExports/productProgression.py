@@ -86,7 +86,7 @@ def generate_market_progression_content(product_id):
 
     s = ""
     countPhases = 1
-    for phase in MarketPhase.objects.filter(ProductType=product_data):
+    for phase in MarketPhase.objects.filter(ProductType=product_data).order_by('PhaseIndex'):
         phase_text = phase_template[0].Text
         if not countPhases == 1:
             phase_text = '\n' + "," + phase_text
@@ -100,7 +100,7 @@ def generate_market_progression_content(product_id):
 
         text = ""
         count = 1
-        for feature in PositiveFeature.objects.filter(MarketPhase=phase):
+        for feature in PositiveFeature.objects.filter(MarketPhase=phase).order_by('Feature'):
             if not count == 1:
                 text = text + "," + '\n'
             count = count + 1
@@ -112,7 +112,7 @@ def generate_market_progression_content(product_id):
 
         text = ""
         count = 1
-        for drawback in NegativeFeature.objects.filter(MarketPhase=phase):
+        for drawback in NegativeFeature.objects.filter(MarketPhase=phase).order_by('Feature'):
             if not count == 1:
                 text = text + ","
             count = count + 1
