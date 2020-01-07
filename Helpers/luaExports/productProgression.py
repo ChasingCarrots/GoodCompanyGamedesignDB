@@ -85,10 +85,12 @@ def generate_market_progression_content(product_id):
     c = c.replace('%basePrice%', str(product_data[0].BaseMarketPrice))
 
     s = ""
+    countPhases = 1
     for phase in MarketPhase.objects.filter(ProductType=product_data):
         phase_text = phase_template[0].Text
-        if not phase.PhaseIndex == 1:
+        if not countPhases == 1:
             phase_text = '\n' + "," + phase_text
+        countPhases += 1
         phase_text = phase_text.replace('%phase_id%', str(phase.PhaseIndex))
         phase_text = phase_text.replace('%phase_duration%', str(phase.Duration))
         phase_text = phase_text.replace('%phase_points%', str(phase.DiscoveryPoints))
