@@ -251,8 +251,8 @@ def get_module_rating(module):
     rating_data["rating_cost"] = 0.0
     if rating_data["cost"] > 0 and rating_data["features"] > 0:
         rating_data["feat_cost"] = rating_data["cost"] / (rating_data["features"] * 10)
-        rating_data["rating_cost"] = ((1.0 - (
-                    rating_data["cost"] / (20.0 * rating_data["features"] * 10.0))) * 10.0) + 1.0
+        rating_data["rating_cost"] = ((pow(((20/rating_data["feat_cost"])-1), (1/1.1))*5)+1)
+        #rating_data["rating_cost"] = ((1.0 - (rating_data["cost"] / (20.0 * rating_data["features"] * 10.0))) * 10.0) + 1.0
 
     rating_data["feat_drawbacks"] = 0.0
     rating_data["rating_drawbacks"] = 0.0
