@@ -6,6 +6,7 @@ from django.db import models
 import common
 from simple_history.models import HistoricalRecords
 from django.core.exceptions import ValidationError
+from Research.models import *
 
 class Material(models.Model):
     history = HistoricalRecords()
@@ -161,11 +162,10 @@ class Module(models.Model):
     IconAssetID = models.CharField(max_length=255)
     Material = models.ForeignKey(Material)
     OutputAmount = models.IntegerField(default=1)
-    BaseMarketPrice = models.FloatField(default=1)
-    BaseMarketCapacity = models.IntegerField(default=50)
-    MarketRecoveryFactor = models.FloatField(default=0.5)
-    AssemblyTime = models.FloatField(default=5)
-    SamplingTime = models.FloatField(default=5)
+    BaseMarketPrice = models.FloatField(default=0)
+    BaseMarketCapacity = models.IntegerField(default=20)
+    AssemblyTime = models.FloatField(default=2)
+    SamplingTime = models.FloatField(default=1)
     Category = models.ForeignKey(ModuleCategory, related_name="Modules", null=True, blank=True)
     OrderInCategory = models.IntegerField(default=1)
     Tags = models.CharField(max_length=512, default="", help_text="Separate multiple tags by comma")
@@ -190,7 +190,6 @@ class Module(models.Model):
             "OutputAmount":self.OutputAmount,
             "BaseMarketPrice":self.BaseMarketPrice,
             "BaseMarketCapacity":self.BaseMarketCapacity,
-            "MarketRecoveryFactor":self.MarketRecoveryFactor,
             "AssemblyTime":self.AssemblyTime,
             "SamplingTime":self.SamplingTime,
             "GridDimensions": gridDimensions,
@@ -206,6 +205,12 @@ class Module(models.Model):
 
     def __unicode__(self):
         return unicode(self.Name)
+
+    def get_tier(self):
+        project = DevelopmentProject.objects.filter(UnlocksModule=self)
+        if project:
+            return project[0].Tier
+        return 0
 
     def rawMaterialCost(self):
         totalCost = 0

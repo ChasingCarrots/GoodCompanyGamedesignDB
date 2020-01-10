@@ -12,11 +12,12 @@
                     <tr>
                         <th width="5%">Order</th>
                         <th width="5%">Icon</th>
+                        <th width="5%">Tier</th>
                         <th width="5%">ID</th>
                         <th>Module</th>
                         <th width="85">Fields</th>
-                        <th width="9%">Rating</th>
-                        <th width="9%">Features</th>
+                        <th width="8%">Rating</th>
+                        <th width="8%">Features</th>
                         <th width="6%">Stack</th>
                         <th width="6%">Batch</th>
                         <th width="6%">Material</th>
@@ -27,6 +28,7 @@
                     <tr>
                         <td>{{item.order}}<br></td>
                         <td><a href="{% url 'moduledetail' item.id %}"><img height="40" src="/goodcompany/static/img/{{item.icon}}.png"></a></td>
+                        <td>{{item.tier}}</td>
                         <td>{{item.id}}</td>
                         <td class="tooltip">
                             {{item.name}}<br>
@@ -101,6 +103,9 @@
 
                         <td class="tooltip">
                             <span style="color: #9c9;">{{item.rating.features|floatformat:1}}</span><br>
+                            {% if  item.rating.conversion > 0 %}
+                                <span style="color: #9bf;">{{item.rating.conversion|floatformat:1}}</span><br>
+                            {% endif %}
                             <span style="color: #c99;">{{item.rating.drawbacks|floatformat:1}}</span>
                             {% if item.features or item.drawbacks %}
                             <div class="tooltiptext" style="margin-top: 70px; margin-left: -220px;">
@@ -127,6 +132,18 @@
                                         {% endfor %}
                                     {% endif %}
 
+                                    {% if item.conversion %}
+                                        {% for subitem in item.conversion %}
+                                            <tr>
+                                                <td>🔁</td>
+                                                <td>{{ subitem.id }}</td>
+                                                <td>{{ subitem.emoji }}</td>
+                                                <td>{{ subitem.name }}</td>
+                                                <td>{{ subitem.value|floatformat:1 }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    {% endif %}
+
                                     {% if item.drawbacks %}
                                         {% for subitem in item.drawbacks %}
                                             <tr>
@@ -140,7 +157,11 @@
                                     {% endif %}
                                 </table>
                             </div>
-                            <span class="frame_footer_end"></span>
+                            <span class="frame_footer_end">
+                                {% if item.rating.conversation_rate %}
+                                    Conversation Rate: {{item.rating.conversation_rate|floatformat:2}}
+                                {% endif %}
+                            </span>
                             </div>
                             {% endif %}
                         </td>

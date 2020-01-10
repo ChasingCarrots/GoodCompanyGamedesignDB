@@ -19,6 +19,7 @@ def module_details(request, module_id):
             "id": research.id,
             "samplingTime": module.SamplingTime,
             "data": get_module_datayield(module),
+            "tier": research.Tier
         }
 
     base_materials = module.collectMaterials()
@@ -92,6 +93,7 @@ def module_category(request, category_id):
         researchid = False
         if DevelopmentProject.objects.filter(UnlocksModules=module):
             researchid = DevelopmentProject.objects.filter(UnlocksModules=module)[0].id
+            tier = DevelopmentProject.objects.filter(UnlocksModules=module)[0].Tier
 
         base_materials = module.collectMaterials()
         base_amount = 0
@@ -105,11 +107,13 @@ def module_category(request, category_id):
             "material": module.Material.id,
             "research": researchid,
             "name": module.Name,
+            "tier": tier,
             "order": module.OrderInCategory,
             "icon": module.IconAssetID,
             "fields": get_module_fields(module, 15, 30, 7),
             "rating": get_module_rating(module),
             "features": get_module_features(module),
+            "conversion": get_module_conversion(module),
             "drawbacks": get_module_drawbacks(module),
             "outputAmount": module.OutputAmount,
             "sellPrice": module.BaseMarketPrice,
@@ -197,12 +201,26 @@ def get_module_usedin(module):
 def get_module_features(module):
     features = []
     for feature in module.Features.filter(ProductFeature__IsDrawback="False").order_by("-FeatureValue"):
-        features.append({
-            "id": feature.ProductFeature.id,
-            "name": feature.ProductFeature.Name,
-            "emoji": feature.ProductFeature.HelperEmoji,
-            "value": float(feature.FeatureValue) / 10.0
-        })
+        if float(feature.FeatureValue) > 0:
+            features.append({
+                "id": feature.ProductFeature.id,
+                "name": feature.ProductFeature.Name,
+                "emoji": feature.ProductFeature.HelperEmoji,
+                "value": float(feature.FeatureValue) / 10.0
+            })
+    return features
+
+
+def get_module_conversion(module):
+    features = []
+    for feature in module.Features.filter(ProductFeature__IsDrawback="False").order_by("-FeatureValue"):
+        if float(feature.FeatureValue) < 0:
+            features.append({
+                "id": feature.ProductFeature.id,
+                "name": feature.ProductFeature.Name,
+                "emoji": feature.ProductFeature.HelperEmoji,
+                "value": float(feature.FeatureValue) / 10.0
+            })
     return features
 
 
@@ -237,9 +255,18 @@ def get_module_rating(module):
     rating_data["fields"] = 0
     rating_data["cost"] = module.rawMaterialCost()
     rating_data["time"] = module.AssemblyTime
+    rating_data["conversion"] = 0
 
     for feature in module.Features.filter(ProductFeature__IsDrawback="False").order_by("-FeatureValue"):
-        rating_data["features"] += float(feature.FeatureValue) / 10.0
+        if float(feature.FeatureValue) > 0:
+            rating_data["features"] += float(feature.FeatureValue) / 10.0
+        else:
+            rating_data["conversion"] -= float(feature.FeatureValue) / 10.0
+
+    if rating_data["conversion"] > 0:
+        rating_data["conversation_rate"] = rating_data["features"] / rating_data["conversion"]
+    else:
+        rating_data["conversation_rate"] = 0
 
     for drawback in module.Features.filter(ProductFeature__IsDrawback="True").order_by("FeatureValue"):
         rating_data["drawbacks"] += float(drawback.FeatureValue) / 10.0
@@ -258,7 +285,8 @@ def get_module_rating(module):
     rating_data["rating_drawbacks"] = 0.0
     if rating_data["drawbacks"] > 0 and rating_data["features"] > 0:
         rating_data["feat_drawbacks"] = rating_data["drawbacks"] / rating_data["features"]
-        rating_data["rating_drawbacks"] = rating_data["features"] / rating_data["drawbacks"] * 5.0
+        rating_data["rating_drawbacks"] = 1/pow(rating_data["feat_drawbacks"], (1/0.4))
+        #rating_data["rating_drawbacks"] = rating_data["features"] / rating_data["drawbacks"] * 5.0
 
     rating_data["feat_fields"] = 0.0
     rating_data["rating_fields"] = 0.0
