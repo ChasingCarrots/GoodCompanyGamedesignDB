@@ -14,15 +14,7 @@ class Migration(migrations.Migration):
     operations = [
         migrations.RemoveField(
             model_name='historicalmodule',
-            name='BaseMarketCapacity',
-        ),
-        migrations.RemoveField(
-            model_name='historicalmodule',
             name='MarketRecoveryFactor',
-        ),
-        migrations.RemoveField(
-            model_name='module',
-            name='BaseMarketCapacity',
         ),
         migrations.RemoveField(
             model_name='module',
@@ -36,7 +28,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='historicalmodule',
             name='BaseMarketPrice',
-            field=models.FloatField(default=0),
+            field=models.FloatField(default=20),
         ),
         migrations.AlterField(
             model_name='historicalmodule',
@@ -51,11 +43,21 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='module',
             name='BaseMarketPrice',
-            field=models.FloatField(default=0),
+            field=models.FloatField(default=20),
         ),
         migrations.AlterField(
             model_name='module',
             name='SamplingTime',
             field=models.FloatField(default=1),
+        ),
+        migrations.AddField(
+            model_name='historicalmarketphase',
+            name='DisplayNotification',
+            field=models.BooleanField(default=True),
+        ),
+        migrations.AddField(
+            model_name='marketphase',
+            name='DisplayNotification',
+            field=models.BooleanField(default=True),
         ),
     ]
