@@ -97,6 +97,7 @@ def generate_market_progression_content(product_id):
         phase_text = phase_text.replace('%phase_demand_factor%', str(phase.DemandFactor))
         phase_text = phase_text.replace('%phase_price_factor%', str(phase.PriceFactor))
         phase_text = phase_text.replace('%phase_min_features%', str(phase.MinimumFeatures))
+        phase_text = phase_text.replace('%phase_display_notification%', str(phase.DisplayNotification))
 
         text = ""
         count = 1

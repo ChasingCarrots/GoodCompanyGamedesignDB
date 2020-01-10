@@ -350,6 +350,7 @@ class MarketPhase(models.Model):
     Duration = models.IntegerField(default=30)
     DiscoveryPoints = models.IntegerField(default=1)
     MinimumFeatures = models.IntegerField(default=0)
+    DisplayNotification = models.BooleanField(default=True)
 
     def getJsonObject(self):
         positiveFeatures = []
@@ -369,6 +370,7 @@ class MarketPhase(models.Model):
             "MinimumFeatures": self.MinimumFeatures,
             "PositiveFeatures": positiveFeatures,
             "NegativeFeatures": negativeFeatures,
+            "DisplayNotification": self.DisplayNotification
         }
 
     class Meta:
