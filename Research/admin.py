@@ -19,5 +19,8 @@ class ProjectCategoryAdmin(SuperModelAdmin):
 admin.site.register(ProjectCategory, ProjectCategoryAdmin)
 
 class DevelopmentProjectAdmin(SuperModelAdmin):
+    list_filter = ("Tier", "Category")
+    list_display = ("id", "__unicode__", "Tier",
+                    "Category")
     inlines = (DevelopmentProjectRequiredDataAdmin,)
 admin.site.register(DevelopmentProject, DevelopmentProjectAdmin)
