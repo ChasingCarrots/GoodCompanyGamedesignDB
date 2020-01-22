@@ -7,6 +7,66 @@ from ObjectTypes.models import *
 from Research.models import *
 
 
+class RenameModule(CommandBase):
+    def RunCommand(self, arguments):
+        array = arguments.split(":", 3)
+
+        prefix = array[0]
+        old_name = array[1]
+        new_name = array[2]
+
+        modules = Module.objects.filter(Name=prefix+old_name)
+        if modules:
+            modules[0].Name = prefix+new_name
+            modules[0].Description = prefix+"desc_"+new_name
+            modules[0].IconAssetID = "icons_modules/"+prefix+new_name
+            modules[0].save()
+
+            modules[0].Material.Name = prefix+new_name
+            modules[0].Material.Description = prefix+"desc_"+new_name
+            modules[0].Material.IconAssetID = "icons_modules/"+prefix+new_name
+            modules[0].Material.ModelAssetID = "modules/"+prefix+new_name
+            modules[0].Material.TextSpriteEntry = prefix+new_name
+            modules[0].Material.save()
+
+            projects = DevelopmentProject.objects.filter(UnlocksModules=modules[0])
+            if projects:
+                projects[0].Name = prefix+new_name
+                projects[0].Description = prefix+"desc_"+new_name
+                projects[0].IconAssetID = "icons_modules/"+prefix+new_name
+                projects[0].save()
+                return "module, material and research renamed"
+            else:
+                return "module found, project not"
+
+        return "no module found"
+
+class RenameComponent(CommandBase):
+    def RunCommand(self, arguments):
+        array = arguments.split(":", 3)
+
+        prefix = array[0]
+        old_name = array[1]
+        new_name = array[2]
+
+        modules = Module.objects.filter(Name=prefix+old_name)
+        if modules:
+            modules[0].Name = prefix+new_name
+            modules[0].Description = prefix+"desc_"+new_name
+            modules[0].IconAssetID = "icons_components/"+prefix+new_name
+            modules[0].save()
+
+            modules[0].Material.Name = prefix+new_name
+            modules[0].Material.Description = prefix+"desc_"+new_name
+            modules[0].Material.IconAssetID = "icons_components/"+prefix+new_name
+            modules[0].Material.ModelAssetID = "components/"+prefix+new_name
+            modules[0].Material.TextSpriteEntry = prefix+new_name
+            modules[0].Material.save()
+            return "module and material renamed"
+
+        return "no module found"
+
+
 class InitAllModuleMarketPrices(CommandBase):
     def RunCommand(self, commandline):
         if commandline != "iknow":
