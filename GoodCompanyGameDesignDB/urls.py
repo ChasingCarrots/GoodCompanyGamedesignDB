@@ -21,6 +21,7 @@ from django.views.generic import TemplateView
 
 from Helpers.views import *
 from Helpers.luaExports.productProgression import *
+from Helpers.luaExports.gameData import *
 from Helpers.view_scripts.modules import *
 
 urlpatterns = [
@@ -29,6 +30,7 @@ urlpatterns = [
     url(r'^goodcompany/gamedataManifest/', getManifestJson, name="gamedata"),
     url(r'^goodcompany/viewall/(\w*)', viewAll, name="viewall"),
     url(r'^goodcompany/exportMarketProgression/', export_market_progression, name="exportMarketProgression"),
+    url(r'^goodcompany/exportGameData/', export_game_data, name="exportGameData"),
     url(r'^goodcompany/helper/materialoverview/', materialOverview, name="materialoverview"),
     url(r'^goodcompany/helper/materialdetail/(\d+)', materialDetail, name="materialdetail"),
     url(r'^goodcompany/helper/moduleoverview/', module_overview, name="moduleoverview"),
