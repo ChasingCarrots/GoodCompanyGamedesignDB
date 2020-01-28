@@ -59,5 +59,5 @@ def export_game_data(request):
     output += "return script"
 
     response = HttpResponse(output, content_type='text/plain')
-    response['Content-Disposition'] = 'attachment; filename={0}'.format('gamedatalist.lua')
+    response['Content-Disposition'] = 'attachment; filename={0}'.format('gamedata.lua')
     return response
