@@ -8,6 +8,30 @@ from bitfield.forms import BitFieldCheckboxSelectMultiple
 
 from ObjectTypes.models import *
 
+from django.http import HttpResponse
+
+def export_names(modeladmin, request, queryset):
+    response = HttpResponse(content_type="text/plain")
+    first = True
+    for obj in queryset:
+        if not first:
+            response.write(',\n"%s"' % obj.Name)
+        else:
+            response.write('"%s"' % obj.Name)
+        first = False
+    return response
+
+def export_ids(modeladmin, request, queryset):
+    response = HttpResponse(content_type="text/plain")
+    first = True
+    for obj in queryset:
+        if not first:
+            response.write(',\n%d' % obj.id)
+        else:
+            response.write('%d' % obj.id)
+        first = False
+    return response
+
 admin.site.register(BuildabelCategory)
 
 class MovablePropertyInlineAdmin(SuperInlineModelAdmin, admin.StackedInline):
@@ -236,6 +260,7 @@ class HasLogisticsWorkplaceFilter(HasPropertyFilter):
     parameter_name = "LogisticsWorkplaceProperty"
 
 class ObjectTypeAdmin(SuperModelAdmin):
+    actions = [export_names, export_ids]
     list_display = ("id", "__unicode__")
     inlines = (MovablePropertyInlineAdmin,
                ObjectLookPropertyInlineAdmin, 

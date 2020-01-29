@@ -6,6 +6,30 @@ from super_inlines.admin import SuperInlineModelAdmin, SuperModelAdmin
 
 from Research.models import *
 
+from django.http import HttpResponse
+
+def export_names(modeladmin, request, queryset):
+    response = HttpResponse(content_type="text/plain")
+    first = True
+    for obj in queryset:
+        if not first:
+            response.write(',\n"%s"' % obj.Name)
+        else:
+            response.write('"%s"' % obj.Name)
+        first = False
+    return response
+
+def export_ids(modeladmin, request, queryset):
+    response = HttpResponse(content_type="text/plain")
+    first = True
+    for obj in queryset:
+        if not first:
+            response.write(',\n%d' % obj.id)
+        else:
+            response.write('%d' % obj.id)
+        first = False
+    return response
+
 class ResearchDataTypeAdmin(SuperModelAdmin):
     pass
 admin.site.register(ResearchDataType, ResearchDataTypeAdmin)
@@ -19,6 +43,7 @@ class ProjectCategoryAdmin(SuperModelAdmin):
 admin.site.register(ProjectCategory, ProjectCategoryAdmin)
 
 class DevelopmentProjectAdmin(SuperModelAdmin):
+    actions = [export_names, export_ids]
     list_filter = ("Tier", "Category")
     list_display = ("id", "__unicode__", "Tier",
                     "Category")

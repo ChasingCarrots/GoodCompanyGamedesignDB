@@ -6,6 +6,30 @@ from super_inlines.admin import SuperInlineModelAdmin, SuperModelAdmin
 
 from Production.models import *
 
+from django.http import HttpResponse
+
+def export_names(modeladmin, request, queryset):
+    response = HttpResponse(content_type="text/plain")
+    first = True
+    for obj in queryset:
+        if not first:
+            response.write(',\n"%s"' % obj.Name)
+        else:
+            response.write('"%s"' % obj.Name)
+        first = False
+    return response
+
+def export_ids(modeladmin, request, queryset):
+    response = HttpResponse(content_type="text/plain")
+    first = True
+    for obj in queryset:
+        if not first:
+            response.write(',\n%d' % obj.id)
+        else:
+            response.write('%d' % obj.id)
+        first = False
+    return response
+
 
 class MaterialSellBuyFilter(admin.SimpleListFilter):
     title = "Sellable/Buyable"
@@ -24,6 +48,7 @@ class MaterialSellBuyFilter(admin.SimpleListFilter):
             return queryset.filter(BuyPrice__gt=0)
 
 class MaterialAdmin(SuperModelAdmin):
+    actions = [export_names, export_ids]
     list_filter = (MaterialSellBuyFilter, "SizeType",)
     list_display = ("id", "__unicode__", "SizeType",
                     "StackSize", "StackBuyPrice", "getPricePerUnit", "assetCheck")
@@ -51,6 +76,7 @@ class ModuleCategoryAdmin(SuperModelAdmin):
 admin.site.register(ModuleCategory, ModuleCategoryAdmin)
 
 class ModuleAdmin(SuperModelAdmin):
+    actions = [export_names, export_ids]
     list_display = ("id", "__unicode__")
     inlines = (ModuleInputMaterialAmountAdmin,
                ModuleFeatureAdmin,
@@ -86,6 +112,7 @@ class ProductTypeCaseAdmin(SuperInlineModelAdmin, admin.StackedInline):
     inlines = (CaseBlockingFieldAdmin,)
 
 class ProductTypeAdmin(SuperModelAdmin):
+    actions = [export_names, export_ids]
     list_display = ("id", "__unicode__", )
     inlines = (ProductTypeFieldAdmin,
                ProductTypeCaseAdmin,
