@@ -9,12 +9,20 @@
 
         <h2>Materials</h2>
         <table width="80%">
+            <tr>
+                <td width="35%">Icon ID</td>
+                <td width="15%">Material ID</td>
+                <td width="15%">Module ID</td>
+                <td width="15%">Research ID</td>
+                <td width="35%">String ID</td>
+            </tr>
         {% for item in materialList %}
             <tr>
                 <td width="35%">{{item.icon}}</td>
                 <td width="15%">{{item.id}}</td>
+                <td width="15%">N/A</td>
+                <td width="15%">N/A</td>
                 <td width="35%">{{item.name}}</td>
-                <td width="15%"></td>
             </tr>
         {% endfor %}
         </table>
@@ -22,12 +30,20 @@
 
         <h2>Components</h2>
         <table width="80%">
+            <tr>
+                <td width="35%">Icon ID</td>
+                <td width="15%">Material ID</td>
+                <td width="15%">Module ID</td>
+                <td width="15%">Research ID</td>
+                <td width="35%">String ID</td>
+            </tr>
         {% for item in componentList %}
             <tr>
                 <td width="35%">{{item.icon}}</td>
+                <td width="15%">{{item.material_id}}</td>
                 <td width="15%">{{item.id}}</td>
+                <td width="15%">N/A</td>
                 <td width="35%">{{item.name}}</td>
-                <td width="15%">{{item.isActive}}</td>
             </tr>
         {% endfor %}
         </table>
@@ -35,31 +51,26 @@
 
         <h2>Modules</h2>
         <table width="80%">
+            <tr>
+                <td width="35%">Icon ID</td>
+                <td width="15%">Material ID</td>
+                <td width="15%">Module ID</td>
+                <td width="15%">Research ID</td>
+                <td width="35%">String ID</td>
+            </tr>
         {% for item in moduleList %}
             <tr>
                 <td width="35%">{{item.icon}}</td>
+                <td width="15%">{{item.material_id}}</td>
                 <td width="15%">{{item.id}}</td>
+                <td width="15%">{{item.research_id}}</td>
                 <td width="35%">{{item.name}}</td>
-                <td width="15%">{{item.isActive}}</td>
             </tr>
         {% endfor %}
         </table>
         <br><br>
 
-
-        <h2>Tables</h2>
-        <table width="80%">
-        {% for item in tableList %}
-            <tr>
-                <td width="15%">{{item.id}}</td>
-                <td width="35%">{{item.name}}</td>
-                <td width="50%"></td>
-            </tr>
-        {% endfor %}
-        </table>
-        <br><br>
-
-        <h2>Form Factors</h2>
+        <h2>Product Types</h2>
         <table width="80%">
         {% for item in productTypeList %}
             <tr>
@@ -67,6 +78,19 @@
                 <td width="15%">{{item.id}}</td>
                 <td width="35%">{{item.name}}</td>
                 <td width="15%"></td>
+            </tr>
+        {% endfor %}
+        </table>
+        <br><br>
+
+
+        <h2>Equipment</h2>
+        <table width="80%">
+        {% for item in tableList %}
+            <tr>
+                <td width="15%">{{item.id}}</td>
+                <td width="35%">{{item.name}}</td>
+                <td width="50%"></td>
             </tr>
         {% endfor %}
         </table>

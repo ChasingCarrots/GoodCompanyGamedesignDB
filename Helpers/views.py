@@ -660,10 +660,10 @@ def viewAll(request, displaymode):
             "stacksize": material.StackSize
         })
 
-    slotList = []
-    for slot in ModuleSlotType.objects.all():
+    categoryList = []
+    for category in ModuleCategory.objects.all():
         moduleList = []
-        for module in slot.FittingModule.all():
+        for module in category.Modules.all():
             tables = []
             for crafterModule in CrafterPropertyModuleDuration.objects.all().filter(Module=module):
                 tables.append({
@@ -686,18 +686,10 @@ def viewAll(request, displaymode):
                 "tables": tables
             })
 
-        typeList = []
-        for type in slot.UsedInProductType.all():
-            typeList.append({
-                "id": type.id,
-                "name": type.Name
-            })
-
-        slotList.append({
-            "id": slot.id,
-            "name": slot.Name,
-            "modules": moduleList,
-            "types": typeList
+        categoryList.append({
+            "id": category.id,
+            "name": category.Name,
+            "modules": moduleList
         })
 
     componentList = []
@@ -716,15 +708,12 @@ def viewAll(request, displaymode):
                 "name": research.Name
             })
 
-        isActive = "/"
-        if ModulePathObject.objects.all().filter(Module=module):
-            isActive = "Active"
 
         componentList.append({
             "id": module.id,
+            "material_id": module.Material.id,
             "name": module.Name,
             "icon": module.IconAssetID,
-            "isActive": isActive,
             "researches": researches,
             "tables": tables
         })
@@ -745,15 +734,16 @@ def viewAll(request, displaymode):
                 "name": research.Name
             })
 
-        isActive = "/"
-        if ModulePathObject.objects.all().filter(Module=module):
-            isActive = "Active"
+        project = "N/A"
+        for proj in DevelopmentProject.objects.filter(UnlocksModules=module):
+            project = proj.id
 
         moduleList.append({
             "id": module.id,
+            "material_id": module.Material.id,
+            "research_id": project,
             "name": module.Name,
             "icon": module.IconAssetID,
-            "isActive": isActive,
             "researches": researches,
             "tables": tables
         })
@@ -787,18 +777,10 @@ def viewAll(request, displaymode):
                 "name": research.Name
             })
 
-        slots = []
-        for slot in type.Slots.all():
-            slots.append({
-                "id": slot.id,
-                "name": slot.Name
-            })
-
         productTypeList.append({
             "id": type.id,
             "name": type.Name,
             "icon": type.IconAssetID,
-            "slots": slots,
             "researches": researches
         })
 
@@ -852,7 +834,7 @@ def viewAll(request, displaymode):
         "materialList": materialList,
         "componentList": componentList,
         "moduleList": moduleList,
-        "slotList": slotList,
+        "categoryList": categoryList,
         "tableList": tableList,
         "productTypeList": productTypeList,
         "projectList": projectList

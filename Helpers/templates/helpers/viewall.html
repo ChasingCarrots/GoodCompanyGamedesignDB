@@ -73,9 +73,6 @@
             <a href="{{url}}#tables" class="item">Tables</a>
         </div>
         <div class="ui container">
-            <a href="{{url}}#slots" class="item">Slots</a>
-        </div>
-        <div class="ui container">
             <a href="{{url}}#producttypes" class="item">Product Types</a>
         </div>
         <div class="ui container">
@@ -168,15 +165,15 @@
                     <th width="10%">Icon</th>
                     <th width="10%">ID</th>
                     <th width="20%">Name</th>
-                    <th width="20%">Slot</th>
+                    <th width="20%">Category</th>
                     <th width="20%">Unlocked By</th>
                     <th width="20%">Crafted At</th>
                 </tr>
             </thead>
             <tbody>
 
-            {% for item in slotList %}
-            <a id="slot_{{item.id}}"></a>
+            {% for item in categoryList %}
+            <a id="category_{{item.id}}"></a>
             {% for subitem in item.modules %}
             <tr>
                 <td>
@@ -242,7 +239,7 @@
         <br><br>
 
 
-        <h2 id="slots" class="ui header">Slot List</h2>
+        <h2 id="categories" class="ui header">Category List</h2>
         <table class="ui celled table" style="text-align:center;">
             <thead>
                 <tr>
@@ -253,13 +250,13 @@
                 </tr>
             </thead>
             <tbody>
-            {% for item in slotList %}
+            {% for item in categoryList %}
             <tr>
                 <td>
                     {{item.id}}
                 </td>
                 <td>
-                    <a href="{{url}}#slot_{{item.id}}">{{item.name}}</a>
+                    <a href="{{url}}#category_{{item.id}}">{{item.name}}</a>
                 </td>
                 <td>
                     {% for subitem in item.modules %}
@@ -287,7 +284,6 @@
                     <th width="8%">Icon</th>
                     <th width="7%">ID</th>
                     <th width="15%">Name</th>
-                    <th width="25%">Slots</th>
                     <th width="25%">Unlocked By</th>
                 </tr>
             </thead>
@@ -302,11 +298,6 @@
                 </td>
                 <td>
                     {{item.name}}
-                </td>
-                <td>
-                    {% for subitem in item.slots %}
-                        {{subitem.name}} ({{subitem.id}})<br>
-                    {% endfor %}
                 </td>
                 <td>
                     {% for subitem in item.researches %}
