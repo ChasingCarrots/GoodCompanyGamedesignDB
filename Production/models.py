@@ -232,7 +232,7 @@ class Module(models.Model):
                 batch_complexity = float(module[0].get_complexity())
                 if batch_factor:
                     batch_complexity = batch_complexity * float(batch_factor[0].Value)
-                batch_complexity = batch_complexity * (input_material.Amount / module[0].OutputAmount)
+                batch_complexity = batch_complexity * (float(input_material.Amount) / float(module[0].OutputAmount))
                 complexity = complexity + batch_complexity
 
         return complexity
