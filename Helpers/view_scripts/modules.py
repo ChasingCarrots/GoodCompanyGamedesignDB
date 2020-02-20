@@ -271,7 +271,10 @@ def get_module_rating(module):
         rating_data["conversation_rate"] = 0
 
     for drawback in module.Features.filter(ProductFeature__IsDrawback="True").order_by("FeatureValue"):
-        rating_data["drawbacks"] += float(drawback.FeatureValue) / 10.0
+        if drawback.ProductFeature.Name == "feat_weight":
+            rating_data["drawbacks"] += float(drawback.FeatureValue) / 10.0
+        else:
+            rating_data["drawbacks"] += float(drawback.FeatureValue*0.5) / 10.0
 
     for field in module.GridFields.all():
         rating_data["fields"] += 1
