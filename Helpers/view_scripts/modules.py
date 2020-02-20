@@ -19,7 +19,7 @@ def module_details(request, module_id):
             "id": research.id,
             "samplingTime": module.SamplingTime,
             "data": get_module_datayield(module),
-            "tier": research.Tier
+            "tier": research.Tier + 1
         }
 
     base_materials = module.collectMaterials()
@@ -92,6 +92,7 @@ def module_category(request, category_id):
     module_list = []
     for module in Module.objects.filter(Category=category).order_by("OrderInCategory"):
         researchid = False
+        tier = -1
         if DevelopmentProject.objects.filter(UnlocksModules=module):
             researchid = DevelopmentProject.objects.filter(UnlocksModules=module)[0].id
             tier = DevelopmentProject.objects.filter(UnlocksModules=module)[0].Tier
@@ -108,7 +109,7 @@ def module_category(request, category_id):
             "material": module.Material.id,
             "research": researchid,
             "name": module.Name,
-            "tier": tier,
+            "tier": tier + 1,
             "complexity": module.get_complexity(),
             "order": module.OrderInCategory,
             "icon": module.IconAssetID,
