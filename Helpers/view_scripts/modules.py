@@ -44,6 +44,7 @@ def module_details(request, module_id):
         "fields": get_module_fields(module, 20, 60, 10),
         "baseMaterials": base_materials.items(),
         "baseMaterialsAmount": base_amount,
+        "complexity": module.get_complexity(),
         "baseMaterialCost": base_cost,
         "inputMaterials": get_input_materials(module),
         "outputAmount": module.OutputAmount,
@@ -108,6 +109,7 @@ def module_category(request, category_id):
             "research": researchid,
             "name": module.Name,
             "tier": tier,
+            "complexity": module.get_complexity(),
             "order": module.OrderInCategory,
             "icon": module.IconAssetID,
             "fields": get_module_fields(module, 15, 30, 7),
@@ -274,31 +276,39 @@ def get_module_rating(module):
     for field in module.GridFields.all():
         rating_data["fields"] += 1
 
+    rating_calculation_costs = str(BalanceValue.objects.filter(Name="rating_calculation_costs")[0].Value)
+    rating_calculation_costs = rating_calculation_costs.replace("$cost", "rating_data[\"feat_cost\"]")
     rating_data["feat_cost"] = 0.0
     rating_data["rating_cost"] = 0.0
     if rating_data["cost"] > 0 and rating_data["features"] > 0:
         rating_data["feat_cost"] = rating_data["cost"] / (rating_data["features"] * 10)
-        rating_data["rating_cost"] = ((pow(((20/rating_data["feat_cost"])-1), (1/1.1))*5)+1)
-        #rating_data["rating_cost"] = ((1.0 - (rating_data["cost"] / (20.0 * rating_data["features"] * 10.0))) * 10.0) + 1.0
+        rating_data["rating_cost"] = eval(rating_calculation_costs)
 
+    rating_calculation_drawback = str(BalanceValue.objects.filter(Name="rating_calculation_drawback")[0].Value)
+    rating_calculation_drawback = rating_calculation_drawback.replace("$drawbacks", "rating_data[\"feat_drawbacks\"]")
     rating_data["feat_drawbacks"] = 0.0
     rating_data["rating_drawbacks"] = 0.0
     if rating_data["drawbacks"] > 0 and rating_data["features"] > 0:
         rating_data["feat_drawbacks"] = rating_data["drawbacks"] / rating_data["features"]
-        rating_data["rating_drawbacks"] = 1/pow(rating_data["feat_drawbacks"], (1/0.4))
-        #rating_data["rating_drawbacks"] = rating_data["features"] / rating_data["drawbacks"] * 5.0
+        rating_data["rating_drawbacks"] = eval(rating_calculation_drawback)
 
+    rating_calculation_fields = str(BalanceValue.objects.filter(Name="rating_calculation_fields")[0].Value)
+    rating_calculation_fields = rating_calculation_fields.replace("$features", "rating_data[\"features\"]")
+    rating_calculation_fields = rating_calculation_fields.replace("$fields", "rating_data[\"fields\"]")
     rating_data["feat_fields"] = 0.0
     rating_data["rating_fields"] = 0.0
     if rating_data["fields"] > 0 and rating_data["features"] > 0:
         rating_data["feat_fields"] = rating_data["fields"] / (rating_data["features"] * 10)
-        rating_data["rating_fields"] = rating_data["features"] * 10 / rating_data["fields"] * 1.5
+        rating_data["rating_fields"] = eval(rating_calculation_fields)
 
+    rating_calculation_time = str(BalanceValue.objects.filter(Name="rating_calculation_time")[0].Value)
+    rating_calculation_time = rating_calculation_time.replace("$features", "rating_data[\"features\"]")
+    rating_calculation_time = rating_calculation_time.replace("$time", "rating_data[\"time\"]")
     rating_data["feat_time"] = 0.0
     rating_data["rating_time"] = 0.0
     if rating_data["time"] > 0 and rating_data["features"] > 0:
         rating_data["feat_time"] = rating_data["time"] / (rating_data["features"] * 10.0)
-        rating_data["rating_time"] = rating_data["features"] * 10.0 / rating_data["time"] * 1.0
+        rating_data["rating_time"] = eval(rating_calculation_time)
 
     rating_data["rating_total"] = 0
     rating_data["rating_total"] += rating_data["rating_time"] * 0.25

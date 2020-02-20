@@ -175,10 +175,6 @@ class BuildablePropertyCanBuildInWorkplace(models.Model):
         verbose_name = 'CanBuildInWorkplace'
         verbose_name_plural = 'CanBuildInWorkplaces'
 
-class BuildsObjectConnection(models.Model):
-    history = HistoricalRecords()
-    BuildsObject = models.ForeignKey(ObjectType, related_name="BuildsObjectConnection", blank=False)
-    BuiltBy = models.OneToOneField("BuildableProperty", related_name="BuildsObjectConnection", blank=False)
 
 class BuildabelCategory(models.Model):
     Name = models.CharField(max_length=255)
@@ -221,7 +217,6 @@ class BuildableProperty(models.Model):
         return {
             "NeededMaterials": neededmats,
             "BuildDuration": self.BuildDuration,
-            "BuildsObjectID": self.BuildsObjectConnection.BuildsObject.id,
             "CanBuildInWorkplaces": canBuildInWorkplaces,
             "Category": category,
             "BuildCost": self.MoneyCost,

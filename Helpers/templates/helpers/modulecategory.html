@@ -11,13 +11,13 @@
                 <table class="frame_table">
                     <tr>
                         <th width="5%">Order</th>
-                        <th width="5%">Icon</th>
-                        <th width="5%">Tier</th>
-                        <th width="5%">ID</th>
-                        <th>Module</th>
+                        <th width="10%">Module</th>
                         <th width="85">Fields</th>
-                        <th width="8%">Rating</th>
-                        <th width="8%">Features</th>
+                        <th>Data</th>
+                        <th width="6%">Tier</th>
+                        <th width="6%">Compl.</th>
+                        <th width="6%">Rating</th>
+                        <th width="6%">Features</th>
                         <th width="6%">Stack</th>
                         <th width="6%">Batch</th>
                         <th width="6%">Material</th>
@@ -27,17 +27,8 @@
                     {% for item in modules %}
                     <tr>
                         <td>{{item.order}}<br></td>
-                        <td><a href="{% url 'moduledetail' item.id %}"><img height="40" src="/goodcompany/static/img/{{item.icon}}.png"></a></td>
-                        <td>{{item.tier}}</td>
-                        <td>{{item.id}}</td>
-                        <td class="tooltip">
-                            {{item.name}}<br>
-                            <a href="{% url 'moduledetail' item.id %}">View</a> &nbsp;&nbsp;/&nbsp;&nbsp; <a href="/goodcompany/admin/Production/module/{{item.id}}/">Module</a>
-                            &nbsp;&nbsp;/&nbsp;&nbsp; <a href="/goodcompany/admin/Production/material/{{item.material}}/">Material</a>
-                            {% if item.research %}
-                            &nbsp;&nbsp;/&nbsp;&nbsp; <a href="/goodcompany/admin/Research/developmentproject/{{item.research}}/">Research</a>
-                            {% endif %}
-                        </td>
+                        <td><a href="{% url 'moduledetail' item.id %}">{{item.name}}</a><br>
+                            <a href="{% url 'moduledetail' item.id %}"><img height="40" src="/goodcompany/static/img/{{item.icon}}.png"></a></td>
                         <td height="55">
                             {% for subitem in item.fields %}
                             <div class="grid_container">
@@ -51,6 +42,16 @@
                             </div>
                             {% endfor %}
                         </td>
+
+                        <td class="tooltip">
+                            <a href="/goodcompany/admin/Production/module/{{item.id}}/">Edit Module ({{item.id}})</a><br>
+                            <a href="/goodcompany/admin/Production/material/{{item.material}}/">Edit Material ({{item.material}})</a><br>
+                            {% if item.research %}
+                            <a href="/goodcompany/admin/Research/developmentproject/{{item.research}}/">Edit Research ({{item.research}})</a>
+                            {% endif %}
+                        </td>
+                        <td>{{item.tier}}</td>
+                        <td>{{item.complexity|floatformat:2}}</td>
                         <td class="tooltip">
                             {{item.rating.rating_total|floatformat:2}}
                             {% if item.features %}
@@ -100,6 +101,7 @@
                                 {% endif %}
                             </div>
                         </td>
+
 
                         <td class="tooltip">
                             <span style="color: #9c9;">{{item.rating.features|floatformat:1}}</span><br>

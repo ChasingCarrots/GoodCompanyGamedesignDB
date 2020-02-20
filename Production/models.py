@@ -7,6 +7,7 @@ import common
 from simple_history.models import HistoricalRecords
 from django.core.exceptions import ValidationError
 from Research.models import *
+from BalancingHelper.models import *
 
 class Material(models.Model):
     history = HistoricalRecords()
@@ -211,6 +212,31 @@ class Module(models.Model):
         if project:
             return project[0].Tier
         return 0
+
+    def get_complexity(self):
+        complexity = 0
+
+        per_step = BalanceValue.objects.filter(Name="complexity_per_step")
+        per_input = BalanceValue.objects.filter(Name="complexity_per_input")
+        batch_factor = BalanceValue.objects.filter(Name="complexity_batch_factor")
+
+        if per_step:
+            complexity = float(complexity) + float(per_step[0].Value)
+
+        for input_material in self.InputMaterials.all():
+            if per_input:
+                complexity = complexity + float(per_input[0].Value)
+
+            module = Module.objects.filter(Material=input_material.Material)
+            if module:
+                batch_complexity = float(module[0].get_complexity())
+                if batch_factor:
+                    batch_complexity = batch_complexity * float(batch_factor[0].Value)
+                batch_complexity = batch_complexity * (input_material.Amount / module[0].OutputAmount)
+                complexity = complexity + batch_complexity
+
+        return complexity
+
 
     def rawMaterialCost(self):
         totalCost = 0
