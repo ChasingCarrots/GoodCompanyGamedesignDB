@@ -758,8 +758,6 @@ def viewAll(request, displaymode):
                 "name": research.Name
             })
 
-        print(object.BuildableProperty.BuildsObjectConnection)
-
         tableList.append({
             "id": object.id,
             "name": object.Name
