@@ -210,9 +210,7 @@
             <thead>
                 <tr>
                     <th width="10%">Build ID</th>
-                    <th width="10%">Table ID</th>
                     <th width="30%">Name</th>
-                    <th width="30%">Unlocked By</th>
                 </tr>
             </thead>
             <tbody>
@@ -222,15 +220,7 @@
                     {{item.id}}
                 </td>
                 <td>
-                    {{item.tableid}}
-                </td>
-                <td>
                     {{item.name}}
-                </td>
-                <td>
-                    {% for subitem in item.researches %}
-                        {{subitem.name}} ({{subitem.id}})<br>
-                    {% endfor %}
                 </td>
             </tr>
             {% endfor %}

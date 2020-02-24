@@ -762,9 +762,7 @@ def viewAll(request, displaymode):
 
         tableList.append({
             "id": object.id,
-            "tableid": object.BuildableProperty.BuildsObjectConnection.BuildsObject.id,
-            "name": object.BuildableProperty.BuildsObjectConnection.BuildsObject.Name,
-            "researches": researches
+            "name": object.Name
         })
 
     productTypeList = []
