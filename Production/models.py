@@ -226,13 +226,15 @@ class Module(models.Model):
                 value = value + (float(input_material.Amount) / float(input_material.Material.StackSize))
         return value
 
-    def get_component_batches(self):
+    def get_component_batches(self, do_recursive):
         value = 0.0
         for input_material in self.InputMaterials.all():
             module = Module.objects.filter(Material=input_material.Material)
             if module:
                 if not module[0].is_module():
                     value = value + (float(input_material.Amount) / float(module[0].OutputAmount))
+                    if do_recursive:
+                        value = value + module[0].get_component_batches(do_recursive)
         return value
 
     def get_complexity(self):

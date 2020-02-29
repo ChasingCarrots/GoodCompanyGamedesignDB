@@ -111,7 +111,7 @@ def module_category(request, category_id):
             "name": module.Name,
             "tier": tier + 1,
             "complexity": module.get_complexity(),
-            "component_batches": module.get_component_batches(),
+            "component_batches": module.get_component_batches(True),
             "order": module.OrderInCategory,
             "icon": module.IconAssetID,
             "fields": get_module_fields(module, 15, 30, 7),
