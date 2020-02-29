@@ -234,7 +234,7 @@ class Module(models.Model):
                 if not module[0].is_module():
                     value = value + (float(input_material.Amount) / float(module[0].OutputAmount))
                     if do_recursive:
-                        value = value + (module[0].get_component_batches(do_recursive) / float(module[0].OutputAmount))
+                        value = value + (module[0].get_component_batches(do_recursive) * (float(input_material.Amount) / float(module[0].OutputAmount)))
         return value
 
     def get_complexity(self):
