@@ -16,13 +16,14 @@
                         <th>Data</th>
                         <th width="6%">Tier</th>
                         <th width="6%">Compl.</th>
+                        <th width="6%">Comp. B</th>
                         <th width="6%">Rating</th>
                         <th width="6%">Features</th>
                         <th width="6%">Stack</th>
                         <th width="6%">Batch</th>
                         <th width="6%">Material</th>
                         <th width="6%">Price</th>
-                        <th width="6%">Demand</th>
+                        <!--<th width="6%">Demand</th>-->
                     </tr>
                     {% for item in modules %}
                     <tr>
@@ -52,6 +53,7 @@
                         </td>
                         <td>{{item.tier}}</td>
                         <td>{{item.complexity|floatformat:2}}</td>
+                        <td>{{item.component_batches|floatformat:2}}</td>
                         <td class="tooltip">
                             {{item.rating.rating_total|floatformat:2}}
                             {% if item.features %}
@@ -203,7 +205,7 @@
                             </div>
                         </td>
                         <td>{{item.sellPrice|floatformat:0}} G</td>
-                        <td>{{item.demand}}</td>
+                        <!--<td>{{item.demand}}</td>-->
                     </tr>
                     {% endfor %}
                 </table>

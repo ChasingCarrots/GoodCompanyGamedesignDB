@@ -213,6 +213,28 @@ class Module(models.Model):
             return project[0].Tier
         return 0
 
+    def is_module(self):
+        if self.Features.all():
+            return True
+        return False
+
+    def get_material_stacks(self):
+        value = 0.0
+        for input_material in self.InputMaterials.all():
+            module = Module.objects.filter(Material=input_material.Material)
+            if not module:
+                value = value + (float(input_material.Amount) / float(input_material.Material.StackSize))
+        return value
+
+    def get_component_batches(self):
+        value = 0.0
+        for input_material in self.InputMaterials.all():
+            module = Module.objects.filter(Material=input_material.Material)
+            if module:
+                if not module[0].is_module():
+                    value = value + (float(input_material.Amount) / float(module[0].OutputAmount))
+        return value
+
     def get_complexity(self):
         complexity = 0
 
