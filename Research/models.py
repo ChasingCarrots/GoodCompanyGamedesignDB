@@ -46,12 +46,14 @@ class DevelopmentProjectRequiredData(models.Model):
 
 class ProjectCategory(models.Model):
     Name = models.CharField(max_length=255)
+    Description = models.CharField(max_length=255, blank=True)
     Order = models.IntegerField(default=1)
     IconAssetID = models.CharField(max_length=255, null=True, blank=True)
 
     def getJsonObject(self):
         return {
             "Name": self.Name,
+            "Description": self.Description,
             "IconAssetID": self.IconAssetID,
             "Order": self.Order
         }
