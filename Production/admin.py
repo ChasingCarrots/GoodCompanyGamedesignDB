@@ -88,23 +88,9 @@ class ProductTypeFieldAdmin(SuperInlineModelAdmin, admin.TabularInline):
     model = ProductTypeField
     extra = 0
 
-class PositiveFeatureAdmin(SuperInlineModelAdmin, admin.TabularInline):
-    model = PositiveFeature
-    extra = 0
-
-class NegativeFeatureAdmin(SuperInlineModelAdmin, admin.TabularInline):
-    model = NegativeFeature
-    extra = 0
-
 class CaseBlockingFieldAdmin(SuperInlineModelAdmin, admin.TabularInline):
     model = ProductTypeCaseBlockingField
     extra = 0
-
-class MarketPhaseAdmin (SuperInlineModelAdmin, admin.StackedInline):
-    model = MarketPhase
-    extra = 0
-    inlines = (PositiveFeatureAdmin,
-               NegativeFeatureAdmin)
 
 class ProductTypeCaseAdmin(SuperInlineModelAdmin, admin.StackedInline):
     model = ProductTypeCase
@@ -115,8 +101,7 @@ class ProductTypeAdmin(SuperModelAdmin):
     actions = [export_names, export_ids]
     list_display = ("id", "__unicode__", )
     inlines = (ProductTypeFieldAdmin,
-               ProductTypeCaseAdmin,
-               MarketPhaseAdmin)
+               ProductTypeCaseAdmin)
 admin.site.register(ProductType, ProductTypeAdmin)
 
 class ProductFeatureAdmin(SuperModelAdmin):

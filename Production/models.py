@@ -392,46 +392,6 @@ class ProductType(models.Model):
     def __unicode__(self):
         return unicode(self.Name)
 
-class MarketPhase(models.Model):
-    history = HistoricalRecords()
-    Name = models.CharField(max_length=255)
-    ProductType = models.ForeignKey(ProductType, related_name="MarketPhases")
-    PhaseIndex = models.IntegerField(default=0)
-    PriceFactor = models.FloatField(default=1.0)
-    DemandFactor = models.FloatField(default=1.0)
-    Duration = models.IntegerField(default=30)
-    DiscoveryPoints = models.IntegerField(default=1)
-    MinimumFeatures = models.IntegerField(default=0)
-    DisplayNotification = models.BooleanField(default=True)
-
-    def getJsonObject(self):
-        positiveFeatures = []
-        for pos in self.PositiveFeatures.all():
-            positiveFeatures.append(pos.getJsonObject())
-        negativeFeatures = []
-        for neg in self.NegativeFeatures.all():
-            negativeFeatures.append(neg.getJsonObject())
-
-        return {
-            "Name": self.Name,
-            "Index": self.PhaseIndex,
-            "PriceFactor": self.PriceFactor,
-            "DemandFactor": self.DemandFactor,
-            "Duration": self.Duration,
-            "DiscoveryPoints": self.DiscoveryPoints,
-            "MinimumFeatures": self.MinimumFeatures,
-            "PositiveFeatures": positiveFeatures,
-            "NegativeFeatures": negativeFeatures,
-            "DisplayNotification": self.DisplayNotification
-        }
-
-    class Meta:
-        verbose_name = "Market Phase"
-        verbose_name_plural = "Market Phases"
-
-    def __unicode__(self):
-        return u"Phase %d: %d Days" % (self.PhaseIndex, self.Duration)
-
 class ProductFeature(models.Model):
     history = HistoricalRecords()
     Name = models.CharField(max_length=255)
@@ -454,45 +414,6 @@ class ProductFeature(models.Model):
 
     def __unicode__(self):
         return unicode(self.HelperEmoji + " " + self.Name)
-
-class PositiveFeature(models.Model):
-    history = HistoricalRecords()
-    MarketPhase = models.ForeignKey(MarketPhase, related_name="PositiveFeatures", null=True, blank=True)
-    Feature = models.ForeignKey(ProductFeature, related_name="ProductTypePositiveFeatures")
-    Max = models.IntegerField(default = 1)
-
-    def getJsonObject(self):
-        return {
-            "FeatureID": self.Feature.id,
-            "Value": self.Max,
-        }
-
-    class Meta:
-        verbose_name = "Positive Feature"
-        verbose_name_plural = "Positive Features"
-
-    def __unicode__(self):
-        return u"%s - %d" % (unicode(self.Feature), self.Max)
-
-class NegativeFeature(models.Model):
-    history = HistoricalRecords()
-    MarketPhase = models.ForeignKey(MarketPhase, related_name="NegativeFeatures", null=True, blank=True)
-    Feature = models.ForeignKey(ProductFeature, related_name="ProductTypeNegativeFeatures")
-    Min = models.IntegerField(default = 1)
-
-    def getJsonObject(self):
-        return {
-            "FeatureID": self.Feature.id,
-            "Value": self.Min,
-        }
-
-    class Meta:
-        verbose_name = "Negative Feature"
-        verbose_name_plural = "Negative Features"
-
-    def __unicode__(self):
-        return u"%s - %d" % (unicode(self.Feature), self.Min)
-
 
 class ProductTypeCase(models.Model):
     history = HistoricalRecords()
