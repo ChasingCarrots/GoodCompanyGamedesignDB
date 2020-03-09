@@ -328,6 +328,10 @@ def getManifestJson(request):
     for modCat in ModuleCategory.objects.all():
         moduleCategories[str(modCat.id)] = modCat.getJsonObject()
 
+    flagtilesProperties = {}
+    for flagtileProp in FlagTilesProperty.objects.all():
+        flagtilesProperties[str(flagtileProp.ObjectType.id)] = flagtileProp.getJsonObject()
+
     return HttpResponse(json.dumps({
         "Materials": materials,
         "Modules": modules,
@@ -354,6 +358,7 @@ def getManifestJson(request):
         "InventoryGroupProperties": inventoryGroupProperties,
         "LogisticsWorkplaceProperties": logisticsWorkplaces,
         "TransferTilesProperties": transferTilesProperties,
+        "FlagTilesProperties": flagtilesProperties,
         "TuningValues": tuningValues,
         "ResearchDataTypes": researchDataTypes,
         "DevelopmentProjects": developmentProjects,

@@ -620,3 +620,44 @@ class TransferTilesProperty(models.Model):
 
     def __unicode__(self):
         return u"TransferTilesProperty of %s" % (self.ObjectType)
+
+class FlagTilesPropertyTile(models.Model):
+    history = HistoricalRecords()
+    FlagsTilesProperty = models.ForeignKey("FlagTilesProperty", related_name="Tiles", blank=False)
+    XCoord = models.IntegerField(blank=False)
+    YCoord = models.IntegerField(blank=False)
+    Flags = BitField(flags=[
+        "FloorTile",
+        "ConveyorHatch",
+        "BlockBuildable"
+    ], default=0)
+
+    class Meta:
+        verbose_name = 'Flags tile'
+        verbose_name_plural = 'Flags tiles'
+
+    def getJsonObject(self):
+        return {
+            "X": self.XCoord,
+            "Y": self.YCoord,
+            "Flags": int(self.Flags)
+        }
+
+    def __unicode__(self):
+        return u"(%d, %d)" % (self.XCoord, self.YCoord)
+
+class FlagTilesProperty(models.Model):
+    history = HistoricalRecords()
+    ObjectType = models.OneToOneField(ObjectType, related_name="FlagTilesProperty", blank=False)
+
+    def getJsonObject(self):
+        return {
+            "Tiles": [tile.getJsonObject() for tile in self.Tiles.all()]
+        }
+
+    class Meta:
+        verbose_name = 'Flag Tiles Property'
+        verbose_name_plural = "Flag Tiles Properties"
+
+    def __unicode__(self):
+        return u"FlagTilesProperty of %s" % (self.ObjectType)

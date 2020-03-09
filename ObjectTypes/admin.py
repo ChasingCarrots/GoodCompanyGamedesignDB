@@ -158,6 +158,18 @@ class TransferTilesPropertyInlineAdmin(SuperInlineModelAdmin, admin.StackedInlin
     extra = 0
     inlines = (TransferTilesPropertyTileInlineAdmin,)
 
+class FlagTilesPropertyTileInlineAdmin(SuperInlineModelAdmin, admin.TabularInline):
+    model = FlagTilesPropertyTile
+    extra = 0
+    formfield_overrides = {
+        BitField: {'widget': BitFieldCheckboxSelectMultiple},
+    }
+
+class FlagTilesPropertyInlineAdmin(SuperInlineModelAdmin, admin.StackedInline):
+    model = FlagTilesProperty
+    extra = 0
+    inlines = (FlagTilesPropertyTileInlineAdmin,)
+
 class HasPropertyFilter(admin.SimpleListFilter):
     title = 'Filter title not set'
     parameter_name = 'parameter name not set'
@@ -275,7 +287,8 @@ class ObjectTypeAdmin(SuperModelAdmin):
                InventoryGroupPropertyInlineAdmin,
                ConveyorPropertyInlineAdmin,
                LogisticsWorkplaceInlineAdmin,
-               TransferTilesPropertyInlineAdmin)
+               TransferTilesPropertyInlineAdmin,
+               FlagTilesPropertyInlineAdmin)
     list_filter = (HasMovablePropertyFilter,
                    HasObjectLookPropertyFilter,
                    HasIconPropertyFilter,
