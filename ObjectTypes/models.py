@@ -204,7 +204,7 @@ class BuildableProperty(models.Model):
     Category = models.ForeignKey(BuildabelCategory, blank=True, null=True)
     OrderInCategory = models.IntegerField(default=1)
     MoneyCost = models.IntegerField(default=1000)
-
+    CanBeBuiltOutdoors = models.BooleanField(default=False)
 
     def getJsonObject(self):
         neededmats = []
@@ -222,7 +222,8 @@ class BuildableProperty(models.Model):
             "CanBuildInWorkplaces": canBuildInWorkplaces,
             "Category": category,
             "BuildCost": self.MoneyCost,
-            "OrderInCategory": self.OrderInCategory
+            "OrderInCategory": self.OrderInCategory,
+            "CanBeBuiltOutdoors": self.CanBeBuiltOutdoors
         }
 
     class Meta:
