@@ -22,11 +22,13 @@ from django.views.generic import TemplateView
 from Helpers.views import *
 from Helpers.luaExports.gameData import *
 from Helpers.view_scripts.modules import *
+from Helpers.view_scripts.jsons import *
 
 urlpatterns = [
     url(r'^goodcompany/$', TemplateView.as_view(template_name="helpers/home.html")),
     url(r'^goodcompany/admin/', include(admin.site.urls)),
     url(r'^goodcompany/gamedataManifest/', getManifestJson, name="gamedata"),
+    url(r'^goodcompany/json/materials/', json_materials, name="json_materials"),
     url(r'^goodcompany/viewall/(\w*)', viewAll, name="viewall"),
     url(r'^goodcompany/exportGameData/', export_game_data, name="exportGameData"),
     url(r'^goodcompany/helper/materialoverview/', materialOverview, name="materialoverview"),
