@@ -73,4 +73,4 @@ def json_materials(request):
                 "module_category": "cat_material"
             })
 
-    return JsonResponse({"Materials": materials})
+    return JsonResponse({"Materials": materials}, json_dumps_params={"indent": 4})
