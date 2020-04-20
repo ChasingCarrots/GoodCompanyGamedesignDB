@@ -253,6 +253,16 @@ def json_equipment(request):
                     "inventory_slots": properties.NumberOfSlots
                 })
 
+            research_properties = []
+            if ResearchAndDevelopmentProperty.objects.filter(ObjectType=equip):
+                properties = ResearchAndDevelopmentProperty.objects.filter(ObjectType=equip)[0]
+
+                research_properties.append({
+                    "can_do_analysis": properties.CanDoResearch,
+                    "can_do_research": properties.CanDoDevelopment,
+                    "research_time": properties.Speed
+                })
+
 
             equip_list.append({
                 "equip_id": equip.id,
@@ -262,6 +272,7 @@ def json_equipment(request):
                 "buildable_properties": buildable_properties,
                 "crafter_properties": crafter_properties,
                 "assembly_properties": assembly_properties,
+                "research_properties": research_properties,
                 "inventory_properties": inventory_properties
             })
     return JsonResponse({"version": version, "equipment": equip_list}, json_dumps_params={"indent": 4})
