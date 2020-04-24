@@ -152,29 +152,6 @@ class BuildablePropertyNeededMaterial(models.Model):
     def __unicode__(self):
         return u"%s (%ds)" % (self.Material, self.Amount)
 
-class BuildablePropertyCanBuildInWorkplace(models.Model):
-    history = HistoricalRecords()
-    PRODUCTION = 0
-    LOGISTICS = 1
-    MANAGEMENT = 2
-    RESEARCH = 3
-
-    BuildableProperty = models.ForeignKey("BuildableProperty", related_name="CanBuildInWorkplaces", blank=False, null=True)
-
-    WorkplaceType = models.IntegerField(
-        default=PRODUCTION,
-        choices=(
-            (PRODUCTION, "production"),
-            (MANAGEMENT, "management"),
-            (LOGISTICS, "logistics"),
-            (RESEARCH, "research"),
-        )
-    )
-
-    class Meta:
-        verbose_name = 'CanBuildInWorkplace'
-        verbose_name_plural = 'CanBuildInWorkplaces'
-
 
 class BuildabelCategory(models.Model):
     Name = models.CharField(max_length=255)
@@ -205,25 +182,23 @@ class BuildableProperty(models.Model):
     OrderInCategory = models.IntegerField(default=1)
     MoneyCost = models.IntegerField(default=1000)
     CanBeBuiltOutdoors = models.BooleanField(default=False)
+    MustBeBuiltInWorkzone = models.BooleanField(default=True)
 
     def getJsonObject(self):
         neededmats = []
         for mat in self.NeededMaterials.all():
             neededmats.append(mat.getJsonObject())
-        canBuildInWorkplaces = []
-        for wp in self.CanBuildInWorkplaces.all():
-            canBuildInWorkplaces.append(wp.WorkplaceType)
         category = 1
         if self.Category:
             category = self.Category.id
         return {
             "NeededMaterials": neededmats,
             "BuildDuration": self.BuildDuration,
-            "CanBuildInWorkplaces": canBuildInWorkplaces,
             "Category": category,
             "BuildCost": self.MoneyCost,
             "OrderInCategory": self.OrderInCategory,
-            "CanBeBuiltOutdoors": self.CanBeBuiltOutdoors
+            "CanBeBuiltOutdoors": self.CanBeBuiltOutdoors,
+            "CanBeBuiltOutdoors": self.MustBeBuiltInWorkzone
         }
 
     class Meta:
