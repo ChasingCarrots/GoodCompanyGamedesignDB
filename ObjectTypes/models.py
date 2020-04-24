@@ -424,6 +424,7 @@ class SpecialFlagsProperty(models.Model):
     ObjectType = models.OneToOneField(ObjectType, related_name="SpecialFlagsProperty", blank=False)
     IsBuyPlace = models.BooleanField(default=False, blank=False)
     IsSellPlace = models.BooleanField(default=False, blank=False)
+    IsInterfacePallet = models.BooleanField(default=False, blank=False)
     IsTrashCan = models.BooleanField(default=False, blank=False)
     IsDraftingTable = models.BooleanField(default=False, blank=False)
     IsContractBoard = models.BooleanField(default=False, blank=False, help_text="Contract boards allow the player to view and accept open contracts.")
@@ -434,6 +435,7 @@ class SpecialFlagsProperty(models.Model):
         return {
             "IsBuyPlace":self.IsBuyPlace,
             "IsSellPlace":self.IsSellPlace,
+            "IsInterfacePallet":self.IsInterfacePallet,
             "IsTrashCan":self.IsTrashCan,
             "IsDraftingTable":self.IsDraftingTable,
             "IsContractBoard":self.IsContractBoard,
