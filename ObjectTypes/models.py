@@ -198,7 +198,7 @@ class BuildableProperty(models.Model):
             "BuildCost": self.MoneyCost,
             "OrderInCategory": self.OrderInCategory,
             "CanBeBuiltOutdoors": self.CanBeBuiltOutdoors,
-            "CanBeBuiltOutdoors": self.MustBeBuiltInWorkzone
+            "MustBeBuiltInWorkzone": self.MustBeBuiltInWorkzone
         }
 
     class Meta:
