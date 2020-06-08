@@ -398,7 +398,7 @@ class ProductFeature(models.Model):
     Description = models.TextField(blank=True)
     SymbolAssetID = models.CharField(max_length=255)
     HelperEmoji = models.CharField(max_length=4)
-    FeatureValue = models.IntegerField(default=10)
+    PriceBonus = models.IntegerField(default=10)
     IsDrawback = models.BooleanField(default=False, help_text="This is a helper for the views, will get exported.")
 
     def getJsonObject(self):
@@ -406,7 +406,7 @@ class ProductFeature(models.Model):
             "Name": self.Name,
             "Description": self.Description,
             "SymbolAssetID": self.SymbolAssetID,
-            "FeatureValue": self.FeatureValue,
+            "PriceBonus": self.PriceBonus,
             "IsDrawback": self.IsDrawback
         }
 
