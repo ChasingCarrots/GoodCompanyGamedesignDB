@@ -429,18 +429,20 @@ class SpecialFlagsProperty(models.Model):
     IsDraftingTable = models.BooleanField(default=False, blank=False)
     IsContractBoard = models.BooleanField(default=False, blank=False, help_text="Contract boards allow the player to view and accept open contracts.")
     IsBatchEditor = models.BooleanField(default=False)
-    IsInventoryDistributor = models.BooleanField(default=False)
+    IsPusher = models.BooleanField(default=False)
+    IsPuller = models.BooleanField(default=False)
 
     def getJsonObject(self):
         return {
-            "IsBuyPlace":self.IsBuyPlace,
-            "IsSellPlace":self.IsSellPlace,
-            "IsInterfacePallet":self.IsInterfacePallet,
-            "IsTrashCan":self.IsTrashCan,
-            "IsDraftingTable":self.IsDraftingTable,
-            "IsContractBoard":self.IsContractBoard,
-            "IsBatchEditor":self.IsBatchEditor,
-            "IsInventoryDistributor":self.IsInventoryDistributor
+            "IsBuyPlace": self.IsBuyPlace,
+            "IsSellPlace": self.IsSellPlace,
+            "IsInterfacePallet": self.IsInterfacePallet,
+            "IsTrashCan": self.IsTrashCan,
+            "IsDraftingTable": self.IsDraftingTable,
+            "IsContractBoard": self.IsContractBoard,
+            "IsBatchEditor": self.IsBatchEditor,
+            "IsPusher": self.IsPusher,
+            "IsPuller": self.IsPuller
         }
 
     class Meta:
