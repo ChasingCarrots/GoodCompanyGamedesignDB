@@ -44,6 +44,49 @@ class DevelopmentProjectRequiredData(models.Model):
     def __unicode__(self):
         return u"%d x %s" %(self.Amount, unicode(self.DataType))
 
+
+class ProgressNodeRequiredData(models.Model):
+    history = HistoricalRecords()
+    DevelopmentProject = models.ForeignKey("ProgressNode", related_name="RequiredData")
+    DataType = models.ForeignKey(ResearchDataType, related_name="ProgressNodes")
+    Amount = models.IntegerField()
+
+    def getJsonObject(self):
+        return {
+            "DataTypeID": self.DataType.id,
+            "Amount": self.Amount,
+        }
+
+    class Meta:
+        verbose_name = 'Progress Node Required Data'
+        verbose_name_plural = 'Progress Node Required Data'
+
+    def __unicode__(self):
+        return u"%d x %s" %(self.Amount, unicode(self.DataType))
+
+
+class TreeCategory(models.Model):
+    Name = models.CharField(max_length=255)
+    Description = models.CharField(max_length=255, blank=True)
+    Order = models.IntegerField(default=1)
+    IconAssetID = models.CharField(max_length=255, null=True, blank=True)
+
+    def getJsonObject(self):
+        return {
+            "Name": self.Name,
+            "Description": self.Description,
+            "IconAssetID": self.IconAssetID,
+            "Order": self.Order
+        }
+
+    class Meta:
+        verbose_name = "Tree Category"
+        verbose_name_plural = "Tree Categories"
+
+    def __unicode__(self):
+        return self.Name
+
+
 class ProjectCategory(models.Model):
     Name = models.CharField(max_length=255)
     Description = models.CharField(max_length=255, blank=True)
@@ -64,6 +107,60 @@ class ProjectCategory(models.Model):
 
     def __unicode__(self):
         return self.Name
+
+
+class ProgressNode(models.Model):
+    history = HistoricalRecords()
+    Name = models.CharField(max_length=255)
+    IsHidden = models.BooleanField(default=False)
+    Description = models.CharField(max_length=255, blank=True)
+    IconAssetID = models.CharField(max_length=255)
+    Lane = models.IntegerField(default=0)
+    Tier = models.IntegerField(default=0)
+    Category = models.ForeignKey(TreeCategory, related_name="Nodes", null=True, blank=True)
+    RequiredProjects = models.ManyToManyField("self", blank=True, symmetrical=False, related_name="RequiredForProjects")
+    UnlocksBuildables = models.ManyToManyField("ObjectTypes.ObjectType", blank=True, related_name="UnlockedByProject")
+    UnlocksMarkets = models.ManyToManyField("Production.ProductType", blank=True, related_name="UnlockedByProject")
+    RequiredMoney = models.IntegerField(default=0)
+    RequiredDiscoveryPoints = models.IntegerField(default=0)
+    RequiredSuccessPoints = models.IntegerField(default=0)
+
+    def getJsonObject(self):
+        requiredData = [reqDat.getJsonObject() for reqDat in self.RequiredData.all()]
+        requiredProjects = [reqProj.id for reqProj in self.RequiredProjects.all()]
+        unlocksBuildables = [objType.id for objType in self.UnlocksBuildables.all()]
+        unlocksMarkets = [prodType.id for prodType in self.UnlocksMarkets.all()]
+        category = 0
+        if self.Category:
+            category = self.Category.id
+
+        return {
+            "Name": self.Name,
+            "IsHidden": self.IsHidden,
+            "Description": self.Description,
+            "IconAssetID": self.IconAssetID,
+            "Tier": self.Tier,
+            "Lane": self.Lane,
+            "CategoryID": category,
+            "RequiredProjects": requiredProjects,
+            "UnlocksBuildables": unlocksBuildables,
+            "UnlocksMarkets": unlocksMarkets,
+            "RequiredMoney": self.RequiredMoney,
+            "RequiredDiscoveryPoints": self.RequiredDiscoveryPoints,
+            "RequiredSuccessPoints": self.RequiredSuccessPoints,
+            "RequiredData": requiredData,
+        }
+
+    class Meta:
+        verbose_name = 'Progress Node'
+        verbose_name_plural = 'Progress Node'
+        ordering = ['id']
+
+    def __unicode__(self):
+        return unicode(self.Name)
+
+
+
 
 class DevelopmentProject(models.Model):
     history = HistoricalRecords()

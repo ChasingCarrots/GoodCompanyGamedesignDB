@@ -320,9 +320,17 @@ def getManifestJson(request):
     for devProj in DevelopmentProject.objects.all():
         developmentProjects[str(devProj.id)] = devProj.getJsonObject()
 
+    progressNodes = {}
+    for proNodes in ProgressNode.objects.all():
+        progressNodes[str(proNodes.id)] = proNodes.getJsonObject()
+
     projectCategories = {}
     for projCat in ProjectCategory.objects.all():
         projectCategories[str(projCat.id)] = projCat.getJsonObject()
+
+    treeCategories = {}
+    for treeCat in TreeCategory.objects.all():
+        treeCategories[str(treeCat.id)] = treeCat.getJsonObject()
 
     moduleCategories = {}
     for modCat in ModuleCategory.objects.all():
@@ -362,7 +370,9 @@ def getManifestJson(request):
         "TuningValues": tuningValues,
         "ResearchDataTypes": researchDataTypes,
         "DevelopmentProjects": developmentProjects,
+        "ProgressNodes": progressNodes,
         "ProjectCategories": projectCategories,
+        "TreeCategories": treeCategories,
         "ModuleCategories": moduleCategories
     }, indent=4), content_type='application/json')
 
