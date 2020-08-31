@@ -123,7 +123,7 @@ class ProgressNode(models.Model):
     RequiredProjects = models.ManyToManyField("self", blank=True, symmetrical=False, related_name="RequiredForProjects")
     UnlocksBuildables = models.ManyToManyField("ObjectTypes.ObjectType", blank=True, related_name="UnlockedByProject")
     UnlocksMarkets = models.ManyToManyField("Production.ProductType", blank=True, related_name="UnlockedByProject")
-    UnlocksPolicies = models.CharField(validators=[validate_comma_separated_integer_list], max_length=500, default="")
+    UnlocksPolicies = models.CharField(validators=[validate_comma_separated_integer_list], max_length=500, default="", blank=True)
     RequiredMoney = models.IntegerField(default=0)
     RequiredDiscoveryPoints = models.IntegerField(default=0)
     RequiredSuccessPoints = models.IntegerField(default=0)
@@ -137,6 +137,10 @@ class ProgressNode(models.Model):
         if self.Category:
             category = self.Category.id
 
+        policies = []
+        if self.UnlocksPolicies != "":
+            policies = literal_eval(self.UnlocksPolicies)
+
         return {
             "Name": self.Name,
             "IsHidden": self.IsHidden,
@@ -148,7 +152,7 @@ class ProgressNode(models.Model):
             "RequiredProjects": requiredProjects,
             "UnlocksBuildables": unlocksBuildables,
             "UnlocksMarkets": unlocksMarkets,
-            "UnlocksPolicies": literal_eval(self.UnlocksPolicies),
+            "UnlocksPolicies": policies,
             "RequiredMoney": self.RequiredMoney,
             "RequiredDiscoveryPoints": self.RequiredDiscoveryPoints,
             "RequiredSuccessPoints": self.RequiredSuccessPoints,
