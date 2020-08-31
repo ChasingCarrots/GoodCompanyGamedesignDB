@@ -139,7 +139,10 @@ class ProgressNode(models.Model):
 
         policies = []
         if self.UnlocksPolicies != "":
-            policies = literal_eval(self.UnlocksPolicies)
+            if isinstance(literal_eval(self.UnlocksPolicies), int):
+                policies.append(literal_eval(self.UnlocksPolicies))
+            else:
+                policies = literal_eval(self.UnlocksPolicies)
 
         return {
             "Name": self.Name,
