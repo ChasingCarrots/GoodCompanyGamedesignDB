@@ -257,13 +257,15 @@ class CrafterProperty(models.Model):
     ObjectType = models.OneToOneField(ObjectType, related_name="CrafterProperty", blank=False)
     SwitchingTime = models.FloatField(blank=False, default=1)
     Automatic = models.BooleanField(default=False, help_text="doesn't need an employee when set to true")
+    AutomaticStorageMultiplier = models.IntegerField(default=10)
 
     def getJsonObject(self):
         possibleModules = [step.getJsonObject() for step in self.PossibleModules.all()]
         return {
             "SwitchingDuration": self.SwitchingTime,
             "PossibleModules": possibleModules,
-            "Automatic": self.Automatic
+            "Automatic": self.Automatic,
+            "AutomaticStorageMultiplier": self.AutomaticStorageMultiplier
         }
 
     class Meta:

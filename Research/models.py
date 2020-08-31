@@ -3,6 +3,8 @@ from __future__ import unicode_literals
 
 from django.db import models
 from simple_history.models import HistoricalRecords
+from ast import literal_eval
+from django.core.validators import validate_comma_separated_integer_list
 
 class ResearchDataType(models.Model):
     history = HistoricalRecords()
@@ -121,6 +123,7 @@ class ProgressNode(models.Model):
     RequiredProjects = models.ManyToManyField("self", blank=True, symmetrical=False, related_name="RequiredForProjects")
     UnlocksBuildables = models.ManyToManyField("ObjectTypes.ObjectType", blank=True, related_name="UnlockedByProject")
     UnlocksMarkets = models.ManyToManyField("Production.ProductType", blank=True, related_name="UnlockedByProject")
+    UnlocksPolicies = models.CharField(validators=[validate_comma_separated_integer_list], max_length=500, default="")
     RequiredMoney = models.IntegerField(default=0)
     RequiredDiscoveryPoints = models.IntegerField(default=0)
     RequiredSuccessPoints = models.IntegerField(default=0)
@@ -145,6 +148,7 @@ class ProgressNode(models.Model):
             "RequiredProjects": requiredProjects,
             "UnlocksBuildables": unlocksBuildables,
             "UnlocksMarkets": unlocksMarkets,
+            "UnlocksPolicies": literal_eval(self.UnlocksPolicies),
             "RequiredMoney": self.RequiredMoney,
             "RequiredDiscoveryPoints": self.RequiredDiscoveryPoints,
             "RequiredSuccessPoints": self.RequiredSuccessPoints,
