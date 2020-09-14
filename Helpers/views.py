@@ -328,10 +328,6 @@ def getManifestJson(request):
     for projCat in ProjectCategory.objects.all():
         projectCategories[str(projCat.id)] = projCat.getJsonObject()
 
-    treeCategories = {}
-    for treeCat in TreeCategory.objects.all():
-        treeCategories[str(treeCat.id)] = treeCat.getJsonObject()
-
     moduleCategories = {}
     for modCat in ModuleCategory.objects.all():
         moduleCategories[str(modCat.id)] = modCat.getJsonObject()
@@ -372,7 +368,6 @@ def getManifestJson(request):
         "DevelopmentProjects": developmentProjects,
         "ProgressNodes": progressNodes,
         "ProjectCategories": projectCategories,
-        "TreeCategories": treeCategories,
         "ModuleCategories": moduleCategories
     }, indent=4), content_type='application/json')
 

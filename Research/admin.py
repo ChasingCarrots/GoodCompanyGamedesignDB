@@ -47,9 +47,6 @@ class ProjectCategoryAdmin(SuperModelAdmin):
     pass
 admin.site.register(ProjectCategory, ProjectCategoryAdmin)
 
-class TreeCategoryAdmin(SuperModelAdmin):
-    pass
-admin.site.register(TreeCategory, TreeCategoryAdmin)
 
 
 class DevelopmentProjectAdmin(SuperModelAdmin):

@@ -22,3 +22,15 @@ SizeTypeChoices = (
     # large objects and materials
     (LARGESLOT, "LargeSlot"),
 )
+
+CAT_TREE_BIZDEV = 1
+CAT_TREE_MARKET = 2
+CAT_TREE_CUSTOM = 99
+NodeTreeCategory = (
+    # small objects and materials
+    (CAT_TREE_BIZDEV, "cat_tree_bizdev"),
+    # large objects and materials
+    (CAT_TREE_MARKET, "cat_tree_market"),
+    # large objects and materials
+    (CAT_TREE_CUSTOM, "cat_tree_custom")
+)

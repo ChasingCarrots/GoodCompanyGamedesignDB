@@ -5,6 +5,7 @@ from django.db import models
 from simple_history.models import HistoricalRecords
 from ast import literal_eval
 from django.core.validators import validate_comma_separated_integer_list
+import common
 
 class ResearchDataType(models.Model):
     history = HistoricalRecords()
@@ -67,28 +68,6 @@ class ProgressNodeRequiredData(models.Model):
         return u"%d x %s" %(self.Amount, unicode(self.DataType))
 
 
-class TreeCategory(models.Model):
-    Name = models.CharField(max_length=255)
-    Description = models.CharField(max_length=255, blank=True)
-    Order = models.IntegerField(default=1)
-    IconAssetID = models.CharField(max_length=255, null=True, blank=True)
-
-    def getJsonObject(self):
-        return {
-            "Name": self.Name,
-            "Description": self.Description,
-            "IconAssetID": self.IconAssetID,
-            "Order": self.Order
-        }
-
-    class Meta:
-        verbose_name = "Tree Category"
-        verbose_name_plural = "Tree Categories"
-
-    def __unicode__(self):
-        return self.Name
-
-
 class ProjectCategory(models.Model):
     Name = models.CharField(max_length=255)
     Description = models.CharField(max_length=255, blank=True)
@@ -119,7 +98,7 @@ class ProgressNode(models.Model):
     IconAssetID = models.CharField(max_length=255)
     Lane = models.IntegerField(default=0)
     Tier = models.IntegerField(default=0)
-    Category = models.ForeignKey(TreeCategory, related_name="Nodes", null=True, blank=True)
+    Category = models.IntegerField(choices=common.NodeTreeCategory, blank=False, default=common.CAT_TREE_BIZDEV)
     RequiredProjects = models.ManyToManyField("self", blank=True, symmetrical=False, related_name="RequiredForProjects")
     UnlocksBuildables = models.ManyToManyField("ObjectTypes.ObjectType", blank=True, related_name="UnlockedByProject")
     UnlocksMarkets = models.ManyToManyField("Production.ProductType", blank=True, related_name="UnlockedByProject")
@@ -133,9 +112,6 @@ class ProgressNode(models.Model):
         requiredProjects = [reqProj.id for reqProj in self.RequiredProjects.all()]
         unlocksBuildables = [objType.id for objType in self.UnlocksBuildables.all()]
         unlocksMarkets = [prodType.id for prodType in self.UnlocksMarkets.all()]
-        category = 0
-        if self.Category:
-            category = self.Category.id
 
         policies = []
         if self.UnlocksPolicies != "":
@@ -151,7 +127,7 @@ class ProgressNode(models.Model):
             "IconAssetID": self.IconAssetID,
             "Tier": self.Tier,
             "Lane": self.Lane,
-            "CategoryID": category,
+            "CategoryID": self.Category,
             "RequiredProjects": requiredProjects,
             "UnlocksBuildables": unlocksBuildables,
             "UnlocksMarkets": unlocksMarkets,
@@ -180,6 +156,7 @@ class DevelopmentProject(models.Model):
     Description = models.CharField(max_length=255, blank=True)
     IconAssetID = models.CharField(max_length=255)
     Tier = models.IntegerField(default=1)
+    Lane = models.IntegerField(default=0)
     Category = models.ForeignKey(ProjectCategory, related_name="Projects", null=True, blank=True)
     OrderInCategory = models.IntegerField(default=1)
     DiscoveryPoints = models.IntegerField(default=0)
@@ -204,6 +181,7 @@ class DevelopmentProject(models.Model):
             "Description": self.Description,
             "IconAssetID": self.IconAssetID,
             "Tier": self.Tier,
+            "Lane": self.Lane,
             "CategoryID": category,
             "OrderInCategory": self.OrderInCategory,
             "DiscoveryPoints": self.DiscoveryPoints,
