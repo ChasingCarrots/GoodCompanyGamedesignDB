@@ -433,6 +433,8 @@ class SpecialFlagsProperty(models.Model):
     IsBatchEditor = models.BooleanField(default=False)
     IsPusher = models.BooleanField(default=False)
     IsPuller = models.BooleanField(default=False)
+    IsMerger = models.BooleanField(default=False)
+    IsSplitter = models.BooleanField(default=False)
 
     def getJsonObject(self):
         return {
@@ -444,7 +446,9 @@ class SpecialFlagsProperty(models.Model):
             "IsContractBoard": self.IsContractBoard,
             "IsBatchEditor": self.IsBatchEditor,
             "IsPusher": self.IsPusher,
-            "IsPuller": self.IsPuller
+            "IsPuller": self.IsPuller,
+            "IsMerger": self.IsMerger,
+            "IsSplitter": self.IsSplitter
         }
 
     class Meta:
