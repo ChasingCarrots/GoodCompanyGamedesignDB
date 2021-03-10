@@ -6,6 +6,7 @@ import Production
 import common
 from simple_history.models import HistoricalRecords
 from bitfield import BitField
+from Production.models import SkillType
 
 class ObjectType(models.Model):
     history = HistoricalRecords()
@@ -646,3 +647,20 @@ class FlagTilesProperty(models.Model):
 
     def __unicode__(self):
         return u"FlagTilesProperty of %s" % (self.ObjectType)
+
+class SkillRequirementsProperty(models.Model):
+    history = HistoricalRecords()
+    ObjectType = models.OneToOneField(ObjectType, related_name="SkillRequirementsProperty", blank=False)
+    RequiredSkill = models.ForeignKey(SkillType, blank=False)
+
+    def getJsonObject(self):
+        return {
+            "RequiredSkill": self.RequiredSkill.id
+        }
+
+    class Meta:
+        verbose_name = 'Skill Requirements Property'
+        verbose_name_plural = "Skill Requirements Properties"
+
+    def __unicode__(self):
+        return u"SkillRequirementsProperty of %s" % (self.ObjectType)

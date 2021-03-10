@@ -107,3 +107,7 @@ admin.site.register(ProductType, ProductTypeAdmin)
 class ProductFeatureAdmin(SuperModelAdmin):
     list_display = ("id", "__unicode__",)
 admin.site.register(ProductFeature, ProductFeatureAdmin)
+
+class SkillTypeAdmin(SuperModelAdmin):
+    list_display = ("id", "__unicode__",)
+admin.site.register(SkillType, SkillTypeAdmin)

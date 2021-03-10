@@ -453,3 +453,35 @@ class ProductTypeCaseBlockingField(models.Model):
 
     def __unicode__(self):
         return u"%s blocking GridFields" % (unicode(self.ProductTypeCase))
+
+class SkillType(models.Model):
+    history = HistoricalRecords()
+    Name = models.CharField(max_length=255)
+    Description = models.TextField(blank=True)
+    ExperienceCost = models.IntegerField()
+    SuccessPointsCost = models.IntegerField()
+    AdditionalHiringCost = models.IntegerField()
+    WageIncrease = models.IntegerField()
+    RequiredHappiness = models.IntegerField()
+    SkillEffectID = models.IntegerField()
+    SkillEffectValue = models.FloatField()
+
+    def getJsonObject(self):
+        return {
+            "Name": self.Name,
+            "Description": self.Description,
+            "ExperienceCost": self.ExperienceCost,
+            "SuccessPointsCost": self.SuccessPointsCost,
+            "AdditionalHiringCost": self.AdditionalHiringCost,
+            "WageIncrease": self.WageIncrease,
+            "RequiredHappiness": self.RequiredHappiness,
+            "SkillEffectID": self.SkillEffectID,
+            "SkillEffectValue": self.SkillEffectValue
+        }
+
+    class Meta:
+        verbose_name = 'Skill Type'
+        verbose_name_plural = 'Skill Types'
+
+    def __unicode__(self):
+        return unicode(self.Name)

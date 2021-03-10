@@ -165,6 +165,10 @@ class FlagTilesPropertyInlineAdmin(SuperInlineModelAdmin, admin.StackedInline):
     extra = 0
     inlines = (FlagTilesPropertyTileInlineAdmin,)
 
+class SkillRequirementsInlineAdmin(SuperInlineModelAdmin, admin.StackedInline):
+    model = SkillRequirementsProperty
+    extra = 0
+
 class HasPropertyFilter(admin.SimpleListFilter):
     title = 'Filter title not set'
     parameter_name = 'parameter name not set'
@@ -261,6 +265,10 @@ class HasLogisticsWorkplaceFilter(HasPropertyFilter):
     title = "LogisticsWorkplace Property"
     parameter_name = "LogisticsWorkplaceProperty"
 
+class HasSkillRequirementsFilter(HasPropertyFilter):
+    title = "SkillRequirements Property"
+    parameter_name = "SkillRequirementsProperty"
+
 class ObjectTypeAdmin(SuperModelAdmin):
     actions = [export_names, export_ids]
     list_display = ("id", "__unicode__")
@@ -283,7 +291,8 @@ class ObjectTypeAdmin(SuperModelAdmin):
                ConveyorPropertyInlineAdmin,
                LogisticsWorkplaceInlineAdmin,
                TransferTilesPropertyInlineAdmin,
-               FlagTilesPropertyInlineAdmin)
+               FlagTilesPropertyInlineAdmin,
+               SkillRequirementsInlineAdmin)
     list_filter = (HasMovablePropertyFilter,
                    HasObjectLookPropertyFilter,
                    HasIconPropertyFilter,
@@ -301,5 +310,6 @@ class ObjectTypeAdmin(SuperModelAdmin):
                    HasResearchAndDevelopmentPropertyFilter,
                    HasInventoryGroupPropertyFilter,
                    HasConveyorPropertyFilter,
-                   HasLogisticsWorkplaceFilter)
+                   HasLogisticsWorkplaceFilter,
+                   HasSkillRequirementsFilter)
 admin.site.register(ObjectType, ObjectTypeAdmin)

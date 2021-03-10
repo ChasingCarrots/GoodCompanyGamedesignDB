@@ -336,6 +336,10 @@ def getManifestJson(request):
     for flagtileProp in FlagTilesProperty.objects.all():
         flagtilesProperties[str(flagtileProp.ObjectType.id)] = flagtileProp.getJsonObject()
 
+    skillRequirementsProperties = {}
+    for skillReqProp in SkillRequirementsProperty.objects.all():
+        skillRequirementsProperties[str(skillReqProp.id)] = skillReqProp.getJsonObject()
+
     return HttpResponse(json.dumps({
         "Materials": materials,
         "Modules": modules,
@@ -363,6 +367,7 @@ def getManifestJson(request):
         "LogisticsWorkplaceProperties": logisticsWorkplaces,
         "TransferTilesProperties": transferTilesProperties,
         "FlagTilesProperties": flagtilesProperties,
+        "SkillRequirementsProperties": skillRequirementsProperties,
         "TuningValues": tuningValues,
         "ResearchDataTypes": researchDataTypes,
         "DevelopmentProjects": developmentProjects,
