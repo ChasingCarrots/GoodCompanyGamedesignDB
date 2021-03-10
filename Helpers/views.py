@@ -342,7 +342,7 @@ def getManifestJson(request):
 
     skillRequirementsProperties = {}
     for skillReqProp in SkillRequirementsProperty.objects.all():
-        skillRequirementsProperties[str(skillReqProp.id)] = skillReqProp.getJsonObject()
+        skillRequirementsProperties[str(skillReqProp.ObjectType.id)] = skillReqProp.getJsonObject()
 
     return HttpResponse(json.dumps({
         "Materials": materials,
