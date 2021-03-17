@@ -198,7 +198,8 @@ class Module(models.Model):
             "GridDimensions": gridDimensions,
             "CategoryID": category,
             "OrderInCategory": self.OrderInCategory,
-            "Tags": self.Tags
+            "Tags": self.Tags,
+            "Tier": self.get_tier()
         }
 
     class Meta:
