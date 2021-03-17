@@ -211,7 +211,7 @@ class Module(models.Model):
         return unicode(self.Name)
 
     def get_tier(self):
-        project = DevelopmentProject.objects.filter(UnlocksModule=self)
+        project = DevelopmentProject.objects.filter(UnlocksModules=self)
         if project:
             return project[0].Tier
         return 0
