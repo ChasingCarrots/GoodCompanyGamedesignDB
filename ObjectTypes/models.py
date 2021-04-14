@@ -184,6 +184,7 @@ class BuildableProperty(models.Model):
     MoneyCost = models.IntegerField(default=1000)
     CanBeBuiltOutdoors = models.BooleanField(default=False)
     MustBeBuiltInWorkzone = models.BooleanField(default=True)
+    AddHappinessToWorkzone = models.FloatField(default=0)
 
     def getJsonObject(self):
         neededmats = []
@@ -199,7 +200,8 @@ class BuildableProperty(models.Model):
             "BuildCost": self.MoneyCost,
             "OrderInCategory": self.OrderInCategory,
             "CanBeBuiltOutdoors": self.CanBeBuiltOutdoors,
-            "MustBeBuiltInWorkzone": self.MustBeBuiltInWorkzone
+            "MustBeBuiltInWorkzone": self.MustBeBuiltInWorkzone,
+            "AddHappinessToWorkzone": self.AddHappinessToWorkzone
         }
 
     class Meta:
