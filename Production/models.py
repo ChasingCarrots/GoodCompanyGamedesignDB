@@ -459,6 +459,7 @@ class SkillType(models.Model):
     history = HistoricalRecords()
     Name = models.CharField(max_length=255)
     Description = models.TextField(blank=True)
+    IconAssetID = models.CharField(max_length=255, blank=True, default="")
     ExperienceCost = models.IntegerField()
     SuccessPointsCost = models.IntegerField()
     AdditionalHiringCost = models.IntegerField()
@@ -471,6 +472,7 @@ class SkillType(models.Model):
         return {
             "Name": self.Name,
             "Description": self.Description,
+            "IconAssetID": self.IconAssetID,
             "ExperienceCost": self.ExperienceCost,
             "SuccessPointsCost": self.SuccessPointsCost,
             "AdditionalHiringCost": self.AdditionalHiringCost,
