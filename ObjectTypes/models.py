@@ -6,7 +6,7 @@ import Production
 import common
 from simple_history.models import HistoricalRecords
 from bitfield import BitField
-from Production.models import SkillType
+from Production.models import SkillType, Module
 
 class ObjectType(models.Model):
     history = HistoricalRecords()
@@ -488,12 +488,15 @@ class ResearchAndDevelopmentProperty(models.Model):
     CanDoResearch = models.BooleanField(default=False, blank=False)
     CanDoDevelopment = models.BooleanField(default=False, blank=False)
     Speed = models.FloatField(default=1)
+    PossibleModules = models.ManyToManyField(Module)
 
     def getJsonObject(self):
+        possibleModules = [mod.id for mod in self.PossibleModules.all()]
         return {
             "CanDoResearch": self.CanDoResearch,
             "CanDoDevelopment": self.CanDoDevelopment,
-            "Speed": self.Speed
+            "Speed": self.Speed,
+            "PossibleModules": possibleModules
         }
 
     class Meta:
