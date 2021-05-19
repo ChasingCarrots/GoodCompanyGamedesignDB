@@ -455,6 +455,29 @@ class ProductTypeCaseBlockingField(models.Model):
     def __unicode__(self):
         return u"%s blocking GridFields" % (unicode(self.ProductTypeCase))
 
+
+class SkillTypeCategory(models.Model):
+    Name = models.CharField(max_length=255)
+    Description = models.CharField(max_length=255, blank=True)
+    Order = models.IntegerField(default=1)
+    IconAssetID = models.CharField(max_length=255, null=True, blank=True)
+
+    def getJsonObject(self):
+        return {
+            "Name": self.Name,
+            "Description": self.Description,
+            "IconAssetID": self.IconAssetID,
+            "Order": self.Order
+        }
+
+    class Meta:
+        verbose_name = "Skill Type Category"
+        verbose_name_plural = "Skill Type Categories"
+
+    def __unicode__(self):
+        return self.Name
+
+
 class SkillType(models.Model):
     history = HistoricalRecords()
     Name = models.CharField(max_length=255)
@@ -467,8 +490,14 @@ class SkillType(models.Model):
     RequiredHappiness = models.IntegerField()
     SkillEffectID = models.IntegerField()
     SkillEffectValue = models.FloatField()
+    Category = models.ForeignKey(SkillTypeCategory, related_name="SkillTypes", null=True, blank=True)
+    OrderInCategory = models.IntegerField(default=1)
 
     def getJsonObject(self):
+        category = 0
+        if self.Category:
+            category = self.Category.id
+
         return {
             "Name": self.Name,
             "Description": self.Description,
@@ -479,7 +508,9 @@ class SkillType(models.Model):
             "WageIncrease": self.WageIncrease,
             "RequiredHappiness": self.RequiredHappiness,
             "SkillEffectID": self.SkillEffectID,
-            "SkillEffectValue": self.SkillEffectValue
+            "SkillEffectValue": self.SkillEffectValue,
+            "CategoryID": category,
+            "OrderInCategory": self.OrderInCategory
         }
 
     class Meta:

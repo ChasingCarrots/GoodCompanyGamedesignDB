@@ -108,6 +108,11 @@ class ProductFeatureAdmin(SuperModelAdmin):
     list_display = ("id", "__unicode__",)
 admin.site.register(ProductFeature, ProductFeatureAdmin)
 
+
+class SkillTypeCategoryAdmin(SuperModelAdmin):
+    pass
+admin.site.register(SkillTypeCategory, SkillTypeCategoryAdmin)
+
 class SkillTypeAdmin(SuperModelAdmin):
     list_display = ("id", "__unicode__",)
 admin.site.register(SkillType, SkillTypeAdmin)

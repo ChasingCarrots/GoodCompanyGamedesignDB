@@ -336,6 +336,10 @@ def getManifestJson(request):
     for modCat in ModuleCategory.objects.all():
         moduleCategories[str(modCat.id)] = modCat.getJsonObject()
 
+    skillTypeCategories = {}
+    for skillCat in SkillTypeCategory.objects.all():
+        skillTypeCategories[str(skillCat.id)] = skillCat.getJsonObject()
+
     flagtilesProperties = {}
     for flagtileProp in FlagTilesProperty.objects.all():
         flagtilesProperties[str(flagtileProp.ObjectType.id)] = flagtileProp.getJsonObject()
@@ -378,7 +382,8 @@ def getManifestJson(request):
         "DevelopmentProjects": developmentProjects,
         "ProgressNodes": progressNodes,
         "ProjectCategories": projectCategories,
-        "ModuleCategories": moduleCategories
+        "ModuleCategories": moduleCategories,
+        "SkillTypeCategories": skillTypeCategories
     }, indent=4), content_type='application/json')
 
 
