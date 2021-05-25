@@ -93,6 +93,7 @@ class ProjectCategory(models.Model):
 class ProgressNode(models.Model):
     history = HistoricalRecords()
     Name = models.CharField(max_length=255)
+    NodeGroup = models.IntegerField(default=0)
     IsHidden = models.BooleanField(default=False)
     Description = models.CharField(max_length=255, blank=True)
     IconAssetID = models.CharField(max_length=255)
@@ -107,6 +108,7 @@ class ProgressNode(models.Model):
     RequiredMoney = models.IntegerField(default=0)
     RequiredDiscoveryPoints = models.IntegerField(default=0)
     RequiredSuccessPoints = models.IntegerField(default=0)
+    NodeNetWorth = models.IntegerField(default=0)
 
     def getJsonObject(self):
         requiredData = [reqDat.getJsonObject() for reqDat in self.RequiredData.all()]
@@ -139,6 +141,8 @@ class ProgressNode(models.Model):
             "RequiredDiscoveryPoints": self.RequiredDiscoveryPoints,
             "RequiredSuccessPoints": self.RequiredSuccessPoints,
             "RequiredData": requiredData,
+            "NodeGroup": self.NodeGroup,
+            "NodeNetWorth": self.NodeNetWorth,
         }
 
     class Meta:
