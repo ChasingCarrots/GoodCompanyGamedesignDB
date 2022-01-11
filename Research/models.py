@@ -12,12 +12,14 @@ class ResearchDataType(models.Model):
     Name = models.CharField(max_length=255)
     IconAssetID = models.CharField(max_length=255)
     NetWorth = models.IntegerField(default=100)
+    DevelopmentTime = models.FloatField(default=1)
 
     def getJsonObject(self):
         return {
             "Name": self.Name,
             "IconAssetID": self.IconAssetID,
             "NetWorth": self.NetWorth,
+            "DevelopmentTime": self.DevelopmentTime,
         }
 
     class Meta:
