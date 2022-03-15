@@ -622,7 +622,8 @@ class FlagTilesPropertyTile(models.Model):
     Flags = BitField(flags=[
         "FloorTile",
         "ConveyorHatch",
-        "BlockBuildable"
+        "BlockBuildable",
+        "NeedsWallTile"
     ], default=0)
 
     class Meta:
