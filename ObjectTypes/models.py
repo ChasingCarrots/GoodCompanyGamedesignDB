@@ -623,7 +623,8 @@ class FlagTilesPropertyTile(models.Model):
         "FloorTile",
         "ConveyorHatch",
         "BlockBuildable",
-        "NeedsWallTile"
+        "NeedsWallTile",
+        "WallDecoration"
     ], default=0)
 
     class Meta:
