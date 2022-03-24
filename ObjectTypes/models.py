@@ -439,6 +439,7 @@ class SpecialFlagsProperty(models.Model):
     IsMerger = models.BooleanField(default=False)
     IsSplitter = models.BooleanField(default=False)
     IsBuffer = models.BooleanField(default=False)
+    IsUpgradeableShelf = models.BooleanField(default=False)
 
     def getJsonObject(self):
         return {
@@ -453,7 +454,8 @@ class SpecialFlagsProperty(models.Model):
             "IsPuller": self.IsPuller,
             "IsMerger": self.IsMerger,
             "IsSplitter": self.IsSplitter,
-            "IsBuffer": self.IsBuffer
+            "IsBuffer": self.IsBuffer,
+            "IsUpgradeableShelf": self.IsUpgradeableShelf
         }
 
     class Meta:
